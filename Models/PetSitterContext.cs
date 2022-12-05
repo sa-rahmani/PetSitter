@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using PetSitter.Data;
 
 namespace PetSitter.Models
 {
     public partial class PetSitterContext : DbContext
     {
-        public PetSitterContext()
-        {
-        }
 
         public PetSitterContext(DbContextOptions<PetSitterContext> options)
             : base(options)
