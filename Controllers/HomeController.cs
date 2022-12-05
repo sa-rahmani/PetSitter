@@ -18,8 +18,8 @@ namespace PetSitter.Controllers
 
         public IActionResult Index()
         {
-            IQueryable<Pet> pets = from pts in _db.Pets
-                                   select pts;
+            IQueryable<Pet> pets = from p in _db.Pets
+                                   select p;
             return View(pets);
         }
 
