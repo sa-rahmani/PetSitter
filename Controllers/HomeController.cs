@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PetSitter.Data;
 using PetSitter.Models;
 using System.Diagnostics;
 
@@ -7,15 +8,19 @@ namespace PetSitter.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly PetSitterContext _db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, PetSitterContext context)
         {
             _logger = logger;
+            _db = context;
         }
 
         public IActionResult Index()
         {
-            return View();
+            IQueryable<Pet> pets = from p in _db.Pets
+                                   select p;
+            return View(pets);
         }
 
         public IActionResult Privacy()
