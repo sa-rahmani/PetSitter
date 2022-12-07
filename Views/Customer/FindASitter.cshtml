@@ -18,6 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.ProfileBio)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AvgRating)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -34,7 +37,10 @@
                 @Html.DisplayFor(modelItem => item.ProfileBio)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.SitterId">Details</a>
+                @Html.DisplayFor(modelItem => item.AvgRating)
+            </td>
+            <td>
+                <a asp-action="SitterDetails" asp-route-sitterID="@item.SitterId">Details</a>
             </td>
         </tr>
 }

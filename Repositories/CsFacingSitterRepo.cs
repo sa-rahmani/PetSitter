@@ -1,14 +1,15 @@
 ﻿using PetSitter.Models;
 using PetSitter.ViewModels;
+using System.Security.Policy;
 
 namespace PetSitter.Repositories
 {
-    public class SitterRepo
+    public class CsFacingSitterRepo
     {
 
         private readonly PetSitterContext _db;
 
-        public SitterRepo(PetSitterContext db)
+        public CsFacingSitterRepo(PetSitterContext db)
         {
             _db = db;
         }
@@ -23,10 +24,19 @@ namespace PetSitter.Repositories
                                  SitterId = s.SitterId,
                                  FirstName = u.FirstName,
                                  Rate = s.RatePerPetPerDay,
-                                 ProfileBio = s.ProfileBio
+                                 ProfileBio = s.ProfileBio,
+                                 AvgRating = (double)_db.Bookings.Where(b => b.SitterId == s.SitterId).Average(b => b.Rating),
+                                 Reviews = _db.Bookings.Where(b => b.SitterId == s.SitterId).Select(b => b.Review).ToList()
                              };
 
             return allSitters;
+        }
+
+        public SitterVM GetSitter(int sitterID)
+        {
+            SitterVM sitter = GetAllSitters().Where(s => s.SitterId == sitterID).FirstOrDefault();
+
+            return sitter;
         }
     }
 }
