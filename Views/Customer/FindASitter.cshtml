@@ -1,0 +1,42 @@
+﻿@model IEnumerable<PetSitter.ViewModels.SitterVM>
+
+@{
+    ViewData["Title"] = "Find A Sitter";
+}
+
+<h1>Find A Sitter</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProfileBio)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProfileBio)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.SitterId">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
