@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using PetSitter.Models;
+using PetSitter.Repositories;
 
 namespace PetSitter.Areas.Identity.Pages.Account
 {
@@ -78,11 +79,43 @@ namespace PetSitter.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            /// 
+            [Required(ErrorMessage = "First Name is required.")]
+            [RegularExpression(@"^[a-zA-Z]+[ a-zA-Z-_]*$", ErrorMessage = "Alphabetical only please.")]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage = "Last Name is required.")]
+            [RegularExpression(@"^[a-zA-Z]+[ a-zA-Z-_]*$", ErrorMessage = "Alphabetical only please.")]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
+            [Required]
+            [RegularExpression("[0-9]{10}")]
+            [Display(Name = "Phone Number")]
+            [Phone]
+            public string PhoneNumber { get; set; }
+
+            [Required]
+            [Display(Name = "City")]
+            public string City { get; set; }
+
+            [Required]
+            [Display(Name = "Postal Code")]
+            public string PostalCode { get; set; }
+
+            [Required]
+            [Display(Name = "Street Address")]
+            public string StreetAddress { get; set; }
+
+            [Required]
+            [Display(Name = "Account Type")]
+            public string UserType { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -126,10 +159,21 @@ namespace PetSitter.Areas.Identity.Pages.Account
                 {
                     User newUser = new User()
                     {
-                        Email = Input.Email
+                        FirstName = Input.FirstName,
+                        LastName = Input.LastName,
+                        Email = Input.Email,
+                        PhoneNumber = Input.PhoneNumber,
+                        City = Input.City,
+                        PostalCode = Input.PostalCode,
+                        StreetAddress = Input.StreetAddress,
+                        UserType = Input.UserType
+
                     };
-                    _context.Users.Add(newUser);
-                    _context.SaveChanges();
+                    //_context.Users.Add(newUser);
+                    //_context.SaveChanges();
+
+                    CustomerRepo customerRepo = new CustomerRepo(_context);
+                    customerRepo.AddUser(newUser);
 
                     _logger.LogInformation("User created a new account with password.");
 
