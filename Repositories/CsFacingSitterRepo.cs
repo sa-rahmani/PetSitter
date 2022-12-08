@@ -14,7 +14,7 @@ namespace PetSitter.Repositories
             _db = db;
         }
 
-        public IQueryable<SitterVM> GetAllSitters()
+        public IQueryable<SitterVM> GetAllSitterVMs()
         {
             var allSitters = from s in _db.Sitters
                              join u in _db.Users
@@ -32,9 +32,9 @@ namespace PetSitter.Repositories
             return allSitters;
         }
 
-        public SitterVM GetSitter(int sitterID)
+        public SitterVM GetSitterVM(int sitterID)
         {
-            SitterVM sitter = GetAllSitters().Where(s => s.SitterId == sitterID).FirstOrDefault();
+            SitterVM sitter = GetAllSitterVMs().Where(s => s.SitterId == sitterID).FirstOrDefault();
 
             return sitter;
         }

@@ -24,7 +24,7 @@ namespace PetSitter.Controllers
         {
             // Get an IQueryable of all sitters.
             CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            IQueryable<SitterVM> allSitters = sitterRepo.GetAllSitters();
+            IQueryable<SitterVM> allSitters = sitterRepo.GetAllSitterVMs();
 
             // Display 10 sitters per page.
             int pageSize = 10;
@@ -36,36 +36,81 @@ namespace PetSitter.Controllers
         {
             // Get the SitterVM.
             CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            SitterVM sitter = sitterRepo.GetSitter(sitterID);
+            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
 
             return View(sitter);
         }
 
-        // GET: Book
+        // GET: Initial Book
         public IActionResult Book(int sitterID)
         {
-            // temp use of a const userID during development
+            // temp use of a const userID + petIDs during development
             const int USERID = 3;
+            List<int> PETIDS = new List<int>() { 1, 2 };
 
-            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
             BookingVM booking = new BookingVM();
             booking.SitterId = sitterID;
             booking.UserId = USERID;
+            booking.Price = 0;
+            booking.PetIDs = PETIDS;
 
             return View(booking);
         }
 
-        // POST: Book
+        // POST: Initial Book
         [HttpPost]
         public IActionResult Book(BookingVM booking)
         {
             if (ModelState.IsValid)
             {
-                // Create the booking.
-
+                // Redirect to confirmation page
+                return RedirectToAction("ConfirmBooking", "Customer", new { booking });
             }
 
-            return View();
+            // Show booking page again.
+            return View(booking);
+        }
+
+        public IActionResult ConfirmBooking(BookingVM booking)
+        {
+            // Determine price.
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingVM updatedBooking = bookingRepo.AddPriceToBooking(booking);
+
+            return View(updatedBooking);
+        }
+
+        public IActionResult Pay(BookingVM booking)
+        {
+            return View(booking);
+        }
+
+        public IActionResult CompleteBooking(BookingVM booking)
+        {
+            // Add confirmed + paid for booking to the database.
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            Booking newBooking = bookingRepo.Create(booking);
+
+            return View(newBooking);
+        }
+
+        public IActionResult BookingDetails(int bookingID)
+        {
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingVM booking = bookingRepo.GetBookingVM(bookingID);
+
+            return View(booking);
+        }
+
+        public IActionResult ViewMyBookings()
+        {
+            // temp use of const user id
+            const int USERID = 3;
+
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            IQueryable<BookingVM> myBookings = bookingRepo.GetMyBookingVMs(USERID);
+
+            return View(myBookings);
         }
     }
 }
