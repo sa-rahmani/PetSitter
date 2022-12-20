@@ -1,0 +1,89 @@
+﻿@model PetSitter.ViewModels.CustomerVM
+
+@{
+    ViewData["Title"] = "EditProfile";
+}
+
+<h1>Edit Profile</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditProfile">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId"/>
+            <input type="hidden" asp-for="UserType"/>
+           <div class="row">
+               <h3>CONTACT DETAILS</h3>
+               @* <div class="form-group">
+                    <label asp-for="UserType" class="control-label"></label>
+                    <input asp-for="UserType" class="form-control" type="hidden" />
+                    <span asp-validation-for="UserType" class="text-danger"></span>
+                </div>*@
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" readonly="readonly" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+           </div>
+            <div class="row">
+                <h3>POSTAL ADDRESS</h3>
+                <div class="form-group">
+                    <label asp-for="StreetAddress" class="control-label"></label>
+                    <input asp-for="StreetAddress" class="form-control" />
+                    <span asp-validation-for="StreetAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="City" class="control-label"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PostalCode" class="control-label"></label>
+                    <input asp-for="PostalCode" class="form-control" />
+                    <span asp-validation-for="PostalCode" class="text-danger"></span>
+                </div>
+            </div>
+          @*  <div class="row">
+                <h3>YOUR PETS</h3>
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-primary">
+                        <a asp-action="" asp-route-id="@Model.UserId" class="text-white text-decoration-none">Add a pet</a>
+                    </button>
+                </div>
+            </div>*@
+            <div class="row">
+                <h3>ADD PET</h3>
+                 <a asp-action="CreatePet" asp-route-id="@Model.UserId" class="text-decoration-none">Add a pet</a>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="GetProfile">Back to Profile</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

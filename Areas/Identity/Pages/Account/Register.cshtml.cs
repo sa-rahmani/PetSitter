@@ -169,11 +169,14 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         UserType = Input.UserType
 
                     };
-                    //_context.Users.Add(newUser);
-                    //_context.SaveChanges();
-
+                    
                     CustomerRepo customerRepo = new CustomerRepo(_context);
                     customerRepo.AddUser(newUser);
+
+                    var customerID = customerRepo.GetCustomerId(Input.Email);
+
+                    HttpContext.Session.SetString("UserName", customerID.FirstName);
+                    HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
 
                     _logger.LogInformation("User created a new account with password.");
 

@@ -1,0 +1,85 @@
+﻿@model PetSitter.ViewModels.CustomerVM
+@{
+    ViewData["Title"] = "GetProfile";
+}
+
+<dl>
+    <h1>Profile</h1>
+    <a asp-action="EditProfile" asp-route-id="@Model.UserId" class="text-decoration-none">Edit Profile</a>   
+</dl>
+
+<hr class="mt-4" />
+<div>
+    <dl class="row">
+        <h3>CONTACT DETAILS</h3>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+    </dl>
+    <dl class="row">
+        <h3>POSTAL ADDRESS</h3>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.City)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PostalCode)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StreetAddress)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.StreetAddress)
+        </dd>
+    </dl>
+    <dl class="row">
+        <h3>YOUR PETS</h3>
+        @foreach (Pet pet in ViewBag.Pets)
+        {
+            <ul>
+                <div class="col-sm-2">
+                    <li class="list-unstyled">@pet.Name</li>
+                </div>
+                <div class="col-sm-10">
+                    <a asp-action="" asp-route-id="@pet.PetId" class="text-decoration-none">Edit</a> |
+                    <a asp-action="" asp-route-id="@pet.PetId" class="text-decoration-none">Delete</a>
+                </div>
+            </ul>
+        }
+        @*<dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>*@
+       @* <div class="col-sm-10">
+            <button type="submit" class="btn btn-primary">
+                <a asp-action="" asp-route-id="@Model.UserId" class="text-white text-decoration-none">Add a pet</a>
+            </button>
+        </div>*@
+    </dl>
+</div>
+            
