@@ -104,5 +104,11 @@ namespace PetSitter.Controllers
             return RedirectToAction("GetProfile", "Customer",
                  new { id = petID, message = createMessage });
         }
+
+        public IActionResult EditPet()
+        {
+
+        }
+
     }
 }
