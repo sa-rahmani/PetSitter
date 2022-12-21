@@ -8,15 +8,15 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">Warning</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="close-delete"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Delete Pet</h4>
                         </div>
                         <div class="modal-body delete-modal-body">
                             
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancel-delete">Cancel</button>
-                            <button type="button" class="btn btn-danger" id="confirm-delete">Delete</button>
+                            <button type="button" class="btn btn-danger" id="confirm-delete">Yes</button>
+                            <button type="button" class="btn btn-default" id="btnClosePopup">No</button>
                         </div>
                         </div>
                     </div>
@@ -53,5 +53,18 @@
                 $("#deleteModal").modal('hide');
             });
     });
+
+    $(function () {
+        $("#close-delete").click(function () {
+            $("#deleteModal").modal("hide");
+        });
+    });
+
+    $(function () {
+        $("#btnClosePopup").click(function () {
+            $("#deleteModal").modal("hide");
+        });
+    });
+
 
 }()));
