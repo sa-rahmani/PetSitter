@@ -105,6 +105,19 @@ namespace PetSitter.Controllers
                  new { id = petID, message = createMessage });
         }
 
+        public IActionResult GetPet(int id)
+        {
+            PetRepo petRepo = new PetRepo(_db);
+
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+            PetVM vm = petRepo.GetPetInform(id, customerID);
+
+            ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            return View(vm);
+        }
+
         public IActionResult EditPet(int id)
         {
             PetRepo petRepo = new PetRepo(_db);

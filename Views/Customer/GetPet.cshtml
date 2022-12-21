@@ -1,0 +1,55 @@
+﻿@model PetSitter.ViewModels.PetVM
+@{
+    ViewData["Title"] = "GetPet";
+}
+
+<dl>
+    <h1>Pet Information</h1>
+</dl>
+
+<hr class="mt-4" />
+<div>
+    <dl class="row">
+        <h3>Detail for @Html.DisplayFor(model => model.Name)</h3>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PetType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PetType)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PetSize)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PetSize)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BirthYear)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BirthYear)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Sex)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Sex)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Instructions)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Instructions)
+        </dd>
+    </dl>
+</div>
+
+<div class="mt-3">
+    <a asp-action="GetProfile">Back to Profile</a>
+</div>
