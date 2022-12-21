@@ -1,6 +1,8 @@
 ﻿using PetSitter.Data;
 using PetSitter.Models;
 using PetSitter.ViewModels;
+using System.Drawing;
+using static Humanizer.In;
 
 namespace PetSitter.Repositories
 {
@@ -53,7 +55,7 @@ namespace PetSitter.Repositories
         }
 
 
-        public PetVM GetPetInform(int petID, int userID)
+        public PetVM GetPetRecord(int petID, int userID)
         {
             var singlePet = _db.Pets.Where(p => p.PetId == petID).FirstOrDefault();
 
@@ -92,13 +94,36 @@ namespace PetSitter.Repositories
                 _db.Update(pet);
                 _db.SaveChanges();
 
-                updateMessage = $"Success editing {pet.Name}'s account No.{pet.PetId}";
+                updateMessage = $"Success editing {pet.Name} pet account " + $"Your edited pet number is: {pet.PetId}";
+               
             }
             catch (Exception ex)
             {
                 updateMessage = ex.Message;
             }
             return Tuple.Create(pet.PetId, updateMessage);
+        }
+
+        public string DeletePetRecord(int petID)
+        {
+            string deleteMessage;
+
+            var pets = _db.Pets.Where(p => p.PetId == petID).FirstOrDefault();
+
+            try
+            {
+                _db.Remove(pets);
+                _db.SaveChanges();
+
+                deleteMessage = $"Success deleting {pets.Name} pet account, " + $"Your deleted pet number is: {pets.PetId}";
+            }
+            
+            catch (Exception ex)
+            {
+
+                deleteMessage = ex.Message;
+            }
+            return deleteMessage;
         }
     }
 }

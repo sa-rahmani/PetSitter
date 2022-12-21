@@ -70,7 +70,7 @@ namespace PetSitter.Controllers
 
             updateMessage = editCustomerRecord.Item2;
 
-            
+
             return RedirectToAction("GetProfile", "Customer",
                  new { id = customerID, message = updateMessage });
         }
@@ -91,15 +91,15 @@ namespace PetSitter.Controllers
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
-            
-                PetRepo petRepo = new PetRepo(_db);
 
-                Tuple<int, string> response =
-                    petRepo.CreatePetRecord(petVM, customerID);
+            PetRepo petRepo = new PetRepo(_db);
 
-                int petID = response.Item1;
-                string createMessage = response.Item2;
-            
+            Tuple<int, string> response =
+                petRepo.CreatePetRecord(petVM, customerID);
+
+            int petID = response.Item1;
+            string createMessage = response.Item2;
+
 
             return RedirectToAction("GetProfile", "Customer",
                  new { id = petID, message = createMessage });
@@ -111,7 +111,7 @@ namespace PetSitter.Controllers
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
-            PetVM vm = petRepo.GetPetInform(id, customerID);
+            PetVM vm = petRepo.GetPetRecord(id, customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
 
@@ -124,7 +124,7 @@ namespace PetSitter.Controllers
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
-            PetVM vm = petRepo.GetPetInform(id, customerID);
+            PetVM vm = petRepo.GetPetRecord(id, customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
 
@@ -146,5 +146,33 @@ namespace PetSitter.Controllers
             return RedirectToAction("GetProfile", "Customer",
                  new { id = petID, message = updateMessage });
         }
+
+        public IActionResult DeletePet(int id)
+        {
+            string deleteMessage;
+
+            PetRepo petRepo = new PetRepo(_db);
+
+            deleteMessage = petRepo.DeletePetRecord(id);
+
+            return RedirectToAction("GetProfile", "Customer",
+                 new { message = deleteMessage });
+            //return Ok();
+        }
+
+        //[HttpPost]
+        //public IActionResult DeletePet(PetVM peVM)
+        //{
+        //    ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+        //    string deleteMessage;
+
+        //    PetRepo petRepo = new PetRepo(_db);
+
+        //    deleteMessage = petRepo.DeletePetRecord(peVM.PetId);
+
+        //    return RedirectToAction("GetProfile", "Customer",
+        //        new { message = deleteMessage });
+        //}
     }
 }

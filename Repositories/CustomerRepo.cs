@@ -1,6 +1,7 @@
 ﻿using PetSitter.Data;
 using PetSitter.Models;
 using PetSitter.ViewModels;
+using System.Drawing;
 
 namespace PetSitter.Repositories
 {
@@ -67,7 +68,7 @@ namespace PetSitter.Repositories
                 _db.Update(user);
                 _db.SaveChanges();
 
-                updateMessage = $"Success editing {user.FirstName}'s account No.{user.UserId}";
+                updateMessage = $"Success editing {user.FirstName} user account " + $"Your edited user number is: {user.UserId}";
             }
             catch (Exception ex)
             {
