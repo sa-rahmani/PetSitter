@@ -46,10 +46,59 @@ namespace PetSitter.Repositories
             return Tuple.Create(pet.PetId, message);
         }
 
-        public IEnumerable<Pet> GetPet()
+        public IEnumerable<Pet> GetPetNameLists()
         {
             var pets = from p in _db.Pets select p;
             return pets;
+        }
+
+
+        public PetVM GetPetInform(int petID, int userID)
+        {
+            var singlePet = _db.Pets.Where(p => p.PetId == petID).FirstOrDefault();
+
+            PetVM vm = new PetVM
+            {
+                PetId = singlePet.PetId,
+                Name = singlePet.Name,
+                BirthYear = (int)singlePet.BirthYear,
+                Sex = singlePet.Sex,
+                PetSize = singlePet.PetSize,
+                Instructions = singlePet.Instructions,
+                UserId = userID,
+                PetType = singlePet.PetType
+            };
+
+            return vm;
+        }
+
+        public Tuple<int, string> EditPet(PetVM petVM, int userID)
+        {
+            string updateMessage;
+            Pet pet = new Pet
+            {
+                PetId = petVM.PetId,
+                Name = petVM.Name,
+                BirthYear = petVM.BirthYear,
+                Sex = petVM.Sex,
+                PetSize = petVM.PetSize,
+                Instructions = petVM.Instructions,
+                UserId = userID,
+                PetType = petVM.PetType
+            };
+
+            try
+            {
+                _db.Update(pet);
+                _db.SaveChanges();
+
+                updateMessage = $"Success editing {pet.Name}'s account No.{pet.PetId}";
+            }
+            catch (Exception ex)
+            {
+                updateMessage = ex.Message;
+            }
+            return Tuple.Create(pet.PetId, updateMessage);
         }
     }
 }

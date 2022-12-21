@@ -39,7 +39,7 @@ namespace PetSitter.Controllers
 
             vm.Message = message;
 
-            ViewBag.Pets = petRepo.GetPet();
+            ViewBag.Pets = petRepo.GetPetNameLists();
 
             return View(vm);
         }
@@ -105,10 +105,33 @@ namespace PetSitter.Controllers
                  new { id = petID, message = createMessage });
         }
 
-        public IActionResult EditPet()
+        public IActionResult EditPet(int id)
         {
+            PetRepo petRepo = new PetRepo(_db);
 
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+            PetVM vm = petRepo.GetPetInform(id, customerID);
+
+            ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            return View(vm);
         }
 
+        [HttpPost]
+        public IActionResult EditPet(PetVM petVM)
+        {
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+            PetRepo petRepo = new PetRepo(_db);
+
+            Tuple<int, string> editPetRecord = petRepo.EditPet(petVM, customerID);
+
+            int petID = editPetRecord.Item1;
+            string updateMessage = editPetRecord.Item2;
+
+            return RedirectToAction("GetProfile", "Customer",
+                 new { id = petID, message = updateMessage });
+        }
     }
 }
