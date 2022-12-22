@@ -1,9 +1,7 @@
-﻿using PetSitter.Models;
-
-namespace PetSitter.ViewModels
+﻿namespace PetSitter.ViewModels
 {
-    public class CustomerVM
-    { 
+    public class CustomerPetVM
+    {
         public string? Message { get; set; }
 
         public int UserId { get; set; }
@@ -16,8 +14,12 @@ namespace PetSitter.ViewModels
         public string PostalCode { get; set; }
         public string UserType { get; set; }
 
-   
-
-
+        public int PetId { get; set; }
+        public string Name { get; set; }
+        public int BirthYear { get; set; }
+        public string Sex { get; set; }
+        public string PetSize { get; set; }
+        public string Instructions { get; set; }
+        public string PetType { get; set; }
     }
 }

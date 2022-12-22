@@ -1,5 +1,4 @@
-﻿@model PetSitter.ViewModels.CustomerVM
-
+﻿@model PetSitter.ViewModels.CustomerPetVM
 @{
     ViewData["Title"] = "EditProfile";
 }
@@ -13,6 +12,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="UserId"/>
             <input type="hidden" asp-for="UserType"/>
+            <input type="hidden" asp-for="PetId"/>
            <div class="row">
                <h3>CONTACT DETAILS</h3>
                 <div class="form-group">
@@ -54,14 +54,6 @@
                     <span asp-validation-for="PostalCode" class="text-danger"></span>
                 </div>
             </div>
-          @*  <div class="row">
-                <h3>YOUR PETS</h3>
-                <div class="col-sm-10">
-                    <button type="submit" class="btn btn-primary">
-                        <a asp-action="" asp-route-id="@Model.UserId" class="text-white text-decoration-none">Add a pet</a>
-                    </button>
-                </div>
-            </div>*@
             <div class="row">
                 <h3>ADD PET</h3>
                  <a asp-action="CreatePet" asp-route-id="@Model.UserId" class="text-decoration-none">Add a pet</a>
@@ -71,6 +63,7 @@
             </div>
         </form>
     </div>
+
 </div>
 
 <div>

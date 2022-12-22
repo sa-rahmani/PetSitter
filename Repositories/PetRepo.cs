@@ -48,9 +48,10 @@ namespace PetSitter.Repositories
             return Tuple.Create(pet.PetId, message);
         }
 
-        public IEnumerable<Pet> GetPetNameLists()
+        public IEnumerable<Pet> GetPetNameLists(int id)
         {
-            var pets = from p in _db.Pets select p;
+
+            var pets = from p in _db.Pets where p.UserId == id select p;
             return pets;
         }
 
@@ -69,6 +70,7 @@ namespace PetSitter.Repositories
                 Instructions = singlePet.Instructions,
                 UserId = userID,
                 PetType = singlePet.PetType
+                
             };
 
             return vm;

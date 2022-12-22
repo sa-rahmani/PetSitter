@@ -22,24 +22,18 @@ namespace PetSitter.Controllers
         }
 
 
-        public IActionResult GetProfile(string? message)
+        public IActionResult GetProfile()
         {
-            CustomerRepo customerRepo = new CustomerRepo(_db);
             PetRepo petRepo = new PetRepo(_db);
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
-            CustomerVM vm = customerRepo.GetProfile(customerID);
+            CustomerRepo customerRepo = new CustomerRepo(_db);
 
-            if (message == null)
-            {
-                message = "";
-            }
+            CustomerPetVM vm = customerRepo.GetProfile(customerID);
 
-            vm.Message = message;
-
-            ViewBag.Pets = petRepo.GetPetNameLists();
+            ViewData["PetLists"] = petRepo.GetPetNameLists(customerID);
 
             return View(vm);
         }
@@ -50,7 +44,7 @@ namespace PetSitter.Controllers
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
-            CustomerVM vm = customerRepo.GetProfile(customerID);
+            CustomerPetVM vm = customerRepo.GetProfile(customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
 
