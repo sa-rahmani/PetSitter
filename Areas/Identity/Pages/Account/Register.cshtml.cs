@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -32,6 +33,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly PetSitterContext _context;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -39,7 +41,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            PetSitterContext context)
+            PetSitterContext context,
+            IWebHostEnvironment webHost)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -48,6 +51,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
             _context = context;
+            webHostEnvironment = webHost;
         }
 
         /// <summary>
@@ -134,6 +138,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+
         }
 
 
@@ -166,11 +172,11 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         City = Input.City,
                         PostalCode = Input.PostalCode,
                         StreetAddress = Input.StreetAddress,
-                        UserType = Input.UserType
+                        UserType = Input.UserType,
 
                     };
                     
-                    CustomerRepo customerRepo = new CustomerRepo(_context);
+                    CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
                     customerRepo.AddUser(newUser);
 
                     var customerID = customerRepo.GetCustomerId(Input.Email);

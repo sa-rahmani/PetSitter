@@ -1,4 +1,4 @@
-﻿@model PetSitter.ViewModels.CustomerPetVM
+﻿@model PetSitter.ViewModels.CustomerVM
 
 @{
     ViewData["Title"] = "GetProfile";
@@ -10,8 +10,25 @@
 </dl>
 
 <hr class="mt-4" />
+
+@{
+
+    IEnumerable<User> users = ViewData["UserProfileImg"] as IEnumerable<User>;
+}
+
 <div>
     <dl class="row">
+        <dd class="col-sm-10">
+            <h3>Profile Image</h3>
+            @foreach (User user in users)
+            {
+
+                <dd>
+                    <img src="~/images/@user.ProfileImage" width="140" height="140" asp-append-version="true" />
+                </dd>
+            }
+
+        </dd> 
         <h3>CONTACT DETAILS</h3>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
@@ -62,7 +79,7 @@
 
  
     @{
-        
+
         IEnumerable<Pet> pets = ViewData["PetLists"] as IEnumerable<Pet>;
     }
     <h3>YOUR PETS</h3>
@@ -84,6 +101,7 @@
             </tr>
         }
     </table>
+
 </div>
 
 

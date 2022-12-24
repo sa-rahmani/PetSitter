@@ -13,6 +13,7 @@
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string UserType { get; set; }
+        public IFormFile ProfileImage { get; set; }
 
         public int PetId { get; set; }
         public string Name { get; set; }

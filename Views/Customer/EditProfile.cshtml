@@ -1,4 +1,4 @@
-﻿@model PetSitter.ViewModels.CustomerPetVM
+﻿@model PetSitter.ViewModels.CustomerVM
 @{
     ViewData["Title"] = "EditProfile";
 }
@@ -8,11 +8,19 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="EditProfile">
+        <form asp-action="EditProfile" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="UserId"/>
             <input type="hidden" asp-for="UserType"/>
-            <input type="hidden" asp-for="PetId"/>
+@*            <input type="hidden" asp-for="PetId"/>
+*@           <div class="row profile-pic">
+               <h3>Profile Image</h3>
+                <div class="form-group">
+                    <label asp-for="ProfileImage" class="control-label"></label>
+                    <input asp-for="ProfileImage" class="form-control" />
+                    <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                </div>
+           </div>
            <div class="row">
                <h3>CONTACT DETAILS</h3>
                 <div class="form-group">

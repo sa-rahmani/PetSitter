@@ -1,4 +1,5 @@
 ﻿using PetSitter.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetSitter.ViewModels
 {
@@ -16,7 +17,8 @@ namespace PetSitter.ViewModels
         public string PostalCode { get; set; }
         public string UserType { get; set; }
 
-   
+        [NotMapped]
+        public IFormFile ProfileImage { get; set; }
 
 
     }
