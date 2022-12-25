@@ -22,10 +22,16 @@
             <h3>Profile Image</h3>
             @foreach (User user in users)
             {
-
+                if(user.ProfileImage == null)
+                {
+                    <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
+                }
+                else
+                {
                 <dd>
-                    <img src="~/images/@user.ProfileImage" width="140" height="140" asp-append-version="true" />
+                    <img src="~/images/@user.ProfileImage" class="rounded-circle" width="200" height="140" asp-append-version="true" />
                 </dd>
+                }
             }
 
         </dd> 

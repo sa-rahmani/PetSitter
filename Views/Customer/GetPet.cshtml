@@ -8,9 +8,29 @@
 
 
 <hr class="mt-4" />
+
+@{
+
+    IEnumerable<Pet> pets = ViewData["PetImg"] as IEnumerable<Pet>;
+}
+
 <div>
     <dl class="row">
         <h3>Detail for @Html.DisplayFor(model => model.Name)</h3>
+        <h4>Pet Image</h4>
+        @foreach (Pet pet in pets)
+        {
+            if (pet.PetImage == null)
+            {
+                <p>No Pet Image Given, click edit button add new Pet Image!</p>
+            }
+            else
+            {
+            <dd>
+                <img src="~/images/@pet.PetImage" class="rounded-circle" width="200" height="140" asp-append-version="true" />
+            </dd>
+            }
+        }
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.PetType)
         </dt>

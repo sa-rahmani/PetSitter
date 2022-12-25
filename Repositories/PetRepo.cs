@@ -1,24 +1,30 @@
-﻿using PetSitter.Data;
+﻿using Microsoft.AspNetCore.Hosting;
+using PetSitter.Data;
 using PetSitter.Models;
 using PetSitter.ViewModels;
 using System.Drawing;
 using static Humanizer.In;
+using System.IO;
 
 namespace PetSitter.Repositories
 {
     public class PetRepo
     {
         PetSitterContext _db;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public PetRepo(PetSitterContext context)
+        public PetRepo(PetSitterContext context, IWebHostEnvironment webHost)
         {
             _db = context;
+            webHostEnvironment = webHost;
         }
 
         public Tuple<int, string> CreatePetRecord(PetVM petVM, int userID)
         {
             Pet pet = new Pet();
             string message;
+            string stringFileName = UploadPetFile(petVM);
+
             try
             {
                 pet = new Pet
@@ -29,7 +35,8 @@ namespace PetSitter.Repositories
                     PetSize = petVM.PetSize,
                     Instructions = petVM.Instructions,
                     UserId = userID,
-                    PetType = petVM.PetType
+                    PetType = petVM.PetType,
+                    PetImage = stringFileName
                 };
 
                 _db.Pets.Add(pet);
@@ -48,7 +55,7 @@ namespace PetSitter.Repositories
             return Tuple.Create(pet.PetId, message);
         }
 
-        public IEnumerable<Pet> GetPetNameLists(int id)
+        public IEnumerable<Pet> GetPetData(int id)
         {
 
             var pets = from p in _db.Pets where p.UserId == id select p;
@@ -69,16 +76,26 @@ namespace PetSitter.Repositories
                 PetSize = singlePet.PetSize,
                 Instructions = singlePet.Instructions,
                 UserId = userID,
-                PetType = singlePet.PetType
+                PetType = singlePet.PetType,
                 
             };
 
             return vm;
         }
 
+        public IEnumerable<Pet> GetPetImg(int petID)
+        {
+
+            var pets = from p in _db.Pets where p.PetId == petID select p;
+            return pets;
+        }
+
         public Tuple<int, string> EditPet(PetVM petVM, int userID)
         {
             string updateMessage;
+
+            string stringFileName = UploadPetFile(petVM);
+
             Pet pet = new Pet
             {
                 PetId = petVM.PetId,
@@ -88,7 +105,8 @@ namespace PetSitter.Repositories
                 PetSize = petVM.PetSize,
                 Instructions = petVM.Instructions,
                 UserId = userID,
-                PetType = petVM.PetType
+                PetType = petVM.PetType,
+                PetImage = stringFileName
             };
 
             try
@@ -104,6 +122,22 @@ namespace PetSitter.Repositories
                 updateMessage = ex.Message;
             }
             return Tuple.Create(pet.PetId, updateMessage);
+        }
+
+        private string UploadPetFile(PetVM petVM)
+        {
+            string fileName = null;
+            if (petVM.PetImage != null)
+            {
+                string uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                fileName = Guid.NewGuid().ToString() + "_" + petVM.PetImage.FileName;
+                string filePath = Path.Combine(uploadDir, fileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    petVM.PetImage.CopyTo(fileStream);
+                }
+            }
+            return fileName;
         }
 
         public string DeletePetRecord(int petID)

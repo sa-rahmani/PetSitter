@@ -1,4 +1,6 @@
-﻿namespace PetSitter.ViewModels
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PetSitter.ViewModels
 {
     public class PetVM
     {
@@ -11,5 +13,7 @@
         public int UserId { get; set; }
         public string PetType { get; set; }
 
+        [NotMapped]
+        public IFormFile PetImage { get; set; }
     }
 }

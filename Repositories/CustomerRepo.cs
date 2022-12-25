@@ -55,7 +55,7 @@ namespace PetSitter.Repositories
             return vm;
         }
 
-        public IEnumerable<User> GetUserProfileImg(int id)
+        public IEnumerable<User> GetUserData(int id)
         {
 
             var users = from u in _db.Users where u.UserId == id select u;
@@ -66,7 +66,7 @@ namespace PetSitter.Repositories
         {
             string updateMessage;
 
-            string stringFileName = UploadFile(customerVM);
+            string stringFileName = UploadCustomerFile(customerVM);
 
             User user = new User
             {
@@ -96,7 +96,7 @@ namespace PetSitter.Repositories
             return Tuple.Create(user.UserId, updateMessage);
         }
 
-        public string UploadFile(CustomerVM customerVM)
+        private string UploadCustomerFile(CustomerVM customerVM)
         {
             string fileName = null;
             if (customerVM.ProfileImage != null)

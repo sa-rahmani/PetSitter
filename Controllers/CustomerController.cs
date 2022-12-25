@@ -25,9 +25,9 @@ namespace PetSitter.Controllers
         }
 
 
-        public IActionResult GetProfile(CustomerVM customerVM)
+        public IActionResult GetProfile()
         {
-            PetRepo petRepo = new PetRepo(_db);
+            PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
@@ -36,8 +36,8 @@ namespace PetSitter.Controllers
 
             CustomerVM vm = customerRepo.GetProfile(customerID);
 
-            ViewData["PetLists"] = petRepo.GetPetNameLists(customerID);
-            ViewData["UserProfileImg"] = customerRepo.GetUserProfileImg(customerID);
+            ViewData["PetLists"] = petRepo.GetPetData(customerID);
+            ViewData["UserProfileImg"] = customerRepo.GetUserData(customerID);
 
             return View(vm);
         }
@@ -75,8 +75,6 @@ namespace PetSitter.Controllers
         }
 
        
-    
-
         public IActionResult CreatePet()
         {
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
@@ -94,7 +92,7 @@ namespace PetSitter.Controllers
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
 
-            PetRepo petRepo = new PetRepo(_db);
+            PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
             Tuple<int, string> response =
                 petRepo.CreatePetRecord(petVM, customerID);
@@ -109,26 +107,28 @@ namespace PetSitter.Controllers
 
         public IActionResult GetPet(int id)
         {
-            PetRepo petRepo = new PetRepo(_db);
+            PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
             PetVM vm = petRepo.GetPetRecord(id, customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+            ViewData["PetImg"] = petRepo.GetPetImg(id);
 
             return View(vm);
         }
 
         public IActionResult EditPet(int id)
         {
-            PetRepo petRepo = new PetRepo(_db);
+            PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
             PetVM vm = petRepo.GetPetRecord(id, customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+            ViewData["PetImg"] = petRepo.GetPetImg(id);
 
             return View(vm);
         }
@@ -138,7 +138,7 @@ namespace PetSitter.Controllers
         {
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
-            PetRepo petRepo = new PetRepo(_db);
+            PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
             Tuple<int, string> editPetRecord = petRepo.EditPet(petVM, customerID);
 
@@ -153,7 +153,7 @@ namespace PetSitter.Controllers
         {
             string deleteMessage;
 
-            PetRepo petRepo = new PetRepo(_db);
+            PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
             deleteMessage = petRepo.DeletePetRecord(id);
 
