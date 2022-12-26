@@ -1,4 +1,4 @@
-﻿@model PetSitter.ViewModels.PetVM
+﻿@model PetSitter.Models.Pet
 @{
     ViewData["Title"] = "GetPet";
 }
@@ -13,6 +13,7 @@
 
     IEnumerable<Pet> pets = ViewData["PetImg"] as IEnumerable<Pet>;
 }
+
 
 <div>
     <dl class="row">

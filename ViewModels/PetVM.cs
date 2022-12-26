@@ -13,7 +13,6 @@ namespace PetSitter.ViewModels
         public int UserId { get; set; }
         public string PetType { get; set; }
 
-        [NotMapped]
-        public IFormFile PetImage { get; set; }
+        public IFormFile? PetImage { get; set; }
     }
 }

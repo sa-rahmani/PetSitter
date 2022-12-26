@@ -5,6 +5,7 @@ using PetSitter.ViewModels;
 using System.Drawing;
 using static Humanizer.In;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
 
 namespace PetSitter.Repositories
 {
@@ -63,7 +64,27 @@ namespace PetSitter.Repositories
         }
 
 
-        public PetVM GetPetRecord(int petID, int userID)
+        public Pet GetPetDetailRecord(int petID, int userID)
+        {
+            var singlePet = _db.Pets.Where(p => p.PetId == petID).FirstOrDefault();
+
+            Pet pet = new Pet
+            {
+                PetId = singlePet.PetId,
+                Name = singlePet.Name,
+                BirthYear = (int)singlePet.BirthYear,
+                Sex = singlePet.Sex,
+                PetSize = singlePet.PetSize,
+                Instructions = singlePet.Instructions,
+                UserId = userID,
+                PetType = singlePet.PetType,
+                PetImage = singlePet.PetImage
+            };
+
+            return pet;
+        }
+
+        public PetVM GetPetEditRecord(int petID, int userID)
         {
             var singlePet = _db.Pets.Where(p => p.PetId == petID).FirstOrDefault();
 
@@ -77,11 +98,11 @@ namespace PetSitter.Repositories
                 Instructions = singlePet.Instructions,
                 UserId = userID,
                 PetType = singlePet.PetType,
-                
             };
 
             return vm;
         }
+
 
         public IEnumerable<Pet> GetPetImg(int petID)
         {
@@ -111,7 +132,12 @@ namespace PetSitter.Repositories
 
             try
             {
-                _db.Update(pet);
+                _db.Entry(pet).State = EntityState.Modified;
+                if (pet.PetImage == null)
+                {
+                    _db.Entry(pet).Property(p => p.PetImage).IsModified = false;
+
+                }
                 _db.SaveChanges();
 
                 updateMessage = $"Success editing {pet.Name} pet account " + $"Your edited pet number is: {pet.PetId}";
@@ -124,9 +150,12 @@ namespace PetSitter.Repositories
             return Tuple.Create(pet.PetId, updateMessage);
         }
 
-        private string UploadPetFile(PetVM petVM)
+      
+
+        public string UploadPetFile(PetVM petVM)
         {
             string fileName = null;
+
             if (petVM.PetImage != null)
             {
                 string uploadDir = Path.Combine(webHostEnvironment.WebRootPath, "images");
@@ -136,7 +165,9 @@ namespace PetSitter.Repositories
                 {
                     petVM.PetImage.CopyTo(fileStream);
                 }
+
             }
+
             return fileName;
         }
 

@@ -96,6 +96,7 @@ namespace PetSitter.Repositories
             return Tuple.Create(user.UserId, updateMessage);
         }
 
+
         private string UploadCustomerFile(CustomerVM customerVM)
         {
             string fileName = null;
@@ -108,7 +109,7 @@ namespace PetSitter.Repositories
                 {
                     customerVM.ProfileImage.CopyTo(fileStream);
                 }
-            }
+            } 
             return fileName;
         }
     }

@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
+using System.Drawing;
 
 namespace PetSitter.Controllers
 {
@@ -85,12 +86,8 @@ namespace PetSitter.Controllers
         [HttpPost]
         public IActionResult CreatePet(PetVM petVM)
         {
-            //int petID = 0;
-
-            //string createMessage = "";
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-
 
             PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
@@ -111,12 +108,12 @@ namespace PetSitter.Controllers
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
-            PetVM vm = petRepo.GetPetRecord(id, customerID);
+            Pet pet = petRepo.GetPetDetailRecord(id, customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
             ViewData["PetImg"] = petRepo.GetPetImg(id);
 
-            return View(vm);
+            return View(pet);
         }
 
         public IActionResult EditPet(int id)
@@ -125,17 +122,19 @@ namespace PetSitter.Controllers
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
-            PetVM vm = petRepo.GetPetRecord(id, customerID);
+            PetVM vm = petRepo.GetPetEditRecord(id, customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
             ViewData["PetImg"] = petRepo.GetPetImg(id);
 
+           
             return View(vm);
         }
 
         [HttpPost]
         public IActionResult EditPet(PetVM petVM)
         {
+
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
             PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
@@ -145,9 +144,12 @@ namespace PetSitter.Controllers
             int petID = editPetRecord.Item1;
             string updateMessage = editPetRecord.Item2;
 
-            return RedirectToAction("GetProfile", "Customer",
+         
+
+            return RedirectToAction("GetPet", "Customer",
                  new { id = petID, message = updateMessage });
         }
+
 
         public IActionResult DeletePet(int id)
         {
