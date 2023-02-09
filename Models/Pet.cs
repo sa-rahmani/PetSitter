@@ -13,7 +13,7 @@ namespace PetSitter.Models
         public string? Instructions { get; set; }
         public int? UserId { get; set; }
         public string? PetType { get; set; }
-
+        public string? PetImage { get; set; }
         public virtual PetType? PetTypeNavigation { get; set; }
         public virtual User? User { get; set; }
     }

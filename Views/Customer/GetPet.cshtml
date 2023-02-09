@@ -1,0 +1,76 @@
+﻿@model PetSitter.Models.Pet
+@{
+    ViewData["Title"] = "GetPet";
+}
+
+
+ <h1>Pet Information</h1>
+
+
+<hr class="mt-4" />
+
+@{
+
+    IEnumerable<Pet> pets = ViewData["PetImg"] as IEnumerable<Pet>;
+}
+
+
+<div>
+    <dl class="row">
+        <h3>Detail for @Html.DisplayFor(model => model.Name)</h3>
+        <h4>Pet Image</h4>
+        @foreach (Pet pet in pets)
+        {
+            if (pet.PetImage == null)
+            {
+                <p>No Pet Image Given, click edit button add new Pet Image!</p>
+            }
+            else
+            {
+            <dd>
+                <img src="~/images/@pet.PetImage" class="rounded-circle" width="200" height="140" asp-append-version="true" />
+            </dd>
+            }
+        }
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PetType)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PetType)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PetSize)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PetSize)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.BirthYear)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.BirthYear)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Sex)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Sex)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Instructions)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Instructions)
+        </dd>
+    </dl>
+</div>
+
+<div class="mt-3">
+    <a asp-action="GetProfile">Back to Profile</a>
+</div>
