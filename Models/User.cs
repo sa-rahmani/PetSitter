@@ -21,7 +21,7 @@ namespace PetSitter.Models
         public string? City { get; set; }
         public string? PostalCode { get; set; }
         public string? UserType { get; set; }
-
+        public string? ProfileImage { get; set; }
         public virtual UserType? UserTypeNavigation { get; set; }
         public virtual ICollection<Booking> Bookings { get; set; }
         public virtual ICollection<Pet> Pets { get; set; }

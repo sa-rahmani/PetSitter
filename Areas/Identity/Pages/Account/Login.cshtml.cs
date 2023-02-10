@@ -14,6 +14,11 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using PetSitter.Data;
+using PetSitter.Models;
+using PetSitter.Repositories;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
 
 namespace PetSitter.Areas.Identity.Pages.Account
 {
@@ -21,11 +26,15 @@ namespace PetSitter.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly PetSitterContext _context;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, PetSitterContext context, IWebHostEnvironment webHost)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
+            webHostEnvironment = webHost;
         }
 
         /// <summary>
@@ -115,6 +124,14 @@ namespace PetSitter.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+
+                    CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
+
+                    var customerID = customerRepo.GetCustomerId(Input.Email);
+
+                    HttpContext.Session.SetString("UserName", customerID.FirstName);
+                    HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
