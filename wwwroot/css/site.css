@@ -17,3 +17,58 @@ body {
   margin-bottom: 60px;
 }
 
+.petsitterLogo {
+    width: 75px
+}
+
+#h1-pet {
+    color: dimgrey;
+}
+
+.wapper {
+    width: 980px;
+    margin: auto;
+}
+.storeTitle {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink:0;
+}
+
+.webBriefDescription {
+    width: 400px;
+    min-width: 400px;
+}
+.btn {
+    border: solid 1px red;
+    color: white;
+    background-color: red;
+    padding: 10px 30px;
+    border-radius: 20px;
+    text-decoration: none;
+}
+.petsitterBrief {
+/*    width: 500px;
+*/}
+
+.howItWorks {
+    background-color: lightpink;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+.PicHowItWorks{
+    width:400px;
+}
+.PicHowItWorksimg {
+    width: 100%
+}
+.wayOfHowItWorks{
+    display:flex;
+    justify-content:space-between;
+}
+
+
