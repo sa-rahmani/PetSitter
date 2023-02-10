@@ -1,0 +1,227 @@
+﻿@model PetSitter.ViewModels.SitterProfileVM
+
+@{
+    ViewData["Title"] = "Profile";
+   //string cat = Model.Cat == "false" ? "" : "checked";
+   // string dog = Model.Dog == "false" ? "" : "checked";
+        string message = Model != null ? Model.Message : String.Empty;
+
+
+}
+
+<h1>My Profile</h1>
+@if (message != null)
+{
+    <div class="alert alert-success">@message</div>}
+
+
+<form asp-action="Profile">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SitterId" class="control-label" hidden></label>
+        <input asp-for="SitterId" class="form-control" hidden />
+        <span asp-validation-for="SitterId" class="text-danger" read></span>
+            </div>
+    <div class="form-group">
+        <label asp-for="UserId" class="control-label" hidden></label>
+        <input asp-for="UserId" class="form-control" hidden />
+        <span asp-validation-for="UserId" class="text-danger" read></span>
+    </div>
+     <div class="form-group">
+        <label asp-for="UserType" class="control-label" hidden></label>
+        <input asp-for="UserType" class="form-control" hidden />
+        <span asp-validation-for="UserType" class="text-danger" read></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ProfileBio" class="control-label"></label>
+        <input asp-for="ProfileBio" class="form-control" />
+        <span asp-validation-for="ProfileBio" class="text-danger"></span>
+    </div>
+    <h4>Contact Details</h4>
+
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+              <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+        <input asp-for="LastName" class="form-control" />
+        <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+    <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" readonly />
+        <span asp-validation-for="Email" class="text-danger" read></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PhoneNumber" class="control-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+    <h4>Postal Adress</h4>
+
+    <div class="form-group">
+        <label asp-for="City" class="control-label"></label>
+        <input asp-for="City" class="form-control" />
+        <span asp-validation-for="City" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PostalCode" class="control-label"></label>
+        <input asp-for="PostalCode" class="form-control" />
+        <span asp-validation-for="PostalCode" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="StreetAddress" class="control-label"></label>
+        <input asp-for="StreetAddress" class="form-control"  />
+        <span asp-validation-for="StreetAddress" class="text-danger"></span>
+    </div>
+    <h4>Service Preferences</h4>
+    <h6> What you want clients to pay per service:</h6>
+
+    <div class="form-group">
+
+        <label asp-for="RatePerPetPerDay" class="control-label"></label>
+        <input asp-for="RatePerPetPerDay" class="form-control" />
+        <span asp-validation-for="RatePerPetPerDay" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+       <h6> What type of pets do you accept?</h6>
+@*        comment this
+*@      @* <label asp-for="Cat" class="control-label"></label>
+        <input asp-for="Cat" id="Cat" type="checkbox"  cat>Cat</input>
+        <span asp-validation-for="Cat" class="text-danger"></span><br/>
+       
+        <label asp-for="Dog" class="control-label"></label>
+        <input asp-for="Dog" id="Dog" type="checkbox"  dog>Dog</input>
+        <span asp-validation-for="Dog" class="text-danger"></span>*@
+        <label for="SelectedPetTypes" class="control-label"></label>
+        @foreach (var petType in Model.PetTypesAvailable)
+            {
+            <input class="form-check-input" type="checkbox" name="SelectedPetTypes" value="@petType"
+               @(Model.SelectedPetTypes.Contains(petType) ? "checked" : "")>
+                    <label class="form-check-label">@petType</label>
+            }
+    </div>
+    <div class="form-group">
+        <input type="submit" id="saveButton" value="Save Changes" class="btn btn-primary"/>
+ 
+
+    </div>
+
+        <div class="form-group">
+        <h4> Delete your account </h4>
+
+            <a asp-action="Delete" asp-route-id="@Model.SitterId" class="btn btn-danger">Delete</a>
+
+</div>
+</form>
+  
+<script type="text/javascript">
+
+$(document).ready(function() {
+  $('#saveButton').prop('disabled', true);
+  $('.checkbox').change(function() {
+    if ($('.checkbox:checked').length > 0) {
+      $('#saveButton').prop('disabled', false);
+    } else {
+      $('#saveButton').prop('disabled', true);
+    }
+  });
+
+  $('input').on('input', function() {
+    $('#saveButton').prop('disabled', false);
+  });
+});
+  </script>
+
+
+  
+@* <div class="form-group">
+        <label asp-for="PetTypes" class="control-label"></label>
+        <select asp-for="PetTypes" class="form-control" multiple>
+            <option  value="Dog" selected="@Model.PetTypes.Contains("Dog")">Dog</option>
+            <option value="Cat" selected="@Model.PetTypes.Contains("Cat")">Cat</option>
+        </select>
+        <span asp-validation-for="PetTypes" class="text-danger"></span>
+    </div>*@
+@*@
+<hr />
+<dl class="row">
+       <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ProfileBio)
+        </dt>
+        <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.ProfileBio)
+        </dd>
+    </dl>
+
+<h4>Contact Details</h4>
+<hr />
+<dl class="row">
+   <dl class="row">
+
+    <dt class="col">
+        @Html.DisplayNameFor(model => model.FirstName)
+    </dt>
+    <dd class="col">
+        @Html.DisplayFor(model => model.FirstName)
+    </dd>
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+  </dl>
+   <dl class="row">
+
+    <dt class="col">
+        @Html.DisplayNameFor(model => model.Email)
+    </dt>
+    <dd class="col">
+        @Html.DisplayFor(model => model.Email)
+    </dd>
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+        </dl>
+
+   
+</dl>
+
+
+<h4>Postal Adress</h4>
+<hr />
+<dl class="row">
+    <dl class="row">
+
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.City)
+        </dd>
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </dt>
+        <dd class="col">
+            @Html.DisplayFor(model => model.PostalCode)
+        </dd>
+        </dl>
+         <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StreetAddress)
+        </dt>
+        <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.StreetAddress)
+        </dd>
+        </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.SitterId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+*@

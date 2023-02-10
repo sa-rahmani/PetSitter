@@ -1,0 +1,104 @@
+﻿@model IEnumerable<PetSitter.ViewModels.SitterDashboardVM>
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Dashboard
+</h1>
+<dl class="row">
+   <dl class="row">
+
+    <dt class="col">
+        @Html.DisplayNameFor(model => model.upComingNbr)
+    </dt>
+    <dd class="col">
+        @ViewBag.UpComing
+    </dd>
+        <dt class="col">
+            @Html.DisplayNameFor(model => model.completeNbr)
+        </dt>
+        <dd class="col">
+        @ViewBag.Complete
+        </dd>
+      
+         <dt class="col">
+            @Html.DisplayNameFor(model => model.reviewsNbr)
+        </dt>
+        <dd class="col">
+        @ViewBag.Reviews
+        </dd>
+        </dd>
+  </dl>
+  </dl>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.bookingId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.petParent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.petType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.startDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.endDate)
+            </th>
+
+          
+
+            <th></th>
+      
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                  <a>  @Html.DisplayFor(modelItem => item.bookingId)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.petParent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.petType)
+                </td>
+                <td>
+                    @if (item.status == "Complete")
+                    {
+                        <div class="alert alert-success">
+
+                    @Html.DisplayFor(modelItem => item.status)</div>}
+                    @if (item.status == "UpComing")
+                    {
+                    <div class="alert alert-danger">
+
+                        @Html.DisplayFor(modelItem => item.status)
+                    </div>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.startDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.endDate)
+                </td>
+
+
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.bookingId">Details</a> |
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
