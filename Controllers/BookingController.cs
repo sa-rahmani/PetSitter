@@ -6,11 +6,11 @@ using PetSitter.ViewModels;
 
 namespace PetSitter.Controllers
 {
-    public class CustomerController : Controller
+    public class BookingController : Controller
     {
         private readonly PetSitterContext _db;
 
-        public CustomerController(PetSitterContext db)
+        public BookingController(PetSitterContext db)
         {
             _db = db;
         }   
