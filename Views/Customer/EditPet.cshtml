@@ -1,0 +1,101 @@
+﻿@model PetSitter.ViewModels.PetVM
+
+@{
+    ViewData["Title"] = "EditPet";
+}
+
+<h1>Edit Pet</h1>
+
+@{
+
+    IEnumerable<Pet> pets = ViewData["PetImg"] as IEnumerable<Pet>;
+}
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditPet" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="PetId" />
+            <div class="row profile-pic">
+                <div class="form-group">
+                    <label asp-for="PetImage" class="control-label"></label>
+                    <input asp-for="PetImage" class="form-control" />
+                    <span asp-validation-for="PetImage" class="text-danger"></span>
+                </div>
+
+                @foreach (Pet pet in pets)
+                {
+                    if (pet.PetImage == null)
+                    {
+                        <p>No Pet Image Given, add new Pet Image!</p>
+                    }
+                    else
+                    {
+
+                        <dd>
+                            <img src="~/images/@pet.PetImage" class="rounded-circle" width="200" height="140" asp-append-version="true" />
+                        </dd>
+                    }
+                }
+            </div>
+            <div class="row">
+                <h4>What type of pet?</h4>
+                <div class="form-group">
+                    <div class="form-group">
+                        <input asp-for="PetType" type="radio" id="dog" value="Dog" />
+                        <label for="dog">Dog</label>
+                        <input asp-for="PetType" type="radio" id="cat" value="Cat" />
+                        <label for="cat">Cat</label>
+                    </div>
+                </div>
+             </div>
+
+              <div class="row">
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PetSize" class="control-label"></label>
+                    <input asp-for="PetSize" class="form-control" />
+                    <span asp-validation-for="PetSize" class="text-danger"></span>
+                </div>
+              </div>
+    
+            <div class="row">
+                <div class="form-group">
+                    <label asp-for="BirthYear" class="control-label"></label>
+                    <input asp-for="BirthYear" class="form-control" />
+                    <span asp-validation-for="BirthYear" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Sex" class="control-label"></label>
+                    <input asp-for="Sex" class="form-control" />
+                    <span asp-validation-for="Sex" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Instructions" class="control-label"></label>
+                    <input asp-for="Instructions" class="form-control" />
+                    <span asp-validation-for="Instructions" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="form-group mt-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="GetProfile">Back to Profile</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

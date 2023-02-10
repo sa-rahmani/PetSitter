@@ -18,9 +18,8 @@ namespace PetSitter.Controllers
 
         public IActionResult Index()
         {
-            IQueryable<Pet> pets = from p in _db.Pets
-                                   select p;
-            return View(pets);
+            ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+            return View();
         }
 
         public IActionResult Privacy()
