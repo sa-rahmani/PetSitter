@@ -17,8 +17,7 @@ namespace PetSitter.ViewModels
         public string PostalCode { get; set; }
         public string UserType { get; set; }
 
-        [NotMapped]
-        public IFormFile ProfileImage { get; set; }
+        public IFormFile? ProfileImage { get; set; }
 
 
     }
