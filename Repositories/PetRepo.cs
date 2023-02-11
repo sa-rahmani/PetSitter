@@ -56,7 +56,7 @@ namespace PetSitter.Repositories
             return Tuple.Create(pet.PetId, message);
         }
 
-        public IEnumerable<Pet> GetPetData(int id)
+        public IEnumerable<Pet> GetPetLists(int id)
         {
 
             var pets = from p in _db.Pets where p.UserId == id select p;
@@ -104,7 +104,7 @@ namespace PetSitter.Repositories
         }
 
 
-        public IEnumerable<Pet> GetPetImg(int petID)
+        public IEnumerable<Pet> GetPetData(int petID)
         {
 
             var pets = from p in _db.Pets where p.PetId == petID select p;
