@@ -84,7 +84,12 @@ namespace PetSitter.Repositories
 
             try
             {
-                _db.Update(user);
+                _db.Entry(user).State = EntityState.Modified;
+                if (user.ProfileImage == null)
+                {
+                    _db.Entry(user).Property(u => u.ProfileImage).IsModified = false;
+
+                }
                 _db.SaveChanges();
 
                 updateMessage = $"Success editing {user.FirstName} user account " + $"Your edited user number is: {user.UserId}";

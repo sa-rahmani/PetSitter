@@ -24,7 +24,7 @@ namespace PetSitter.Repositories
         {
             Pet pet = new Pet();
             string message;
-            string stringFileName = UploadPetFile(petVM);
+            string stringFileName = UploadPetImageFile(petVM);
 
             try
             {
@@ -115,7 +115,7 @@ namespace PetSitter.Repositories
         {
             string updateMessage;
 
-            string stringFileName = UploadPetFile(petVM);
+            string stringFileName = UploadPetImageFile(petVM);
 
             Pet pet = new Pet
             {
@@ -152,7 +152,7 @@ namespace PetSitter.Repositories
 
       
 
-        public string UploadPetFile(PetVM petVM)
+        public string UploadPetImageFile(PetVM petVM)
         {
             string fileName = null;
 
