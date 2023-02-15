@@ -42,6 +42,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Book" asp-route-sitterID="model.SitterId">Book with @Html.DisplayFor(model => model.FirstName)</a>
+    <a asp-action="Book" asp-route-sitterID="@Model.SitterId">Book with @Html.DisplayFor(model => model.FirstName)</a>
     <a asp-action="FindASitter">Back to List</a>
 </div>

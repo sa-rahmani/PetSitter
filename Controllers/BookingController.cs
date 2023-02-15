@@ -20,6 +20,17 @@ namespace PetSitter.Controllers
             return View();
         }
 
+        public IActionResult ViewMyBookings()
+        {
+            // temp use of const user id
+            const int USERID = 3;
+
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            IQueryable<BookingVM> myBookings = bookingRepo.GetBookingVMsByUserId(USERID);
+
+            return View(myBookings);
+        }
+
         public IActionResult FindASitter(int? page)
         {
             // Get an IQueryable of all sitters.
@@ -41,43 +52,71 @@ namespace PetSitter.Controllers
             return View(sitter);
         }
 
+        // possible code for selecting particular pets for a booking
+        //// GET: Select Pets
+        //public IActionResult SelectPets()
+        //{
+        //    // temp user ID for use during dev
+        //    int userID = 3;
+
+        //    // Get user's pets
+        //    BookingRepo bookingRepo = new BookingRepo(_db);
+        //    IQueryable<SelectPetsVM> pets = bookingRepo.GetSelectPetVMsByUserId(userID);
+
+        //    return View(pets);
+        //}
+
+        //// POST: Select Pets
+        //[HttpPost]
+        //public IActionResult SelectPets(List<SelectPetsVM> pets)
+        //{
+        //    var selectedPets = pets.Where(p => p.IsChecked).ToList();
+        //    return RedirectToAction("Book", new { selectedPets = selectedPets });
+        //}
+
         // GET: Initial Book
         public IActionResult Book(int sitterID)
         {
-            // temp use of a const userID + petIDs during development
-            const int USERID = 3;
-            List<int> PETIDS = new List<int>() { 1, 2 };
-
-            BookingVM booking = new BookingVM();
-            booking.SitterId = sitterID;
-            booking.UserId = USERID;
-            booking.Price = 0;
-            booking.PetIDs = PETIDS;
+            BookingFormVM booking = new BookingFormVM();
+            booking.SitterId= sitterID;
 
             return View(booking);
         }
 
         // POST: Initial Book
         [HttpPost]
-        public IActionResult Book(BookingVM booking)
+        public IActionResult Book(BookingFormVM bookingForm)
         {
             if (ModelState.IsValid)
             {
+                // temporary values while developing
+                int userID = 3;
+                BookingRepo bookingRepo = new BookingRepo(_db);
+                List<int> petIds = bookingRepo.GetPetIdsByUserId(userID);
+
+                // Create BookingVM
+                BookingVM booking = new BookingVM();
+                booking.SitterId = bookingForm.SitterId;
+                booking.UserId = userID;
+                booking.PetIDs = petIds;
+                booking.StartDate = bookingForm.StartDate;
+                booking.EndDate = bookingForm.EndDate;
+                booking.SpecialRequests = bookingForm.SpecialRequests;
+
+                // Add price to BookingVM
+                BookingVM fullBooking = bookingRepo.AddPriceToBooking(booking);
+
                 // Redirect to confirmation page
-                return RedirectToAction("ConfirmBooking", "Customer", new { booking });
+                return Redirect(Url.Action("ConfirmBooking", "Booking", fullBooking));
             }
 
             // Show booking page again.
-            return View(booking);
+            return View(bookingForm);
         }
 
         public IActionResult ConfirmBooking(BookingVM booking)
         {
-            // Determine price.
-            BookingRepo bookingRepo = new BookingRepo(_db);
-            BookingVM updatedBooking = bookingRepo.AddPriceToBooking(booking);
-
-            return View(updatedBooking);
+            return View(booking);
         }
 
         public IActionResult Pay(BookingVM booking)
@@ -102,15 +141,6 @@ namespace PetSitter.Controllers
             return View(booking);
         }
 
-        public IActionResult ViewMyBookings()
-        {
-            // temp use of const user id
-            const int USERID = 3;
-
-            BookingRepo bookingRepo = new BookingRepo(_db);
-            IQueryable<BookingVM> myBookings = bookingRepo.GetMyBookingVMs(USERID);
-
-            return View(myBookings);
-        }
+        
     }
 }

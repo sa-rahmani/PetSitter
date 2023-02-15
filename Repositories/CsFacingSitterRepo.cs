@@ -23,7 +23,7 @@ namespace PetSitter.Repositories
                              {
                                  SitterId = s.SitterId,
                                  FirstName = u.FirstName,
-                                 Rate = s.RatePerPetPerDay,
+                                 Rate = (decimal)s.RatePerPetPerDay,
                                  ProfileBio = s.ProfileBio,
                                  AvgRating = (double)_db.Bookings.Where(b => b.SitterId == s.SitterId).Average(b => b.Rating),
                                  Reviews = _db.Bookings.Where(b => b.SitterId == s.SitterId).Select(b => b.Review).ToList()

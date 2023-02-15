@@ -18,18 +18,20 @@ namespace PetSitter.Repositories
             var allBookings = from b in _db.Bookings
                               select new BookingVM
                               {
-                                  SitterId = b.SitterId,
-                                  UserId = b.UserId,
-                                  StartDate = b.StartDate,
-                                  EndDate = b.EndDate,
+                                  BookingId = b.BookingId,
+                                  SitterId = (int)b.SitterId,
+                                  UserId = (int)b.UserId,
+                                  PetIDs = _db.BookingPets.Where(bp => bp.BookingId == b.BookingId).Select(bp => (int)bp.PetId).ToList(),
+                                  StartDate = (DateTime)b.StartDate,
+                                  EndDate = (DateTime)b.EndDate,
                                   SpecialRequests = b.SpecialRequests,
-                                  PetIDs = _db.BookingPets.Where(bp => bp.BookingId == b.BookingId).Select(bp => bp.PetId).ToList()
+                                  Price = (decimal)b.Price,
                               };
 
             return allBookings;
         }
 
-        public IQueryable<BookingVM> GetMyBookingVMs(int userID)
+        public IQueryable<BookingVM> GetBookingVMsByUserId(int userID)
         {
             return GetAllBookingVMs().Where(b => b.UserId == userID);
         }
@@ -42,8 +44,7 @@ namespace PetSitter.Repositories
         public BookingVM AddPriceToBooking(BookingVM booking)
         {
             // Calculate number of days in booking.
-            DateTime endDate = (DateTime)booking.EndDate;
-            int days = endDate.Subtract((DateTime)booking.StartDate).Days;
+            int days = booking.EndDate.Subtract(booking.StartDate).Days;
 
             // Get sitter.
             CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
@@ -59,7 +60,7 @@ namespace PetSitter.Repositories
         public Booking Create(BookingVM booking)
         {
             // Create a new Booking object.
-            Booking newBooking = new Booking((decimal)booking.Price, (DateTime)booking.StartDate, (DateTime)booking.EndDate, booking.SpecialRequests, (int)booking.SitterId, (int)booking.UserId);
+            Booking newBooking = new Booking((decimal)booking.Price, booking.StartDate, booking.EndDate, booking.SpecialRequests, (int)booking.SitterId, (int)booking.UserId);
 
             // Save to database.
             _db.Add(newBooking);
@@ -75,5 +76,23 @@ namespace PetSitter.Repositories
 
             return newBooking;
         }
+
+        public List<int> GetPetIdsByUserId(int userId)
+        {
+            return _db.Pets.Where(p => p.UserId == userId).Select(p => (int)p.PetId).ToList();
+        }
+
+        //public IQueryable<SelectPetsVM> GetSelectPetVMsByUserId(int userId)
+        //{
+        //    var myPets = from p in _db.Pets
+        //                 where p.UserId == userId
+        //                 select new SelectPetsVM
+        //                 {
+        //                     PetId = p.PetId,
+        //                     Name = p.Name
+        //                 };
+
+        //    return myPets;
+        //}
     }
 }

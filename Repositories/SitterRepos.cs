@@ -26,9 +26,9 @@ namespace PetSitter.Repositories
         public List<PetType> getPetTypeSitter(int sitterId)
         {
             var petTypeSitter = (from s in _db.Sitters
-                                from p in s.PetTypes
-                                where s.SitterId == sitterId
-                                select p).ToList();
+                                 from p in s.PetTypes
+                                 where s.SitterId == sitterId
+                                 select p).ToList();
             return petTypeSitter;
 
         }
@@ -52,8 +52,9 @@ namespace PetSitter.Repositories
                           from s in _db.Sitters
                           from p in s.PetTypes
                           where u.Email == email
-                          && s.UserId == u.UserId
-                          select new {
+                          //&& s.UserId == u.UserId
+                          select new
+                          {
                               SitterId = s.SitterId,
                               UserId = u.UserId,
                               FirstName = u.FirstName,
@@ -65,7 +66,8 @@ namespace PetSitter.Repositories
                               PhoneNumber = u.PhoneNumber,
                               RatePerPetPerDay = s.RatePerPetPerDay,
                               UserType = u.UserType,
-                              ProfileBio = s.ProfileBio }).FirstOrDefault();
+                              ProfileBio = s.ProfileBio
+                          }).FirstOrDefault();
 
             List<PetType> petTypeSitter = getPetTypeSitter(sitter.SitterId);
 
@@ -84,7 +86,7 @@ namespace PetSitter.Repositories
                 ProfileBio = sitter.ProfileBio,
                 UserType = sitter.UserType,
                 PetTypesAvailable = getPetTypes(),
-                SelectedPetTypes = petTypeSitter.Select(p=>p.PetType1).ToList()
+                SelectedPetTypes = petTypeSitter.Select(p => p.PetType1).ToList()
 
             };
 
@@ -96,16 +98,16 @@ namespace PetSitter.Repositories
             List<string> petTypeSitter = getPetTypeSitter(sitterProfileVM.SitterId).Select(p => p.PetType1).ToList();
             PetType petTypeObj = null;
 
-          
+
 
             User sitterBasicInfo = new User
             {
                 UserId = sitterProfileVM.UserId,
                 FirstName = sitterProfileVM.FirstName,
-            LastName = sitterProfileVM.LastName,
-            City = sitterProfileVM.City,
-            PostalCode = sitterProfileVM.PostalCode,
-            StreetAddress = sitterProfileVM.StreetAddress,
+                LastName = sitterProfileVM.LastName,
+                City = sitterProfileVM.City,
+                PostalCode = sitterProfileVM.PostalCode,
+                StreetAddress = sitterProfileVM.StreetAddress,
                 Email = sitterProfileVM.Email,
                 PhoneNumber = sitterProfileVM.PhoneNumber,
                 UserType = sitterProfileVM.UserType
@@ -115,7 +117,7 @@ namespace PetSitter.Repositories
             var petTypesToInsert = sitterProfileVM.SelectedPetTypes.Except(petTypeSitter).ToList();
             var petTypesToDelete = petTypeSitter.Except(sitterProfileVM.SelectedPetTypes).ToList();
 
-          
+
             string message = String.Empty;
             //Sitter sitterObj = (from s in _db.Sitters
             //                 where s.SitterId == sitterProfileVM.SitterId
@@ -153,8 +155,8 @@ namespace PetSitter.Repositories
                 _db.Users.Update(sitterBasicInfo);
                 _db.Sitters.Update(sitterObj);
                 _db.SaveChanges();
-                 
-                
+
+
 
                 message = $"Success editing" +
                     $"{sitterProfileVM.FirstName}";
@@ -178,18 +180,18 @@ namespace PetSitter.Repositories
             Sitter sitter = getSitterById(sitterProfileVM.SitterId);
             User user = getUser(sitter.UserId);
             PetType petType = getPetTypeSitter(sitterProfileVM.SitterId).FirstOrDefault();
-           // ClientAccountRepo clientAccountRepo = new ClientAccountRepo(_context);
-           // ClientAccount clientAccount = clientAccountRepo.GetClientAccount(bankAccountVM.AccountNum);
+            // ClientAccountRepo clientAccountRepo = new ClientAccountRepo(_context);
+            // ClientAccount clientAccount = clientAccountRepo.GetClientAccount(bankAccountVM.AccountNum);
             try
             {
                 //foreach (var p in petType) {
-              
 
-                    //sitter.PetTypes.Remove(petType);
 
-                
+                //sitter.PetTypes.Remove(petType);
+
+
                 // }
-               // _db.SaveChanges();
+                // _db.SaveChanges();
 
                 _db.Sitters.Remove(sitter);
 
@@ -204,8 +206,8 @@ namespace PetSitter.Repositories
                 //    Balance = bankAccountVM.Balance
                 //};
 
-              //  _context.ClientAccounts.Remove(clientAccount);
-               // _context.BankAccounts.Remove(bankAccount);
+                //  _context.ClientAccounts.Remove(clientAccount);
+                // _context.BankAccounts.Remove(bankAccount);
                 //_context.SaveChanges();
 
                 message = $"your account sitter Id:  {sitterProfileVM.SitterId}  deleted successfully";
@@ -223,20 +225,20 @@ namespace PetSitter.Repositories
             SitterProfileVM sitter = GetSitterByEmail(email);
 
             var bookings = from b in _db.Bookings
-                        join s in _db.Sitters on b.SitterId equals s.SitterId
-                        join u in _db.Users on b.UserId equals u.UserId
-                        join bp in _db.BookingPets on b.BookingId equals bp.BookingId
-                        join p in _db.Pets on bp.PetId equals p.PetId
-                        where b.SitterId == sitter.SitterId
+                           join s in _db.Sitters on b.SitterId equals s.SitterId
+                           join u in _db.Users on b.UserId equals u.UserId
+                           join bp in _db.BookingPets on b.BookingId equals bp.BookingId
+                           join p in _db.Pets on bp.PetId equals p.PetId
+                           where b.SitterId == sitter.SitterId
                            select new
-                        {
-                            b.StartDate,
-                            b.EndDate,
-                            b.BookingId,
-                            u.FirstName,
-                            u.LastName,
-                            p.PetType
-                        };
+                           {
+                               b.StartDate,
+                               b.EndDate,
+                               b.BookingId,
+                               u.FirstName,
+                               u.LastName,
+                               p.PetType
+                           };
 
 
             List<SitterDashboardVM> vm = new List<SitterDashboardVM>();
@@ -244,8 +246,8 @@ namespace PetSitter.Repositories
             int complete = 0;
             int upComing = 0;
             int reviews = (from b in _db.Bookings
-                         where b.SitterId == 1 && b.Review != null
-                         select b.Review).Count();
+                           where b.SitterId == 1 && b.Review != null
+                           select b.Review).Count();
             foreach (var b in bookings)
             {
                 var endDateString = b.EndDate.HasValue ? b.EndDate.Value.ToString("MM/dd/yyyy") : "";
@@ -253,7 +255,7 @@ namespace PetSitter.Repositories
 
                 //Check the current date
                 DateTime currentDate = DateTime.Now;
-                string status ="";
+                string status = "";
                 //Compare the date from the database
                 if (currentDate.Date.CompareTo(b.EndDate.Value.Date) > 0)
                 {
@@ -269,19 +271,19 @@ namespace PetSitter.Repositories
                 }
                 vm.Add(new SitterDashboardVM
                 {
-                   petParent = b.FirstName +" "+ b.LastName,
-                   startDate = startDateString,
-                   endDate = endDateString,
-                   bookingId = b.BookingId,
-                   petType =b.PetType,
-                   sitter = sitter.FirstName+" "+sitter.LastName,
-                   status = status,
-                   upComingNbr=upComing,
-                   completeNbr=complete,
-                   reviewsNbr=reviews
-                 
+                    petParent = b.FirstName + " " + b.LastName,
+                    startDate = startDateString,
+                    endDate = endDateString,
+                    bookingId = b.BookingId,
+                    petType = b.PetType,
+                    sitter = sitter.FirstName + " " + sitter.LastName,
+                    status = status,
+                    upComingNbr = upComing,
+                    completeNbr = complete,
+                    reviewsNbr = reviews
 
-            });
+
+                });
             }
 
             return vm;
@@ -303,20 +305,21 @@ namespace PetSitter.Repositories
                                u.UserId,
                                p.PetType,
                                b.Review,
-                              
+
 
                            }).FirstOrDefault();
 
             User user = getUser(booking.UserId);
-            SitterDashboardVM vm = new SitterDashboardVM { 
-            bookingId= booking.BookingId,
-            user=user,
-            startDate=booking.StartDate.Value.ToString("MM/dd/yyyy"),
-            endDate=booking.EndDate.Value.ToString("MM/dd/yyyy"),
-            review=booking.Review,
-            petType=booking.PetType,
-            petParent=user.FirstName +" "+user.LastName
-            
+            SitterDashboardVM vm = new SitterDashboardVM
+            {
+                bookingId = booking.BookingId,
+                user = user,
+                startDate = booking.StartDate.Value.ToString("MM/dd/yyyy"),
+                endDate = booking.EndDate.Value.ToString("MM/dd/yyyy"),
+                review = booking.Review,
+                petType = booking.PetType,
+                petParent = user.FirstName + " " + user.LastName
+
 
 
 
