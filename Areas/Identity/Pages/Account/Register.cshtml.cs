@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
 
@@ -34,6 +35,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
         private readonly PetSitterContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IEmailService _emailService;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -42,7 +44,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
             PetSitterContext context,
-            IWebHostEnvironment webHost)
+            IWebHostEnvironment webHost,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -52,6 +55,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _context = context;
             webHostEnvironment = webHost;
+            _emailService= emailService;
         }
 
         /// <summary>
@@ -195,12 +199,27 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    var response = await _emailService.SendSingleEmail(new Models.ComposeEmailModel
+                    {
+                        FirstName = "TeamGreen",
+                        LastName = "SSD",
+                        Subject = "Confirm your email",
+                        Email = Input.Email,
+                        Body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>."
+                    });
+
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new
+                        {
+                            email = Input.Email
+                                                  ,
+                            returnUrl = returnUrl
+                                                  ,
+                            DisplayConfirmAccountLink = false
+                        });
+
                     }
                     else
                     {
