@@ -1,5 +1,5 @@
 IF OBJECT_ID('BookingPet')
-	IS NOT NULL DROP TABLE BookingPet;
+IS NOT NULL DROP TABLE BookingPet;
 IF OBJECT_ID('Booking')
 	IS NOT NULL DROP TABLE Booking;
 IF OBJECT_ID('Pet')
@@ -38,6 +38,7 @@ CREATE TABLE [User] (
 	city					VARCHAR(50) NOT NULL,
 	postalCode				CHAR(6) NOT NULL,
 	userType				VARCHAR(50) NOT NULL,
+	profileImage			VARCHAR(8000)
 	FOREIGN KEY(userType) REFERENCES UserType(userType)
 );
 
@@ -82,6 +83,7 @@ CREATE TABLE Pet (
 	instructions			VARCHAR(2000) NOT NULL,
 	userID					INT NOT NULL,
 	petType					VARCHAR(25) NOT NULL,
+	petImage				VARCHAR(8000)
 	FOREIGN KEY(userID) REFERENCES [User](userID),
 	FOREIGN KEY(petType) REFERENCES PetType(petType)
 );
