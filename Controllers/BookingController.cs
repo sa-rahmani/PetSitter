@@ -26,7 +26,7 @@ namespace PetSitter.Controllers
             const int USERID = 3;
 
             BookingRepo bookingRepo = new BookingRepo(_db);
-            IQueryable<BookingVM> myBookings = bookingRepo.GetBookingVMsByUserId(USERID);
+            List<BookingVM> myBookings = bookingRepo.GetBookingVMsByUserId(USERID);
 
             return View(myBookings);
         }

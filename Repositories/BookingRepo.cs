@@ -1,4 +1,5 @@
-﻿using PetSitter.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using PetSitter.Models;
 using PetSitter.ViewModels;
 using System.Runtime.InteropServices;
 
@@ -13,27 +14,44 @@ namespace PetSitter.Repositories
             _db = db;
         }
 
-        public IQueryable<BookingVM> GetAllBookingVMs()
+        public List<BookingVM> GetAllBookingVMs()
         {
-            var allBookings = from b in _db.Bookings
-                              select new BookingVM
-                              {
-                                  BookingId = b.BookingId,
-                                  SitterId = (int)b.SitterId,
-                                  UserId = (int)b.UserId,
-                                  PetIDs = _db.BookingPets.Where(bp => bp.BookingId == b.BookingId).Select(bp => (int)bp.PetId).ToList(),
-                                  StartDate = (DateTime)b.StartDate,
-                                  EndDate = (DateTime)b.EndDate,
-                                  SpecialRequests = b.SpecialRequests,
-                                  Price = (decimal)b.Price,
-                              };
+            IQueryable<BookingVM> bookings = from b in _db.Bookings
+                                             select new BookingVM
+                                             {
+                                                 BookingId = b.BookingId,
+                                                 SitterId = (int)b.SitterId,
+                                                 UserId = (int)b.UserId,
+                                                 StartDate = (DateTime)b.StartDate,
+                                                 EndDate = (DateTime)b.EndDate,
+                                                 SpecialRequests = b.SpecialRequests,
+                                                 Price = (decimal)b.Price
+                                             };
 
-            return allBookings;
+            // Convert to list so that it can be looped through to add PetIDs.
+            List<BookingVM> bookingsList = bookings.ToList();
+
+            foreach (var booking in bookingsList)
+            {
+                List<int> pets = _db.BookingPets.Where(bp => bp.BookingId == booking.BookingId).Where(bp => bp.PetId.HasValue).Select(bp => bp.PetId.GetValueOrDefault()).ToList();
+                booking.PetIDs = pets;
+            }
+
+            return bookingsList;
         }
 
-        public IQueryable<BookingVM> GetBookingVMsByUserId(int userID)
+        public List<BookingVM> GetBookingVMsByUserId(int userID)
         {
-            return GetAllBookingVMs().Where(b => b.UserId == userID);
+            List<BookingVM> bookings = GetAllBookingVMs();
+            List<BookingVM> myBookings = new List<BookingVM>();
+            foreach (var booking in bookings)
+            {
+                if(booking.UserId == userID)
+                {
+                    myBookings.Add(booking);
+                }
+            }
+            return myBookings;
         }
 
         public BookingVM GetBookingVM(int bookingID)
@@ -81,18 +99,5 @@ namespace PetSitter.Repositories
         {
             return _db.Pets.Where(p => p.UserId == userId).Select(p => (int)p.PetId).ToList();
         }
-
-        //public IQueryable<SelectPetsVM> GetSelectPetVMsByUserId(int userId)
-        //{
-        //    var myPets = from p in _db.Pets
-        //                 where p.UserId == userId
-        //                 select new SelectPetsVM
-        //                 {
-        //                     PetId = p.PetId,
-        //                     Name = p.Name
-        //                 };
-
-        //    return myPets;
-        //}
     }
 }

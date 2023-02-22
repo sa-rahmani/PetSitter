@@ -44,7 +44,10 @@
                     @Html.DisplayFor(modelItem => item.SitterId)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.PetIDs)
+                    @foreach (var pet in item.PetIDs)
+                    {
+                        <p>@pet</p>
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.StartDate)
@@ -56,7 +59,7 @@
                     @Html.DisplayFor(modelItem => item.SpecialRequests)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Price)
+                    $@Html.DisplayFor(modelItem => item.Price)
                 </td>
             </tr>
         }
