@@ -24,7 +24,7 @@ namespace PetSitter.Repositories
         {
             Pet pet = new Pet();
             string message;
-            string stringFileName = UploadPetFile(petVM);
+            string stringFileName = UploadPetImageFile(petVM);
 
             try
             {
@@ -56,7 +56,7 @@ namespace PetSitter.Repositories
             return Tuple.Create(pet.PetId, message);
         }
 
-        public IEnumerable<Pet> GetPetData(int id)
+        public IEnumerable<Pet> GetPetLists(int id)
         {
 
             var pets = from p in _db.Pets where p.UserId == id select p;
@@ -104,7 +104,7 @@ namespace PetSitter.Repositories
         }
 
 
-        public IEnumerable<Pet> GetPetImg(int petID)
+        public IEnumerable<Pet> GetPetData(int petID)
         {
 
             var pets = from p in _db.Pets where p.PetId == petID select p;
@@ -115,7 +115,7 @@ namespace PetSitter.Repositories
         {
             string updateMessage;
 
-            string stringFileName = UploadPetFile(petVM);
+            string stringFileName = UploadPetImageFile(petVM);
 
             Pet pet = new Pet
             {
@@ -152,7 +152,7 @@ namespace PetSitter.Repositories
 
       
 
-        public string UploadPetFile(PetVM petVM)
+        public string UploadPetImageFile(PetVM petVM)
         {
             string fileName = null;
 

@@ -37,8 +37,8 @@ namespace PetSitter.Controllers
 
             CustomerVM vm = customerRepo.GetProfile(customerID);
 
-            ViewData["PetLists"] = petRepo.GetPetData(customerID);
-            ViewData["UserProfileImg"] = customerRepo.GetUserData(customerID);
+            ViewData["PetLists"] = petRepo.GetPetLists(customerID);
+            ViewData["UserData"] = customerRepo.GetUserData(customerID);
 
             return View(vm);
         }
@@ -111,7 +111,7 @@ namespace PetSitter.Controllers
             Pet pet = petRepo.GetPetDetailRecord(id, customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
-            ViewData["PetImg"] = petRepo.GetPetImg(id);
+            ViewData["PetData"] = petRepo.GetPetData(id);
 
             return View(pet);
         }
@@ -125,7 +125,7 @@ namespace PetSitter.Controllers
             PetVM vm = petRepo.GetPetEditRecord(id, customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
-            ViewData["PetImg"] = petRepo.GetPetImg(id);
+            ViewData["PetData"] = petRepo.GetPetData(id);
 
            
             return View(vm);

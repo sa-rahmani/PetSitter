@@ -52,9 +52,7 @@ namespace PetSitter.Repositories
                           from s in _db.Sitters
                           from p in s.PetTypes
                           where u.Email == email
-                          //&& s.UserId == u.UserId
-                          select new
-                          {
+                          select new {
                               SitterId = s.SitterId,
                               UserId = u.UserId,
                               FirstName = u.FirstName,
