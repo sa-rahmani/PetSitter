@@ -10,5 +10,11 @@ namespace PetSitter.Models
 
         public virtual Booking? Booking { get; set; }
         public virtual Pet? Pet { get; set; }
+
+        public BookingPet(int? bookingId, int? petId)
+        {
+            BookingId = bookingId;
+            PetId = petId;
+        }
     }
 }
