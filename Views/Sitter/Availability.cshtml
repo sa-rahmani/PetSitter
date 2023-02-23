@@ -1,0 +1,68 @@
+﻿@model PetSitter.ViewModels.SitterAvailabilityVM
+@{
+    ViewData["Title"] = "Availability";
+    string message = Model != null ? Model.Message : String.Empty;
+}
+<h1>Add Availability</h1>
+@if (message != null)
+{
+    <div class="alert alert-danger">@message</div>
+}
+<form  asp-action="Availability" >
+    <div class="form-group">
+        <input asp-for="SitterId" class="form-control" value="@Model.SitterId" type="hidden" />
+    </div>
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label"></label>
+        <input asp-for="StartDate" class="form-control" type="date" value="" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label"></label>
+        <input asp-for="EndDate" class="form-control" type="date" value="" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+<div id="calendar"></div>
+ <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' rel='stylesheet' />
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js'></script>
+   
+<script>
+    $(function () {
+        var bookedDates = @Html.Raw(ViewBag.BookedDates);
+        //var availableDates = @Html.Raw(ViewBag.AvailableDates);
+
+        $('#calendar').fullCalendar({
+            // Set the calendar options
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            defaultView: 'month',
+            // Set the booked dates
+            events: bookedDates.map(function (booking) {
+                return {
+                    title: 'Booked',
+                    start: booking.StartDate,
+                    end: booking.EndDate,
+                    color: 'red'
+                };
+            })
+            //         events: availableDates.map(function (available) {
+            //    return {
+            //        title: 'available',
+            //        start: available.StartDate,
+            //        end: available.EndDate,
+            //        color: 'green'
+            //    };
+            //})
+          
+        });
+    });
+
+</script>

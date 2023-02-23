@@ -2,14 +2,113 @@
 
 @{
     ViewData["Title"] = "Profile";
-   //string cat = Model.Cat == "false" ? "" : "checked";
-   // string dog = Model.Dog == "false" ? "" : "checked";
+
         string message = Model != null ? Model.Message : String.Empty;
 
 
 }
 
-<h1>My Profile</h1>
+@{
+
+    User user = ViewData["UserProfileImg"] as User;
+}
+<dl>
+    <h1>Profile</h1>
+    <a asp-action="EditProfile" asp-route-id="@Model.UserId" class="text-decoration-none">Edit Profile</a>
+</dl>
+<hr class="mt-4" />
+
+<div>
+    <dl class="row">
+        <dd class="col-sm-10">
+            <h3>Profile Image</h3>
+            
+                @if (user.ProfileImage == null)
+                {
+                    <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
+                }
+                @if (user.ProfileImage != null)
+
+                {
+                <dd>
+                    <img src="~/images/@user.ProfileImage" class="rounded-circle" width="200" height="140" asp-append-version="true" />
+                </dd>
+               }
+            
+
+        </dd>
+       
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ProfileBio)
+        </dd>
+        <h3>CONTACT DETAILS</h3>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+    
+    </dl>
+    <dl class="row">
+        <h3>POSTAL ADDRESS</h3>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.City)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PostalCode)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PostalCode)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StreetAddress)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.StreetAddress)
+        </dd>
+    </dl>
+    <div class="form-group">
+       <h6> What type of pets do you accept?</h6>
+
+      <label for="SelectedPetTypes" class="control-label"></label>
+        @foreach (var petType in Model.PetTypesAvailable)
+            {
+            <input class="form-check-input" type="checkbox" name="SelectedPetTypes" value="@petType"
+               @(Model.SelectedPetTypes.Contains(petType) ? "checked" : "") disabled>
+                    <label class="form-check-label">@petType</label>
+            }
+   
+             <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.RatePerPetPerDay)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.RatePerPetPerDay)
+        </dd>
+        </div>
+    </div>
+@*
 @if (message != null)
 {
     <div class="alert alert-success">@message</div>}
@@ -87,15 +186,7 @@
     </div>
     <div class="form-group">
        <h6> What type of pets do you accept?</h6>
-@*        comment this
-*@      @* <label asp-for="Cat" class="control-label"></label>
-        <input asp-for="Cat" id="Cat" type="checkbox"  cat>Cat</input>
-        <span asp-validation-for="Cat" class="text-danger"></span><br/>
-       
-        <label asp-for="Dog" class="control-label"></label>
-        <input asp-for="Dog" id="Dog" type="checkbox"  dog>Dog</input>
-        <span asp-validation-for="Dog" class="text-danger"></span>*@
-        <label for="SelectedPetTypes" class="control-label"></label>
+      <label for="SelectedPetTypes" class="control-label"></label>
         @foreach (var petType in Model.PetTypesAvailable)
             {
             <input class="form-check-input" type="checkbox" name="SelectedPetTypes" value="@petType"
@@ -117,35 +208,18 @@
 </div>
 </form>
   
-<script type="text/javascript">
 
-$(document).ready(function() {
-  $('#saveButton').prop('disabled', true);
-  $('.checkbox').change(function() {
-    if ($('.checkbox:checked').length > 0) {
-      $('#saveButton').prop('disabled', false);
-    } else {
-      $('#saveButton').prop('disabled', true);
-    }
-  });
-
-  $('input').on('input', function() {
-    $('#saveButton').prop('disabled', false);
-  });
-});
-  </script>
 
 
   
-@* <div class="form-group">
+<div class="form-group">
         <label asp-for="PetTypes" class="control-label"></label>
         <select asp-for="PetTypes" class="form-control" multiple>
             <option  value="Dog" selected="@Model.PetTypes.Contains("Dog")">Dog</option>
             <option value="Cat" selected="@Model.PetTypes.Contains("Cat")">Cat</option>
         </select>
         <span asp-validation-for="PetTypes" class="text-danger"></span>
-    </div>*@
-@*@
+    </div>
 <hr />
 <dl class="row">
        <dt class="col-sm-2">
