@@ -126,12 +126,15 @@ namespace PetSitter.Areas.Identity.Pages.Account
                     _logger.LogInformation("User logged in.");
 
                     CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
+                    SitterRepos sitterRepos = new SitterRepos(_context, webHostEnvironment);
 
                     var customerID = customerRepo.GetCustomerId(Input.Email);
 
+                    var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
+
                     HttpContext.Session.SetString("UserName", customerID.FirstName);
                     HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
-
+                    HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

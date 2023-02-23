@@ -1,0 +1,115 @@
+﻿@model PetSitter.ViewModels.SitterProfileVM
+@{
+    ViewData["Title"] = "EditProfile";
+}
+
+<h1>Edit Profile</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditProfile" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserId"/>
+            <input type="hidden" asp-for="SitterId" />
+
+            <input type="hidden" asp-for="UserType"/>
+@*            <input type="hidden" asp-for="PetId"/>
+*@           <div class="row profile-pic">
+               <h3>Profile Image</h3>
+                <div class="form-group">
+                    <label asp-for="ProfileImage" class="control-label"></label>
+                    <input asp-for="ProfileImage" class="form-control" />
+                    <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                </div>
+               
+           </div>
+            <div class="row">
+
+            <div class="form-group">
+                    <label asp-for="ProfileBio" class="control-label"></label>
+
+                    <textarea asp-for="ProfileBio" rows="3" class="form-control" autocomplete="username" aria-required="true"></textarea>
+                    <span asp-validation-for="ProfileBio" class="text-danger"></span>
+
+                </div>
+            </div>
+           <div class="row">
+               <h3>CONTACT DETAILS</h3>
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" readonly="readonly" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PhoneNumber" class="control-label"></label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+           </div>
+            <div class="row">
+                <h3>POSTAL ADDRESS</h3>
+                <div class="form-group">
+                    <label asp-for="StreetAddress" class="control-label"></label>
+                    <input asp-for="StreetAddress" class="form-control" />
+                    <span asp-validation-for="StreetAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="City" class="control-label"></label>
+                    <input asp-for="City" class="form-control" />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PostalCode" class="control-label"></label>
+                    <input asp-for="PostalCode" class="form-control" />
+                    <span asp-validation-for="PostalCode" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <h3>Pet preferences</h3>
+            <div class="form-group">
+                <h6> What type of pets do you accept?</h6>
+
+                <label for="SelectedPetTypes" class="control-label"></label>
+                @foreach (var petType in Model.PetTypesAvailable)
+                {
+                    <input class="form-check-input" type="checkbox" name="SelectedPetTypes" value="@petType"
+                       @(Model.SelectedPetTypes.Contains(petType) ? "checked" : "")>
+                    <label class="form-check-label">@petType</label>
+                }
+            </div>
+           
+
+                <div class="form-group">
+                    <label asp-for="RatePerPetPerDay"></label>
+                    <input asp-for="RatePerPetPerDay" type="text" class="form-control" autocomplete="username" aria-required="true" />
+                    <span asp-validation-for="RatePerPetPerDay" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<div>
+    <a asp-action="GetProfile">Back to Profile</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
