@@ -64,10 +64,12 @@ namespace PetSitter.Repositories
         {
             var sitter = (from u in _db.Users
                           from s in _db.Sitters
+
                           where s.SitterId == sitterId
                           && s.UserId == u.UserId
                           select new
                           {
+
                               SitterId = s.SitterId,
                               UserId = u.UserId,
                               FirstName = u.FirstName,
@@ -205,6 +207,7 @@ namespace PetSitter.Repositories
                 {
                     sitterProfileVM.ProfileImage.CopyTo(fileStream);
                 }
+
             }
             return fileName;
         }
@@ -235,7 +238,9 @@ namespace PetSitter.Repositories
             int complete = 0;
             int upComing = 0;
             int reviews = (from b in _db.Bookings
+
                            where b.SitterId == sitterId && b.Review != null
+
                            select b.Review).Count();
             foreach (var b in bookings)
             {

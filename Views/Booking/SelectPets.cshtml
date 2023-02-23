@@ -1,0 +1,33 @@
+﻿@*@{
+    ViewData["Title"] = "Select Pets";
+}
+
+<h1>Select Pets</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SelectPets">
+            @for (var index = 0; index < Model.Count(); index++)
+            {
+                <input type="checkbox" asp-for="@Model[index].IsChecked" class="form-check-input" />
+                <label class="form-check-label" asp-for="@Model[index].IsChecked">
+                    @Model[index].LabelName
+                </label>
+                <input type="hidden" asp-for="@Model[index].Id" />
+                <input type="hidden" asp-for="@Model[index].LabelName" />
+                <br />
+            }
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+*@
