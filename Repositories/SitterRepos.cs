@@ -326,5 +326,14 @@ namespace PetSitter.Repositories
 
         }
 
+        public List<SitterDashboardVM> GetReviews(string email)
+        {
+            SitterProfileVM sitter = GetSitterByEmail(email);
+
+        }
+
+
+
+
     }
 }
