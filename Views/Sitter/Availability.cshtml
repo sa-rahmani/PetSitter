@@ -26,43 +26,48 @@
     <button type="submit" class="btn btn-primary">Save</button>
 </form>
 <div id="calendar"></div>
- <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' rel='stylesheet' />
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.min.css' rel='stylesheet' media='print' />
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js'></script>
-   
-<script>
-    $(function () {
-        var bookedDates = @Html.Raw(ViewBag.BookedDates);
-        //var availableDates = @Html.Raw(ViewBag.AvailableDates);
+ 
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css" rel="stylesheet" />
+<link href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.print.css" rel="stylesheet" media="print"/>
+ 
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        $('#calendar').fullCalendar({
-            // Set the calendar options
-            header: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'month,agendaWeek,agendaDay'
-            },
-            defaultView: 'month',
-            // Set the booked dates
-            events: bookedDates.map(function (booking) {
-                return {
-                    title: 'Booked',
-                    start: booking.StartDate,
-                    end: booking.EndDate,
-                    color: 'red'
-                };
-            })
-            //         events: availableDates.map(function (available) {
-            //    return {
-            //        title: 'available',
-            //        start: available.StartDate,
-            //        end: available.EndDate,
-            //        color: 'green'
-            //    };
-            //})
-          
-        });
-    });
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>
+ 
+        <script>
+      
 
-</script>
+
+            $(document).ready(function () {
+                // initialize the calendar
+                $('#calendar').fullCalendar({
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,basicWeek,basicDay'
+                    },
+                    defaultDate: new Date(),
+                    navLinks: true, // can click day/week names to navigate views
+                    editable: false,
+                    eventLimit: false, // allow "more" link when too many events
+                events: {
+                    url: '@Url.Action("GetEvents", "sitter")',
+                    type: 'GET',
+                    error: function () {
+                        alert('There was an error fetching calendar data.');
+                    }
+                },
+                    // add a callback function to handle the event click
+                  
+                });
+            });
+    </script>
+    }
+<style>
+    #calendar {
+        max-width: 1100px;
+        margin: 40px auto;
+    }
+</style>

@@ -9,6 +9,7 @@ using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
 using System.Drawing.Drawing2D;
+using System.Linq;
 
 namespace PetSitter.Controllers
 {
@@ -117,29 +118,30 @@ namespace PetSitter.Controllers
             vm.SitterId = sitterID;
 
             // Get the booked dates for the sitter from the Booking table
-            var Bookings = _db.Sitters.Include(s => s.Bookings)
-                .Where(s => s.SitterId == sitterID).Select(s => s.Bookings);
+            //var bookings = _db.Bookings
+            //    .Where(s => s.SitterId == sitterID).ToList();
+            //var availabilities = (from s in _db.Sitters
+            //                      from a in s.Availabilities
+            //                      where s.SitterId == sitterID
+            //                      select a).ToList();
+            //vm.BookedDates = bookings;
+            //List<Availability> bookingsdates = new List<Availability>();
+            //foreach(var b in bookings) {
 
-            // Pass the booked dates to the view
-            ViewBag.BookedDates = JsonConvert.SerializeObject(Bookings.ToList());
+            //    bookingsdates.Add(new Availability
+            //    {
+            //        StartDate = b.StartDate,
+            //        EndDate = b.EndDate
+            //    });
+            //}
 
-
-            //// Get the available dates for the sitter from the Availability table
-            //var availableDates = _db.Availability
-            //    .Where(a => !_db.SitterAvailability
-            //        .Where(sa => sa.SitterID == sitterID)
-            //        .Select(sa => sa.AvailabilityID)
-            //        .Contains(a.AvailabilityID))
-            //    .ToList();
-
-            //// Pass the available dates to the view
-            //ViewBag.BookedDates = JsonConvert.SerializeObject(sitterObj.Availabilities);
-
-            // Return the view with the view model
+            //vm.AvailableDates = availabilities.Except(bookingsdates).ToList();
+            
             return View(vm);
 
 
         }
+
 
         [HttpPost]
         public IActionResult Availability(SitterAvailabilityVM availability)
@@ -165,7 +167,75 @@ namespace PetSitter.Controllers
             return View(availability);
 
         }
+   
+
+
+    public JsonResult GetEvents()
+    {
+        int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
+
+        var bookings = _db.Bookings
+         .Where(s => s.SitterId == sitterID).ToList();
+        var availabilities = (from s in _db.Sitters
+                                  from a in s.Availabilities
+                                  where s.SitterId == sitterID
+                                  select a).ToList();
+
+
+
+
+         var events = new List<object>();
+        var bookedDates=new List<DateTime>();
+            //Add bookings as events
+            foreach (var booking in bookings)
+            {
+                for (DateTime date = (DateTime)booking.StartDate; date <= (DateTime)booking.EndDate; date = date.AddDays(1))
+                {
+                    bookedDates.Add(date);
+                }
+            }
+                foreach (var date in bookedDates)
+                {
+
+                    events.Add(new
+                    {
+                        title = "booked",
+                        start = date.ToString("yyyy-MM-dd"),
+                        display = "background",
+
+                        color = "red"
+                    });
+                }
+            
+                var availableDates = new List<DateTime>();
+                //Add bookings as events
+                foreach (var a in availabilities)
+                {
+                for (DateTime date = (DateTime)a.StartDate; date <= (DateTime)a.EndDate; date = date.AddDays(1))
+                {
+                    availableDates.Add(date);
+                }
+            }
+
+                var notBooked = availableDates.Except(bookedDates);
+                    // Add bookings as events
+                    foreach (var date in notBooked)
+        {
+            events.Add(new
+            {
+                title = "not booked",
+                start = date.ToString("yyyy-MM-dd"),
+                display = "background",
+
+                color = "green"
+            });
+        }
+
+     
+        return Json(events);
 
 
     }
+
+}
 }
