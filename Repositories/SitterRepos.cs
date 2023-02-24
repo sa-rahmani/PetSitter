@@ -221,7 +221,7 @@ namespace PetSitter.Repositories
                            join u in _db.Users on b.UserId equals u.UserId
                            join bp in _db.BookingPets on b.BookingId equals bp.BookingId
                            join p in _db.Pets on bp.PetId equals p.PetId
-                           where b.SitterId == sitter.SitterId
+                           where b.SitterId == sitterId
                            select new
                            {
                                b.StartDate,

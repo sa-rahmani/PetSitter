@@ -1,4 +1,6 @@
-﻿namespace PetSitter.ViewModels
+﻿using PetSitter.Models;
+
+namespace PetSitter.ViewModels
 {
     public class SitterAvailabilityVM
     {
@@ -6,8 +8,8 @@
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public List<DateTime>? AvailableDates { get; set; }
-        public List<DateTime>? BookedDates { get; set; }
+        public List<Availability>? AvailableDates { get; set; }
+        public List<Booking>? BookedDates { get; set; }
         public string? Message { get; set; }
 
     }
