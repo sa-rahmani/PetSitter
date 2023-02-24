@@ -16,3 +16,226 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+img{
+    max-width:100%;
+    height:auto;
+}
+
+.petsitterLogo {
+    width: 75px
+}
+
+#h1-pet {
+    color: dimgrey;
+}
+
+/*.wapper {
+    width: 980px;
+    margin: auto;
+}*/
+
+.wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+
+.storeTitle {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink:0;
+}
+
+.webBriefDescription {
+/*    width: 400px;
+    min-width: 400px;*/
+align-items:center;
+}
+.btn {
+    border: solid 1px red;
+    color: white;
+    background-color: red;
+    padding: 10px 30px;
+    border-radius: 20px;
+    text-decoration: none;
+}
+.petsitterBrief {
+/*    width: 500px;
+*/    width: 100%;
+    height: auto;
+}
+.adv {
+
+    justify-content: center;
+    margin-top:30px;
+    margin-bottom:30px;
+}
+.howItWorks {
+    height: auto;
+    background-color: lightpink;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    gap:20px;
+}
+.PicHowItWorks{
+    width:400px;
+}
+.PicHowItWorksimg {
+    width: 100%
+}
+li {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+}
+.wayOfHowItWorks{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding-left:30px;
+    padding-right:30px;
+}
+
+legend {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+
+    legend::before {
+        content: "1";
+        display: inline-block;
+        width: 2.3rem;
+        height: 2.3rem;
+        line-height: 2.3rem;
+        color: white;
+        background: #808080;
+        border-radius: 50%;
+        text-align: center;
+        vertical-align: middle;
+        margin: 0 8px 0 5px;
+        position: relative;
+        bottom: 0.1rem;
+    }
+
+li:nth-of-type(2) legend::before {
+    content: "2";
+}
+
+li:nth-of-type(3) legend::before {
+    content: "3";
+}
+.howItWorks p{
+    margin-left: 20px;
+}
+.getStartedbtn{
+    margin-bottom: 20px;
+}
+
+.wayToHireacceptProfessionalCleaner {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.hireAProfessionalCleaner {
+    /*    display: flex;
+    justify-content: space-between;
+    gap: 20px;*/
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px 80px;
+    justify-items: center;
+    place-items: center;
+}
+.item-a{
+    grid-column:1/2;
+    grid-row:1/2
+}
+.item-b {
+    grid-column: 1/2;
+    grid-row: 2/3;
+}
+.item-c {
+    grid-column: 1/2;
+    grid-row: 3/4;
+}
+
+.item-d {
+    grid-column: 2/3;
+    grid-row: 1/2
+}
+
+.item-e {
+    grid-column: 2/3;
+    grid-row: 2/3;
+}
+
+.item-f {
+    grid-column: 2/3;
+    grid-row: 3/4;
+}
+
+
+.item-g {
+    grid-column: 3/4;
+    grid-row: 1/2
+}
+
+.item-h {
+    grid-column: 3/4;
+    grid-row: 2/3;
+}
+
+.item-i {
+    grid-column: 3/4;
+    grid-row: 3/4;
+}
+
+
+
+.FindPetSitter {
+    height: auto;
+    background-color: lightpink;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding:20px;
+}
+
+
+@media (max-width: 600px) {
+    .wayOfHowItWorks {
+        flex-direction: column
+    }
+
+    .hireAProfessionalCleaner {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        margin-left: 100px;
+        margin-right: 100px;
+    }
+        .hireAProfessionalCleaner img {
+            object-fit: cover;
+            align-self: center;
+        }
+
+    .medialocation, .mediaHireYouTerm, .mediaPersonalized {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+}
+
