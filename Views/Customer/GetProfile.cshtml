@@ -10,7 +10,7 @@
         <h2>Hello @Html.DisplayFor(model => model.FirstName)!</h2>
         <h3>
             Explore your profile and click
-            <a asp-action="EditProfile" asp-route-id="@Model.UserId">
+            <a asp-action="EditProfile" asp-route-id="@Model.CustomerId">
                 <span class="material-symbols-outlined">
                     account_box
                 </span>
@@ -111,14 +111,11 @@
                 <tr>
                     <td class="d-flex justify-content-between">
                         <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
-
                         <div>
                             <a asp-action="EditPet" asp-route-id="@pet.PetId">
                                 <span class="material-symbols-outlined edit">edit</span>
                             </a>
-
-                            <a data-id="@pet.PetId" data-controller="Customer" data-action="DeletePet"
-                           data-body-message="Are you sure to delete this pet?">
+                            <a class="btn-delete" data-id="@pet.PetId" data-controller="Customer" data-action="DeletePet" data-body-message="Are you sure to delete this pet?">
                                 <span class="material-symbols-outlined delete">delete</span>
                             </a>
                         </div>

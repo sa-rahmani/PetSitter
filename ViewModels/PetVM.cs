@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetSitter.ViewModels
 {
@@ -14,5 +15,8 @@ namespace PetSitter.ViewModels
         public string PetType { get; set; }
 
         public IFormFile? PetImage { get; set; }
+
+        public List<string> AvailableSizes { get; set; }
+
     }
 }

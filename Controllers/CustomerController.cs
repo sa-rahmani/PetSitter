@@ -80,7 +80,12 @@ namespace PetSitter.Controllers
         {
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
 
-            return View();
+            PetVM vm = new PetVM()
+            {
+                AvailableSizes = new List<string>() { "0-15lb", "15lb-40lb", "40lb-70lb", "70lb-100lb", "100lb-150lb", "150lb-" }
+            };
+
+            return View(vm);
         }
 
         [HttpPost]
@@ -123,6 +128,7 @@ namespace PetSitter.Controllers
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
             PetVM vm = petRepo.GetPetEditRecord(id, customerID);
+            vm.AvailableSizes = new List<string>() { "0-15lb", "15lb-40lb", "40lb-70lb", "70lb-100lb", "100lb-150lb", "150lb-" };
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
             ViewData["PetData"] = petRepo.GetPetData(id);
