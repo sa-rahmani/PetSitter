@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PetSitter.Data;
 using PetSitter.Models;
@@ -14,10 +15,12 @@ namespace PetSitter.Repositories
     public class SitterRepos
     {
         private readonly PetSitterContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public SitterRepos(PetSitterContext db)
+        public SitterRepos(PetSitterContext db, IWebHostEnvironment webHostEnvironment)
         {
             _db = db;
+            _webHostEnvironment = webHostEnvironment;
         }
         public List<string> getPetTypes()
         {
@@ -39,6 +42,11 @@ namespace PetSitter.Repositories
                           select s).FirstOrDefault();
             return sitter;
         }
+        public void AddSiter(Sitter sitter)
+        {
+            _db.Sitters.Add(sitter);
+            _db.SaveChanges();
+        }
         public User getUser(int? userId)
         {
             var user = (from u in _db.Users
@@ -46,13 +54,22 @@ namespace PetSitter.Repositories
                         select u).FirstOrDefault();
             return user;
         }
-        public SitterProfileVM GetSitterByEmail(string email)
+        public Sitter GetSitterByEmail(string email)
+        {
+            var sitter = _db.Sitters.Where(s => s.User.Email == email).FirstOrDefault();
+
+            return sitter;
+        }
+        public SitterProfileVM GetSitterById(int sitterId)
         {
             var sitter = (from u in _db.Users
                           from s in _db.Sitters
-                          from p in s.PetTypes
-                          where u.Email == email
-                          select new {
+
+                          where s.SitterId == sitterId
+                          && s.UserId == u.UserId
+                          select new
+                          {
+
                               SitterId = s.SitterId,
                               UserId = u.UserId,
                               FirstName = u.FirstName,
@@ -93,6 +110,8 @@ namespace PetSitter.Repositories
         }
         public Tuple<int, string> EditSitter(SitterProfileVM sitterProfileVM)
         {
+            string stringFileName = UploadCustomerFile(sitterProfileVM);
+
             List<string> petTypeSitter = getPetTypeSitter(sitterProfileVM.SitterId).Select(p => p.PetType1).ToList();
             PetType petTypeObj = null;
 
@@ -108,7 +127,11 @@ namespace PetSitter.Repositories
                 StreetAddress = sitterProfileVM.StreetAddress,
                 Email = sitterProfileVM.Email,
                 PhoneNumber = sitterProfileVM.PhoneNumber,
-                UserType = sitterProfileVM.UserType
+                UserType = sitterProfileVM.UserType,
+
+                ProfileImage = stringFileName
+
+
 
 
             };
@@ -172,62 +195,33 @@ namespace PetSitter.Repositories
 
             return Tuple.Create(sitterObj.SitterId, message);
         }
-        public Tuple<int, string> DeleteProfile(SitterProfileVM sitterProfileVM)
+        private string UploadCustomerFile(SitterProfileVM sitterProfileVM)
         {
-            string message = String.Empty;
-            Sitter sitter = getSitterById(sitterProfileVM.SitterId);
-            User user = getUser(sitter.UserId);
-            PetType petType = getPetTypeSitter(sitterProfileVM.SitterId).FirstOrDefault();
-            // ClientAccountRepo clientAccountRepo = new ClientAccountRepo(_context);
-            // ClientAccount clientAccount = clientAccountRepo.GetClientAccount(bankAccountVM.AccountNum);
-            try
+            string fileName = null;
+            if (sitterProfileVM.ProfileImage != null)
             {
-                //foreach (var p in petType) {
+                string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+                fileName = Guid.NewGuid().ToString() + "_" + sitterProfileVM.ProfileImage.FileName;
+                string filePath = Path.Combine(uploadDir, fileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    sitterProfileVM.ProfileImage.CopyTo(fileStream);
+                }
 
-
-                //sitter.PetTypes.Remove(petType);
-
-
-                // }
-                // _db.SaveChanges();
-
-                _db.Sitters.Remove(sitter);
-
-                _db.Users.Remove(user);
-
-                _db.SaveChanges();
-
-                //bankAccount = new BankAccount
-                //{
-                //    AccountNum = bankAccountVM.AccountNum,
-                //    AccountType = bankAccountVM.AccountType,
-                //    Balance = bankAccountVM.Balance
-                //};
-
-                //  _context.ClientAccounts.Remove(clientAccount);
-                // _context.BankAccounts.Remove(bankAccount);
-                //_context.SaveChanges();
-
-                message = $"your account sitter Id:  {sitterProfileVM.SitterId}  deleted successfully";
             }
-            catch (Exception e)
-            {
-                sitterProfileVM.SitterId = -1;
-                message = $"Error deleting your bankAccount, error: {e.Message} ";
-            }
-
-            return Tuple.Create(sitterProfileVM.SitterId, message);
+            return fileName;
         }
-        public List<SitterDashboardVM> GetBooking(string email)
+
+        public List<SitterDashboardVM> GetBooking(int sitterId)
         {
-            SitterProfileVM sitter = GetSitterByEmail(email);
+            SitterProfileVM sitter = GetSitterById(sitterId);
 
             var bookings = from b in _db.Bookings
                            join s in _db.Sitters on b.SitterId equals s.SitterId
                            join u in _db.Users on b.UserId equals u.UserId
                            join bp in _db.BookingPets on b.BookingId equals bp.BookingId
                            join p in _db.Pets on bp.PetId equals p.PetId
-                           where b.SitterId == sitter.SitterId
+                           where b.SitterId == sitterId
                            select new
                            {
                                b.StartDate,
@@ -244,7 +238,9 @@ namespace PetSitter.Repositories
             int complete = 0;
             int upComing = 0;
             int reviews = (from b in _db.Bookings
-                           where b.SitterId == 1 && b.Review != null
+
+                           where b.SitterId == sitterId && b.Review != null
+
                            select b.Review).Count();
             foreach (var b in bookings)
             {
@@ -326,6 +322,44 @@ namespace PetSitter.Repositories
 
             return vm;
 
+        }
+        public Tuple<int, string> AddAvailability(SitterAvailabilityVM availabilityVM)
+
+        {
+            Availability availability = new Availability
+            {
+                StartDate = availabilityVM.StartDate,
+                EndDate = availabilityVM.EndDate
+
+            };
+            string message = String.Empty;
+
+            try
+            {
+                // Add the availability to the database
+                _db.Availabilities.Add(availability);
+                _db.SaveChanges();
+
+                // Get the current sitter and add the availability to their list of availabilities
+                var currentSitter = _db.Sitters.Include(s => s.Availabilities).FirstOrDefault(s => s.SitterId == availabilityVM.SitterId);
+                currentSitter.Availabilities.Add(availability);
+                _db.SaveChanges();
+
+
+                message = $"Success adding new availability";
+
+            }
+            catch (Exception e)
+            {
+                availability.AvailabilityId = -1;
+
+                message = e.Message + " "
+    + "The sitter account may not exist or "
+    + "there could be a foreign key restriction.";
+
+            }
+
+            return Tuple.Create(availability.AvailabilityId, message);
         }
 
     }

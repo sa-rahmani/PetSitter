@@ -73,21 +73,21 @@ img{
     color: var(--gray-500);
 }
 
-table a{
-    font-size:0.8rem;
+.profile-container table a {
+    font-size: 0.8rem;
 }
 
-table td{
+.profile-container table td {
     display: flex;
     align-items: center;
 }
 
-table .edit{
+.profile-container table .edit {
     margin-right: 10px;
     color: var(--indigo-500)
 }
 
-table .delete{
+.profile-container table .delete {
     color: var(--red-500);
     cursor: pointer;
 }
