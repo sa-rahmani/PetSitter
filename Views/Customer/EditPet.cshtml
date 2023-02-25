@@ -60,21 +60,28 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="PetSize" class="control-label"></label>
-                    <input asp-for="PetSize" class="form-control" />
-                    <span asp-validation-for="PetSize" class="text-danger"></span>
+                    <select asp-for="PetSize" asp-items="@(new SelectList(Model.AvailableSizes))" class="form-control"></select>
                 </div>
+
               </div>
     
             <div class="row">
                 <div class="form-group">
                     <label asp-for="BirthYear" class="control-label"></label>
-                    <input asp-for="BirthYear" class="form-control" />
+                    <select asp-for="BirthYear" class="form-control">
+                        <option value="">--Select Year--</option>
+                        @for (int year = DateTime.Now.Year; year >= 2002; year--)
+                        {
+                            <option value="@year">@year</option>
+                        }
+                    </select>
                     <span asp-validation-for="BirthYear" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="Sex" class="control-label"></label>
-                    <input asp-for="Sex" class="form-control" />
-                    <span asp-validation-for="Sex" class="text-danger"></span>
+                    <input asp-for="Sex" type="radio" id="f" value="F" />
+                    <label for="f">F</label>
+                    <input asp-for="Sex" type="radio" id="m" value="M" />
+                    <label for="m">M</label>
                 </div>
                 <div class="form-group">
                     <label asp-for="Instructions" class="control-label"></label>

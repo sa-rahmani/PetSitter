@@ -10,7 +10,7 @@
     <div class="col-md-4">
         <form asp-action="EditProfile" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="UserId"/>
+            <input type="hidden" asp-for="CustomerId" />
             <input type="hidden" asp-for="UserType"/>
 @*            <input type="hidden" asp-for="PetId"/>
 *@           <div class="row profile-pic">
@@ -64,7 +64,7 @@
             </div>
             <div class="row">
                 <h3>ADD PET</h3>
-                 <a asp-action="CreatePet" asp-route-id="@Model.UserId" class="text-decoration-none">Add a pet</a>
+                <a asp-action="CreatePet" asp-route-id="@Model.CustomerId" class="text-decoration-none">Add a pet</a>
             </div>
             <div class="form-group mt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />

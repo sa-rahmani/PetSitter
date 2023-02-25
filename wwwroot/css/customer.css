@@ -89,6 +89,14 @@ img{
 
 .profile-container table .delete {
     color: var(--red-500);
+    cursor: pointer;
 }
 
 /* End of GetProfile.cshtml */
+
+
+/*Start of GetPet.cshtml*/
+
+.getpet-container{
+
+}
