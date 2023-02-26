@@ -134,7 +134,12 @@ namespace PetSitter.Areas.Identity.Pages.Account
 
                     HttpContext.Session.SetString("UserName", customerID.FirstName);
                     HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
-                    HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
+
+                    // This code will prevent error from login as customer
+                    if (sitterID != null)
+                    {
+                        HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
+                    }
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

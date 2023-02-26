@@ -129,7 +129,12 @@ namespace PetSitter.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Account Type")]
             public string UserType { get; set; }
- 
+            [Display(Name = "Profile Bio")]
+            public string? ProfileBio { get; set; }
+
+            [Display(Name = "Rate Per Pet Per Day")]
+            [Range(0, double.MaxValue, ErrorMessage = "Rate must be a positive number.")]
+            public decimal? RatePerPetPerDay { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -149,9 +154,6 @@ namespace PetSitter.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
-
-
         }
 
 
@@ -198,35 +200,42 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         PostalCode = Input.PostalCode,
                         StreetAddress = Input.StreetAddress,
                         UserType = Input.UserType,
-
                     };
-
-
-                    CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
-                    customerRepo.AddUser(newUser);
-
-                    var customerID = customerRepo.GetCustomerId(Input.Email);
-                    SitterRepos sitterRepos = new SitterRepos(_context, webHostEnvironment);
 
                     if (newUser.UserType == "Sitter")
                     {
+                        SitterRepos sitterRepos = new SitterRepos(_context, webHostEnvironment);
+                        CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
+
+                        customerRepo.AddUser(newUser);
+
+                        var customerID = customerRepo.GetCustomerId(Input.Email);
+
                         Sitter newSitter = new Sitter()
                         {
                             UserId = customerID.UserId,
-                            RatePerPetPerDay = 200,
-
+                            ProfileBio = Input.ProfileBio,
+                            RatePerPetPerDay = Input.RatePerPetPerDay
 
                         };
-                        sitterRepos.AddSiter(newSitter);
+
                         var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
+                    var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
+                        HttpContext.Session.SetString("UserName", customerID.FirstName);
+                        HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
                         HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
-
-
                     }
+                    else if (newUser.UserType == "Customer")
+                    {
+                        CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
+                        customerRepo.AddUser(newUser);
+                        var customerID = customerRepo.GetCustomerId(Input.Email);
 
-
-                    HttpContext.Session.SetString("UserName", customerID.FirstName);
-                    HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
+                        HttpContext.Session.SetString("UserName", customerID.FirstName);
+                        HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
+                    }
+                    // usertype == 'admin' can go here this will make more clean code structure in terms of user roles
+                    HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
 
                     _logger.LogInformation("User created a new account with password.");
 

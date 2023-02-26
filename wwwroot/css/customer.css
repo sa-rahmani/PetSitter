@@ -92,6 +92,10 @@ img{
     cursor: pointer;
 }
 
+.pet-lists i{
+    margin-right: 8px;
+}
+
 /* End of GetProfile.cshtml */
 
 
@@ -99,4 +103,59 @@ img{
 
 .getpet-container{
 
+}
+
+/*Start of CreatePet.cshtml*/
+.hidden-radio {
+    position: absolute;
+    opacity: 0;
+}
+
+.radio-icon {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+label[for="dog"]{
+    margin-right: 4em;
+}
+
+label[for="dog"], label[for="cat"] {
+    border: 3px solid lightgray;
+    padding: 10px;
+}
+
+
+.radio-icon:hover .radio-circle {
+    border-color: var(--indigo-500);
+}
+
+.radio-icon:hover i {
+    color: var(--indigo-500);
+}
+
+input[type="radio"]:checked + .radio-icon .radio-circle {
+    border-color: var(--indigo-500);
+}
+
+input[type="radio"]:checked + .radio-icon i {
+    color: var(--indigo-500);
+}
+
+
+
+/*Start of EditPet.cshtml*/
+
+.pet-image img {
+    width: 200px;
+    max-height: 230px;
+    padding: 10px;
+    margin-top: 10px;
+    position: relative;
+    right: 10px;
+    border-radius: 10%;
 }
