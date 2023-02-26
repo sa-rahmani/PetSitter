@@ -22,7 +22,7 @@ using Microsoft.Extensions.Logging;
 using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
-using PetSitter.ViewModels;
+using static PetSitter.Services.ReCAPTCHA;
 
 namespace PetSitter.Areas.Identity.Pages.Account
 {
@@ -37,6 +37,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
         private readonly PetSitterContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -46,7 +47,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             IEmailSender emailSender,
             PetSitterContext context,
             IWebHostEnvironment webHost,
-            IEmailService emailService)
+            IEmailService emailService,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -57,6 +59,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             _context = context;
             webHostEnvironment = webHost;
             _emailService= emailService;
+            _configuration = configuration;
+
         }
 
         /// <summary>
@@ -157,12 +161,25 @@ namespace PetSitter.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            string captchaResponse = Request.Form["g-Recaptcha-Response"];
+            string secret = _configuration["Recaptcha:SecretKey"];
+            ReCaptchaValidationResult resultCaptcha =
+                ReCaptchaValidator.IsValid(secret, captchaResponse);
+
+            // Invalidate the form if the captcha is invalid.
+            if (!resultCaptcha.Success)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "The ReCaptcha is invalid.");
+            }
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -199,11 +216,11 @@ namespace PetSitter.Areas.Identity.Pages.Account
                             UserId = customerID.UserId,
                             ProfileBio = Input.ProfileBio,
                             RatePerPetPerDay = Input.RatePerPetPerDay
+
                         };
-                        sitterRepos.AddSiter(newSitter);
 
                         var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
-
+                    var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
                         HttpContext.Session.SetString("UserName", customerID.FirstName);
                         HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
                         HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
@@ -218,6 +235,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
                     }
                     // usertype == 'admin' can go here this will make more clean code structure in terms of user roles
+                    HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
 
                     _logger.LogInformation("User created a new account with password.");
 
