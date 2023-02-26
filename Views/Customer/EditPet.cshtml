@@ -34,25 +34,32 @@
                     else
                     {
 
-                        <dd>
-                            <img src="~/images/@pet.PetImage" class="rounded-circle" width="200" height="140" asp-append-version="true" />
+                        <dd class="pet-image">
+                            <img src="~/images/@pet.PetImage" asp-append-version="true" />
                         </dd>
                     }
                 }
             </div>
-            <div class="row">
-                <h4>What type of pet?</h4>
-                <div class="form-group">
-                    <div class="form-group">
-                        <input asp-for="PetType" type="radio" id="dog" value="Dog" />
-                        <label for="dog">Dog</label>
-                        <input asp-for="PetType" type="radio" id="cat" value="Cat" />
-                        <label for="cat">Cat</label>
-                    </div>
-                </div>
-             </div>
 
-              <div class="row">
+            <div class="form-group mt-4 mb-4">
+                <p class="m-0">Pet Type</p>
+                <label for="dog" class="radio-label">
+                    <input asp-for="PetType" type="radio" value="Dog" id="dog" class="hidden-radio" />
+                    <span class="radio-icon">
+                        <i class="fas fa-dog fa-4x"></i>
+                        <span class="radio-circle"></span>
+                    </span>
+                </label>
+                <label for="cat" class="radio-label">
+                    <input asp-for="PetType" type="radio" value="Cat" id="cat" class="hidden-radio" />
+                    <span class="radio-icon">
+                        <i class="fas fa-cat fa-4x"></i>
+                        <span class="radio-circle"></span>
+                    </span>
+                </label>
+            </div>
+
+            <div class="row">
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
                     <input asp-for="Name" class="form-control" />

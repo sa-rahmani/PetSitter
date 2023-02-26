@@ -108,9 +108,21 @@
             </tr>
             @foreach (Pet pet in pets)
             {
-                <tr>
+                <tr class="pet-lists">
                     <td class="d-flex justify-content-between">
-                        <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
+                        @if(@pet.PetType == "Dog"){
+                            <div>
+                                <i class="fa-solid fa-dog"></i>
+                                <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <i class="fa-solid fa-cat"></i>
+                                <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
+                            </div>
+                        }
                         <div>
                             <a asp-action="EditPet" asp-route-id="@pet.PetId">
                                 <span class="material-symbols-outlined edit">edit</span>
