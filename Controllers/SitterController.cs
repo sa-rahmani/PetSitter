@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
+using SendGrid;
 using System.Drawing.Drawing2D;
 using System.Linq;
 
@@ -29,6 +30,10 @@ namespace PetSitter.Controllers
 
 
         }
+        /// <summary>
+        /// get  bookings  list 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Dashboard()
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
@@ -42,6 +47,11 @@ namespace PetSitter.Controllers
 
             return View(bookings);
         }
+        /// <summary>
+        /// get details of booking with pet parent informatins
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IActionResult Details(int id)
         {
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
@@ -50,10 +60,14 @@ namespace PetSitter.Controllers
             return View(booking);
         }
 
+        /// <summary>
+        /// get all sitter information 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public IActionResult Profile(string message)
         {
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
-            //SitterProfileVM sitterProfileVM = sitterRepos.GetSitterByEmail(User.Identity.Name);
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
 
             int userID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
@@ -66,6 +80,10 @@ namespace PetSitter.Controllers
             sitterProfileVM.Message = message;
             return View(sitterProfileVM);
         }
+        /// <summary>
+        /// edit sitter profile
+        /// </summary>
+        /// <returns></returns>
         public IActionResult EditProfile()
         {
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
@@ -106,37 +124,18 @@ namespace PetSitter.Controllers
 
             return View(sitterProfileVM);
         }
-
+        /// <summary>
+        /// add new availability and view all booked and not booked day 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Availability()
         {
             // Get the logged in sitter ID
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
             SitterAvailabilityVM vm = new SitterAvailabilityVM();
-
             // Set the sitter ID for the view model
             vm.SitterId = sitterID;
-
-            // Get the booked dates for the sitter from the Booking table
-            //var bookings = _db.Bookings
-            //    .Where(s => s.SitterId == sitterID).ToList();
-            //var availabilities = (from s in _db.Sitters
-            //                      from a in s.Availabilities
-            //                      where s.SitterId == sitterID
-            //                      select a).ToList();
-            //vm.BookedDates = bookings;
-            //List<Availability> bookingsdates = new List<Availability>();
-            //foreach(var b in bookings) {
-
-            //    bookingsdates.Add(new Availability
-            //    {
-            //        StartDate = b.StartDate,
-            //        EndDate = b.EndDate
-            //    });
-            //}
-
-            //vm.AvailableDates = availabilities.Except(bookingsdates).ToList();
-            
             return View(vm);
 
 
@@ -151,9 +150,9 @@ namespace PetSitter.Controllers
             // Check if the model is valid
             if (ModelState.IsValid)
             {
-                SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
-                Tuple<int, string> response = sitterRepos.AddAvailability(availability);
-                if (response.Item1 < 0)
+                AvailabilityRepo availabilityRepo = new AvailabilityRepo(_db);
+                Tuple<int, string> response = availabilityRepo.AddAvailability(availability);
+                if (response.Item1 <= 0)
                 {
                     availability.Message = response.Item2;
                 }
@@ -167,75 +166,62 @@ namespace PetSitter.Controllers
             return View(availability);
 
         }
-   
+        /// <summary>
+        /// get the booked and not booked as json result
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult GetEvents()
+        {
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            AvailabilityRepo availabilityRepo = new AvailabilityRepo(_db);
 
-    public JsonResult GetEvents()
-    {
-        int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
+            var bookings = bookingRepo.GetBookingsBySitter(sitterID);
+            var availabilities = availabilityRepo.GetAvailabilities(sitterID);
 
-        var bookings = _db.Bookings
-         .Where(s => s.SitterId == sitterID).ToList();
-        var availabilities = (from s in _db.Sitters
-                                  from a in s.Availabilities
-                                  where s.SitterId == sitterID
-                                  select a).ToList();
+            var events = new List<object>();
 
-
-
-
-         var events = new List<object>();
-        var bookedDates=new List<DateTime>();
+            var bookedDates = bookingRepo.GetBookedDates(bookings);
             //Add bookings as events
-            foreach (var booking in bookings)
-            {
-                for (DateTime date = (DateTime)booking.StartDate; date <= (DateTime)booking.EndDate; date = date.AddDays(1))
-                {
-                    bookedDates.Add(date);
-                }
-            }
-                foreach (var date in bookedDates)
-                {
 
+            foreach (var date in bookedDates)
+            {
+                if (date >= DateTime.Now)
+                {
                     events.Add(new
                     {
                         title = "booked",
                         start = date.ToString("yyyy-MM-dd"),
                         display = "background",
-
                         color = "red"
                     });
                 }
-            
-                var availableDates = new List<DateTime>();
-                //Add bookings as events
-                foreach (var a in availabilities)
+            }
+
+            var availableDates = availabilityRepo.GetAvailableDates(availabilities);
+            var notBooked = availableDates.Except(bookedDates);
+            // Add bookings as events
+            foreach (var date in notBooked)
+            {
+                if (date >= DateTime.Now)
                 {
-                for (DateTime date = (DateTime)a.StartDate; date <= (DateTime)a.EndDate; date = date.AddDays(1))
-                {
-                    availableDates.Add(date);
+                    events.Add(new
+                    {
+                        title = "not booked",
+                        start = date.ToString("yyyy-MM-dd"),
+                        display = "background",
+
+                        color = "green"
+                    });
                 }
             }
 
-                var notBooked = availableDates.Except(bookedDates);
-                    // Add bookings as events
-                    foreach (var date in notBooked)
-        {
-            events.Add(new
-            {
-                title = "not booked",
-                start = date.ToString("yyyy-MM-dd"),
-                display = "background",
 
-                color = "green"
-            });
+            return Json(events);
+
+
         }
 
-     
-        return Json(events);
-
-
     }
-
-}
 }
