@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
+using static PetSitter.Services.ReCAPTCHA;
 
 namespace PetSitter.Areas.Identity.Pages.Account
 {
@@ -36,6 +37,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
         private readonly PetSitterContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -45,7 +47,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             IEmailSender emailSender,
             PetSitterContext context,
             IWebHostEnvironment webHost,
-            IEmailService emailService)
+            IEmailService emailService,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -56,6 +59,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             _context = context;
             webHostEnvironment = webHost;
             _emailService= emailService;
+            _configuration = configuration;
+
         }
 
         /// <summary>
@@ -154,12 +159,25 @@ namespace PetSitter.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            string captchaResponse = Request.Form["g-Recaptcha-Response"];
+            string secret = _configuration["Recaptcha:SecretKey"];
+            ReCaptchaValidationResult resultCaptcha =
+                ReCaptchaValidator.IsValid(secret, captchaResponse);
+
+            // Invalidate the form if the captcha is invalid.
+            if (!resultCaptcha.Success)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "The ReCaptcha is invalid.");
+            }
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
