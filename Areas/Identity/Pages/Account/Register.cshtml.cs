@@ -214,8 +214,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         Sitter newSitter = new Sitter()
                         {
                             UserId = customerID.UserId,
-                            ProfileBio = Input.ProfileBio,
-                            RatePerPetPerDay = Input.RatePerPetPerDay
+                            RatePerPetPerDay = 200
 
                         };
                         sitterRepos.AddSiter(newSitter);
