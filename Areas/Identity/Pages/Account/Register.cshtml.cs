@@ -129,12 +129,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Account Type")]
             public string UserType { get; set; }
-            [Display(Name = "Profile Bio")]
-            public string? ProfileBio { get; set; }
-
-            [Display(Name = "Rate Per Pet Per Day")]
-            [Range(0, double.MaxValue, ErrorMessage = "Rate must be a positive number.")]
-            public decimal? RatePerPetPerDay { get; set; }
+            
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
