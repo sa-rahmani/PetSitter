@@ -218,9 +218,9 @@ namespace PetSitter.Areas.Identity.Pages.Account
                             RatePerPetPerDay = Input.RatePerPetPerDay
 
                         };
+                        sitterRepos.AddSiter(newSitter);
 
                         var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
-                    var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
                         HttpContext.Session.SetString("UserName", customerID.FirstName);
                         HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
                         HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
@@ -235,7 +235,6 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
                     }
                     // usertype == 'admin' can go here this will make more clean code structure in terms of user roles
-                    HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
 
                     _logger.LogInformation("User created a new account with password.");
 
