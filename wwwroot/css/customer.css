@@ -73,7 +73,8 @@ img{
     color: var(--gray-500);
 }
 
-table a{
+/* commented out in lauren branch bc currently conflicting with my pages */
+/*table a{
     font-size:0.8rem;
 }
 
@@ -89,6 +90,6 @@ table .edit{
 
 table .delete{
     color: var(--red-500);
-}
+}*/
 
 /* End of GetProfile.cshtml */
