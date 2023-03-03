@@ -9,7 +9,7 @@
 <div>
     <hr />
     <div>
-        <a asp-action="Edit" asp-route-clientID="@Model.BookingId">Edit Booking</a>
+        <a asp-action="Edit" asp-route-bookingId="@Model.BookingId">Edit Booking</a>
     </div>
     <dl class="row">
         <dt class = "col-sm-2">
@@ -127,7 +127,7 @@
                     },
 
                     error: function (msg) {
-                        alert("fail: " + JSON.stringify(msg));
+                        alert("Payment failed! Please try again.");
                     }
                 });
             })

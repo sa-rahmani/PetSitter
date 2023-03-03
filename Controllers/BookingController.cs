@@ -24,13 +24,25 @@ namespace PetSitter.Controllers
 
         public IActionResult ViewMyBookings()
         {
-            // temp use of const user id
-            const int USERID = 3;
+            // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
+            int userId = 3;
+            
+            if (HttpContext.Session.GetString("UserID") != null) {
+                userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            }
 
             BookingRepo bookingRepo = new BookingRepo(_db);
-            List<BookingVM> myBookings = bookingRepo.GetBookingVMsByUserId(USERID);
+            List<BookingVM> myBookings = bookingRepo.GetBookingVMsByUserId(userId);
 
             return View(myBookings);
+        }
+
+        public IActionResult BookingDetails(int bookingID)
+        {
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingVM booking = bookingRepo.GetBookingVM(bookingID);
+
+            return View(booking);
         }
 
         public IActionResult FindASitter(int? page)
@@ -60,10 +72,16 @@ namespace PetSitter.Controllers
             BookingFormVM booking = new BookingFormVM();
             booking.SitterId= sitterID;
 
-            // temporary values while developing
-            int userID = 3;
+            // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
+            int userId = 3;
+
+            if (HttpContext.Session.GetString("UserID") != null)
+            {
+                userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            }
+
             BookingRepo bookingRepo = new BookingRepo(_db);
-            List<BookingPetVM> pets = bookingRepo.GetBookingPetVMsByUserId(userID);
+            List<BookingPetVM> pets = bookingRepo.GetBookingPetVMsByUserId(userId);
             booking.Pets = pets;
 
             return View(booking);
@@ -84,14 +102,19 @@ namespace PetSitter.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    // temporary values while developing
+                    // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
                     int userId = 3;
+
+                    if (HttpContext.Session.GetString("UserID") != null)
+                    {
+                        userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+                    }
 
                     // Create booking
                     int bookingId = bookingRepo.Create(bookingForm, userId);
 
-                    // Redirect to confirmation page
-                    return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+                    // Redirect to confirmation and payment page
+                    return RedirectToAction("ConfirmBooking", "Booking", new { bookingId });
                 }
             } else
             {
@@ -153,15 +176,7 @@ namespace PetSitter.Controllers
         {
             BookingRepo bookingRepo = new BookingRepo(_db);
             IPN completeIPN = bookingRepo.AddTransaction(ipn);
-            return Json(ipn);
-        }
-
-        public IActionResult BookingDetails(int bookingID)
-        {
-            BookingRepo bookingRepo = new BookingRepo(_db);
-            BookingVM booking = bookingRepo.GetBookingVM(bookingID);
-
-            return View(booking);
+            return Json(completeIPN);
         }
 
         
