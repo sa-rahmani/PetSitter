@@ -35,13 +35,13 @@ namespace PetSitter.Repositories
             return petTypeSitter;
 
         }
-        public Sitter getSitterById(int sitterId)
-        {
-            var sitter = (from s in _db.Sitters
-                          where s.SitterId == sitterId
-                          select s).FirstOrDefault();
-            return sitter;
-        }
+        //public Sitter getSitterById(int sitterId)
+        //{
+        //    var sitter = (from s in _db.Sitters
+        //                  where s.SitterId == sitterId
+        //                  select s).FirstOrDefault();
+        //    return sitter;
+        //}
         //Add new sitter
         public void AddSiter(Sitter sitter)
         {

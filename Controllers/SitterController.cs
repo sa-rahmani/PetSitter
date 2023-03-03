@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using GoogleMaps.LocationServices;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -52,10 +53,19 @@ namespace PetSitter.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IActionResult Details(int id)
+        public  IActionResult Details(int id)
         {
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
+
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
+            SitterProfileVM sitter = sitterRepos.GetSitterById(sitterID);
             SitterDashboardVM booking = sitterRepos.GetBookingDetails(id);
+            var locationService = new GoogleLocationService("AIzaSyCjk4Fk0czwcKDngFVd6iWNOm0A_o1VRzE");
+            string customerAddress = $"{booking.user.StreetAddress}, {booking.user.City}, {booking.user.PostalCode}";
+            string sitterAddress = $"{sitter.StreetAddress}, {sitter.City}, {sitter.PostalCode}";
+
+            booking.PointCustomer = locationService.GetLatLongFromAddress(customerAddress);
+            booking.PointSitter = locationService.GetLatLongFromAddress(sitterAddress);
 
             return View(booking);
         }
