@@ -1,30 +1,45 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
+using SendGrid;
 using System.Drawing.Drawing2D;
+using System.Linq;
 
 namespace PetSitter.Controllers
 {
     public class SitterController : Controller
     {
         private readonly PetSitterContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<CustomerController> _logger;
+
 
         public static int clientID;
-        public SitterController(PetSitterContext db)
+        public SitterController(ILogger<CustomerController> logger, PetSitterContext db, IWebHostEnvironment webHost)
         {
             _db = db;
+            _logger = logger;
+            _webHostEnvironment = webHost;
 
 
         }
+        /// <summary>
+        /// get  bookings  list 
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Dashboard()
         {
-            SitterRepos sitterRepos = new SitterRepos(_db);
-            IEnumerable<SitterDashboardVM> bookings = sitterRepos.GetBooking(User.Identity.Name);
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
+
+            SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
+            IEnumerable<SitterDashboardVM> bookings = sitterRepos.GetBooking(sitterID);
             ViewData["UpComing"] = bookings.Select(b => b.upComingNbr).LastOrDefault();
             ViewData["Complete"] = bookings.Select(b => b.completeNbr).LastOrDefault();
             ViewData["Reviews"] = bookings.Select(b => b.reviewsNbr).LastOrDefault();
@@ -32,29 +47,62 @@ namespace PetSitter.Controllers
 
             return View(bookings);
         }
+        /// <summary>
+        /// get details of booking with pet parent informatins
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IActionResult Details(int id)
         {
-            SitterRepos sitterRepos = new SitterRepos(_db);
+            SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
             SitterDashboardVM booking = sitterRepos.GetBookingDetails(id);
 
             return View(booking);
         }
 
+        /// <summary>
+        /// get all sitter information 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public IActionResult Profile(string message)
         {
-            SitterRepos sitterRepos = new SitterRepos(_db);
-            SitterProfileVM sitterProfileVM = sitterRepos.GetSitterByEmail(User.Identity.Name);
-            //sitterProfileVM.PetTypesAvailable = sitterRepos.getPetTypes();
-            //sitterProfileVM.SelectedPetTypes = sitterRepos.getPetTypeSitter(sitterProfileVM.SitterId).Select(p => p.PetType1).ToList();
+            SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
+            ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            int userID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            ViewData["UserProfileImg"] = sitterRepos.getUser(userID);
+
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
+
+            SitterProfileVM sitterProfileVM = sitterRepos.GetSitterById(sitterID);
+
             sitterProfileVM.Message = message;
             return View(sitterProfileVM);
         }
-        [HttpPost]
-        public IActionResult Profile(SitterProfileVM sitterProfileVM)
+        /// <summary>
+        /// edit sitter profile
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult EditProfile()
         {
-                sitterProfileVM.Message = "Invalid entry please try again";
-           
-            SitterRepos sitterRepos = new SitterRepos(_db);
+            SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
+            int userID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
+
+            SitterProfileVM vm = sitterRepos.GetSitterById(sitterID);
+
+            ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            return View(vm);
+        }
+        [HttpPost]
+        public IActionResult EditProfile(SitterProfileVM sitterProfileVM)
+        {
+            sitterProfileVM.Message = "Invalid entry please try again";
+
+            SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
 
 
             if (ModelState.IsValid)
@@ -73,46 +121,107 @@ namespace PetSitter.Controllers
                     return RedirectToAction("Profile", "Sitter", new { message = response.Item2 });
                 }
             }
-            //sitterProfileVM.PetTypesAvailable = sitterRepos.getPetTypes();
-
-            //sitterProfileVM.SelectedPetTypes = sitterRepos.getPetTypeSitter(sitterProfileVM.SitterId).Select(p => p.PetType1).ToList();
 
             return View(sitterProfileVM);
         }
-
-        public IActionResult Delete(int id)
+        /// <summary>
+        /// add new availability and view all booked and not booked day 
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult Availability()
         {
-            SitterRepos sitterRepos = new SitterRepos(_db);
-            SitterProfileVM sitterProfileVM = sitterRepos.GetSitterByEmail(User.Identity.Name);
+            // Get the logged in sitter ID
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
-            return View(sitterProfileVM);
+            SitterAvailabilityVM vm = new SitterAvailabilityVM();
+            // Set the sitter ID for the view model
+            vm.SitterId = sitterID;
+            return View(vm);
+
+
         }
+
+
         [HttpPost]
-        public IActionResult Delete(SitterProfileVM sitterProfileVM)
+        public IActionResult Availability(SitterAvailabilityVM availability)
         {
-            sitterProfileVM.Message = "Invalid entry please try again";
+            availability.Message = "Invalid entry please try again";
+
+            // Check if the model is valid
             if (ModelState.IsValid)
             {
-                SitterRepos sitterRepos = new SitterRepos(_db);
-                Tuple<int, string> response = sitterRepos.DeleteProfile(sitterProfileVM);
-
-                if (response.Item1 < 0)
+                AvailabilityRepo availabilityRepo = new AvailabilityRepo(_db);
+                Tuple<int, string> response = availabilityRepo.AddAvailability(availability);
+                if (response.Item1 <= 0)
                 {
-                    sitterProfileVM.Message = response.Item2;
+                    availability.Message = response.Item2;
                 }
                 else
                 {
-                   // var authenticationProperties = new AuthenticationProperties { RedirectUri = "/Home/Index" };
-                     HttpContext.SignOutAsync();
-                    //return Redirect(authenticationProperties.RedirectUri);
-                    return RedirectToAction("Index", "Home", new { area = "" });
+                    return RedirectToAction("Availability", "Sitter");
                 }
             }
 
-            return View(sitterProfileVM);
+            // If the model is not valid, return the view with the errors
+            return View(availability);
 
         }
+        /// <summary>
+        /// get the booked and not booked as json result
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult GetEvents()
+        {
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            AvailabilityRepo availabilityRepo = new AvailabilityRepo(_db);
+
+            var bookings = bookingRepo.GetBookingsBySitter(sitterID);
+            var availabilities = availabilityRepo.GetAvailabilities(sitterID);
+
+            var events = new List<object>();
+
+            var bookedDates = bookingRepo.GetBookedDates(bookings);
+            //Add bookings as events
+
+            foreach (var date in bookedDates)
+            {
+                if (date >= DateTime.Now)
+                {
+                    events.Add(new
+                    {
+                        title = "booked",
+                        start = date.ToString("yyyy-MM-dd"),
+                        display = "background",
+                        color = "red"
+                    });
+                }
+            }
+
+            var availableDates = availabilityRepo.GetAvailableDates(availabilities);
+            var notBooked = availableDates.Except(bookedDates);
+            // Add bookings as events
+            foreach (var date in notBooked)
+            {
+                if (date >= DateTime.Now)
+                {
+                    events.Add(new
+                    {
+                        title = "not booked",
+                        start = date.ToString("yyyy-MM-dd"),
+                        display = "background",
+
+                        color = "green"
+                    });
+                }
+            }
+
+
+            return Json(events);
+
+
+        }
 
     }
 }

@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
+using static PetSitter.Services.ReCAPTCHA;
 
 namespace PetSitter.Areas.Identity.Pages.Account
 {
@@ -36,6 +37,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
         private readonly PetSitterContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -45,7 +47,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             IEmailSender emailSender,
             PetSitterContext context,
             IWebHostEnvironment webHost,
-            IEmailService emailService)
+            IEmailService emailService,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -56,6 +59,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             _context = context;
             webHostEnvironment = webHost;
             _emailService= emailService;
+            _configuration = configuration;
+
         }
 
         /// <summary>
@@ -124,6 +129,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Account Type")]
             public string UserType { get; set; }
+            
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -142,8 +149,6 @@ namespace PetSitter.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-
-
         }
 
 
@@ -151,12 +156,25 @@ namespace PetSitter.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            string captchaResponse = Request.Form["g-Recaptcha-Response"];
+            string secret = _configuration["Recaptcha:SecretKey"];
+            ReCaptchaValidationResult resultCaptcha =
+                ReCaptchaValidator.IsValid(secret, captchaResponse);
+
+            // Invalidate the form if the captcha is invalid.
+            if (!resultCaptcha.Success)
+            {
+                ModelState.AddModelError(string.Empty,
+                    "The ReCaptcha is invalid.");
+            }
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -177,16 +195,40 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         PostalCode = Input.PostalCode,
                         StreetAddress = Input.StreetAddress,
                         UserType = Input.UserType,
-
                     };
-                    
-                    CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
-                    customerRepo.AddUser(newUser);
 
-                    var customerID = customerRepo.GetCustomerId(Input.Email);
+                    if (newUser.UserType == "Sitter")
+                    {
+                        SitterRepos sitterRepos = new SitterRepos(_context, webHostEnvironment);
+                        CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
 
-                    HttpContext.Session.SetString("UserName", customerID.FirstName);
-                    HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
+                        customerRepo.AddUser(newUser);
+
+                        var customerID = customerRepo.GetCustomerId(Input.Email);
+
+                        Sitter newSitter = new Sitter()
+                        {
+                            UserId = customerID.UserId,
+                            RatePerPetPerDay = 200
+
+                        };
+                        sitterRepos.AddSiter(newSitter);
+
+                        var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
+                        HttpContext.Session.SetString("UserName", customerID.FirstName);
+                        HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
+                        HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
+                    }
+                    else if (newUser.UserType == "Customer")
+                    {
+                        CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
+                        customerRepo.AddUser(newUser);
+                        var customerID = customerRepo.GetCustomerId(Input.Email);
+
+                        HttpContext.Session.SetString("UserName", customerID.FirstName);
+                        HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
+                    }
+                    // usertype == 'admin' can go here this will make more clean code structure in terms of user roles
 
                     _logger.LogInformation("User created a new account with password.");
 
