@@ -7,6 +7,7 @@ using PetSitter.ViewModels;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Security.Policy;
 using System.Text.RegularExpressions;
 
@@ -362,14 +363,52 @@ namespace PetSitter.Repositories
             return Tuple.Create(availability.AvailabilityId, message);
         }
 
-        public List<SitterDashboardVM> GetReviews(string email)
+
+
+
+
+        public List<ReviewVM> GetReviews(int sitterId)
         {
-            SitterProfileVM sitter = GetSitterByEmail(email);
+            SitterProfileVM sitter = GetSitterById(sitterId);
+
+            List<ReviewVM> vm = new List<ReviewVM>();
+
+            //SitterProfileVM sitter = GetSitterByEmail(email);
+            var reviews = (from b in _db.Bookings
+                           join u in _db.Users on b.UserId equals u.UserId
+                           where b.SitterId == sitterId && b.Review != null
+                           select new
+                           {
+                               u.FirstName,
+                               u.LastName,
+                               b.Review,
+                               b.Rating,
+                               b.StartDate,
+                               b.EndDate
+                           });
+
+            foreach (var r in reviews)
+            {
+                vm.Add(new ReviewVM
+                {
+                    petParent = r.FirstName + " " + r.LastName,
+                    startDate = r.StartDate,
+                    endDate = r.EndDate,
+                    rating = r.Rating,
+                    review = r.Review
+
+                });
+
+
+            }
+
+
+            return vm;
+
+
+
+
 
         }
-
-
-
-
     }
 }

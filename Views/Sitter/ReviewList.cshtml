@@ -1,0 +1,61 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<PetSitter.ViewModels.ReviewVM>
+
+@{
+    ViewData["Title"] = "ReviewList";
+}
+
+<h1>Review</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.petParent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.startDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.endDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.rating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.review)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.petParent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.startDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.endDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.rating)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.review)
+                </td>
+       @*         <td>
+                    <a asp-action="SitterDetails" asp-route-sitterID="@item.SitterId">Details</a>
+                </td>*@
+            </tr>
+        }
+    </tbody>
+</table>

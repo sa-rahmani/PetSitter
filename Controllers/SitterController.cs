@@ -166,6 +166,23 @@ namespace PetSitter.Controllers
 
         }
 
+        public IActionResult ReviewList() {
+
+            // Get the logged in sitter ID
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
+
+            //var rating 
+
+            SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+           List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+
+
+
+
+            return View(response);
+        }
+
 
     }
 }
