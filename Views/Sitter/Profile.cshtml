@@ -12,16 +12,26 @@
 
     User user = ViewData["UserProfileImg"] as User;
 }
-<dl>
-    <h1>Profile</h1>
-    <a asp-action="EditProfile" asp-route-id="@Model.UserId" class="text-decoration-none">Edit Profile</a>
-</dl>
-<hr class="mt-4" />
+<div class="profile">
+    <div class="header">
+       
+        <h3>
+            Hello @Html.DisplayFor(model => model.FirstName)! Click here
+            <a asp-action="EditProfile" asp-route-id="@Model.UserId">
+                <span class="material-symbols-outlined">
+                    account_box
+                </span>
+            </a>
+            to edit your profile!
+        </h3>
+    </div>
 
-<div>
+    <hr class="mt-4" />
+    <div class="body">
+
     <dl class="row">
-        <dd class="col-sm-10">
-            <h3>Profile Image</h3>
+        <dd class="col-sm-3">
+            <h4>Profile Image</h4>
             
                 @if (user.ProfileImage == null)
                 {
@@ -37,59 +47,85 @@
             
 
         </dd>
-       
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ProfileBio)
-        </dd>
-        <h3>CONTACT DETAILS</h3>
-        <dt class="col-sm-2">
+
+        @if (Model.ProfileBio != null)
+        {
+            <dd class="col-sm-9">
+                <h4>Profile Bio</h4>
+
+                @Html.DisplayFor(model => model.ProfileBio)
+        </dd>}
+       @if (Model.ProfileBio == null)
+{
+        <p>
+            click here ->  
+            <a asp-action="EditProfile" asp-route-id="@Model.UserId">
+                    <span class="material-symbols-outlined">
+                        account_box
+                    </span>
+
+            </a>
+            and add your profile bio
+        </p>
+        }
+            <hr class="mt-2" />
+
+        <h4>Contact Details</h4>
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-3">
             @Html.DisplayFor(model => model.FirstName)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.LastName)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-3">
             @Html.DisplayFor(model => model.LastName)
         </dd>
-        <dt class="col-sm-2">
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Email)
         </dt>
-        <dd class="col-sm-10">
+            <dd class="col-sm-3">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        <dt class="col-sm-2">
+            <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.PhoneNumber)
         </dt>
-        <dd class="col-sm-10">
+            <dd class="col-sm-3">
             @Html.DisplayFor(model => model.PhoneNumber)
         </dd>
     
     </dl>
+        <hr class="mt-2" />
+
     <dl class="row">
-        <h3>POSTAL ADDRESS</h3>
-        <dt class="col-sm-2">
+        <h4>Postal Address</h4>
+            <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.City)
         </dt>
-        <dd class="col-sm-10">
+            <dd class="col-sm-3">
             @Html.DisplayFor(model => model.City)
         </dd>
-        <dt class="col-sm-2">
+            <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.PostalCode)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-3">
             @Html.DisplayFor(model => model.PostalCode)
         </dd>
-        <dt class="col-sm-2">
+            <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.StreetAddress)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-8">
             @Html.DisplayFor(model => model.StreetAddress)
         </dd>
     </dl>
-    <div class="form-group">
+        <hr class="mt-2" />
+
+        <h4>Pet Preferences</h4>
+
+    <div class="form-group-pets">
+            <div class="pets">
        <h6> What type of pets do you accept?</h6>
 
       <label for="SelectedPetTypes" class="control-label"></label>
@@ -99,15 +135,30 @@
                @(Model.SelectedPetTypes.Contains(petType) ? "checked" : "") disabled>
                     <label class="form-check-label">@petType</label>
             }
-   
-             <dt class="col-sm-2">
+            </div>
+            <div class="rate">
+             <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.RatePerPetPerDay)
         </dt>
-        <dd class="col-sm-10">
+        <dd class="col-sm-3">
             @Html.DisplayFor(model => model.RatePerPetPerDay)
-        </dd>
+                </dd>
+            </div>
         </div>
     </div>
+    </div>
+    <style>
+        .profile{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        }
+        .form-group-pets{
+            display:flex;
+            flex-wrap:wrap;
+        justify-content: space-around;
+        }
+    </style>
 @*
 @if (message != null)
 {
