@@ -102,7 +102,7 @@ namespace PetSitter.Models
 
             modelBuilder.Entity<BookingPet>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(e => new { e.BookingId, e.PetId });
 
                 entity.ToTable("BookingPet");
 

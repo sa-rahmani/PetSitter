@@ -1,7 +1,9 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PetSitter.Models;
 using PetSitter.ViewModels;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace PetSitter.Repositories
@@ -26,16 +28,33 @@ namespace PetSitter.Repositories
                                                  StartDate = (DateTime)b.StartDate,
                                                  EndDate = (DateTime)b.EndDate,
                                                  SpecialRequests = b.SpecialRequests,
-                                                 Price = (decimal)b.Price
+                                                 Price = (decimal)b.Price,
+                                                 PaymentId = b.PaymentId
                                              };
 
-            // Convert to list so that it can be looped through to add PetIDs.
+            // Convert to list so that it can be looped through to add pets.
             List<BookingVM> bookingsList = bookings.ToList();
 
+            // Get all BookingPetVMs.
+            IQueryable<BookingPetVM> bookingPetVMs = from p in _db.Pets
+                                                     select new BookingPetVM
+                                                     {
+                                                         PetId = p.PetId,
+                                                         Name = p.Name
+                                                     };
+
+            // Assign the appropriate BookingPetVM to each BookingVM.
             foreach (var booking in bookingsList)
             {
-                List<int> pets = _db.BookingPets.Where(bp => bp.BookingId == booking.BookingId).Where(bp => bp.PetId.HasValue).Select(bp => bp.PetId.GetValueOrDefault()).ToList();
-                booking.PetIDs = pets;
+                List<int> petIds = _db.BookingPets.Where(bp => bp.BookingId == booking.BookingId).Where(bp => bp.PetId.HasValue).Select(bp => bp.PetId.GetValueOrDefault()).ToList();
+
+                List<BookingPetVM> pets = new List<BookingPetVM>();
+                foreach (var petId in petIds)
+                {
+                    pets.Add(bookingPetVMs.Where(pv => pv.PetId == petId).FirstOrDefault());
+                }
+
+                booking.Pets = pets;
             }
 
             return bookingsList;
@@ -47,7 +66,7 @@ namespace PetSitter.Repositories
             List<BookingVM> myBookings = new List<BookingVM>();
             foreach (var booking in bookings)
             {
-                if (booking.UserId == userID)
+                if(booking.UserId == userID && booking.PaymentId != null)
                 {
                     myBookings.Add(booking);
                 }
@@ -69,36 +88,67 @@ namespace PetSitter.Repositories
             CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
             SitterVM sitter = sitterRepo.GetSitterVM((int)booking.SitterId);
 
-            decimal price = sitter.Rate * days * booking.PetIDs.Count;
+            decimal price = sitter.Rate * days * booking.Pets.Count;
 
             booking.Price = price;
 
             return booking;
         }
 
-        public Booking Create(BookingVM booking)
+        public int Create(BookingVM booking)
         {
+            // Add price to booking.
+            BookingVM fullBooking = AddPriceToBooking(booking);
+
             // Create a new Booking object.
-            Booking newBooking = new Booking((decimal)booking.Price, booking.StartDate, booking.EndDate, booking.SpecialRequests, (int)booking.SitterId, (int)booking.UserId);
+            Booking newBooking = new Booking((decimal)fullBooking.Price, fullBooking.StartDate, fullBooking.EndDate, fullBooking.SpecialRequests, (int)fullBooking.SitterId, (int)fullBooking.UserId);
 
             // Save to database.
             _db.Add(newBooking);
             _db.SaveChanges();
 
             // Create BookingPet objects and add to database.
-            foreach (var petID in booking.PetIDs)
+            foreach (var pet in booking.Pets)
             {
-                BookingPet bookingPet = new BookingPet(newBooking.BookingId, petID);
+                BookingPet bookingPet = new BookingPet(newBooking.BookingId, pet.PetId);
                 _db.Add(bookingPet);
                 _db.SaveChanges();
             }
 
-            return newBooking;
+            return newBooking.BookingId;
         }
 
-        public List<int> GetPetIdsByUserId(int userId)
+        public IPN AddTransaction(IPN ipn)
         {
-            return _db.Pets.Where(p => p.UserId == userId).Select(p => (int)p.PetId).ToList();
+            // Add IPN record.
+            _db.IPNs.Add(ipn);
+            _db.SaveChanges();
+
+            // Update Booking record with payment ID.
+            Booking booking = _db.Bookings.Where(b => b.BookingId.ToString() == ipn.custom).FirstOrDefault();
+            booking.PaymentId = ipn.paymentID;
+            _db.Bookings.Update(booking);
+            _db.SaveChanges();
+
+            return ipn;
+        }
+
+        public List<BookingPetVM> GetBookingPetVMsByUserId(int userId)
+        {
+            //var pets = _db.Pets.Where(p => p.UserId == userId)
+            //return _db.Pets.Where(p => p.UserId == userId).ToList();
+
+            IQueryable<BookingPetVM> bookingPetVMs =    from p in _db.Pets
+                                                        where p.UserId == userId
+                                                        select new BookingPetVM
+                                                        {
+                                                            PetId = p.PetId,
+                                                            Name = p.Name
+                                                        };
+
+            List<BookingPetVM> result = bookingPetVMs.ToList();
+
+            return result;
         }
 
         //Get All sitter's booking

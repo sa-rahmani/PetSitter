@@ -16,7 +16,7 @@
                 @Html.DisplayNameFor(model => model.SitterId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PetIDs)
+                @Html.DisplayNameFor(model => model.Pets)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.StartDate)
@@ -44,9 +44,9 @@
                     @Html.DisplayFor(modelItem => item.SitterId)
                 </td>
                 <td>
-                    @foreach (var pet in item.PetIDs)
+                    @foreach (var pet in item.Pets)
                     {
-                        <p>@pet</p>
+                        <p>@pet.Name</p>
                     }
                 </td>
                 <td>

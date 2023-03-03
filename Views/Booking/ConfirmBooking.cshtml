@@ -22,11 +22,14 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.UserId)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PetIDs)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Pets)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PetIDs)
+        <dd class="col-sm-10">
+            @foreach (var pet in Model.Pets)
+            {
+                @pet.Name
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.StartDate)
@@ -49,5 +52,86 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Pay">Confirm and Pay for Booking</a>
+    <div id="paypal-button"></div>
 </div>
+
+
+<script src="https://www.paypalobjects.com/api/checkout.js"></script>
+<script>
+    paypal.Button.render({
+        env: 'sandbox',
+        style: {
+            size: 'small',
+            color: 'gold',
+            shape: 'pill',
+            label: 'checkout'
+        },
+        client: {
+            sandbox: 'AdlHdDBqL4w2dMDhLEdgxOj-CJ6dLm5XdTxSdQD2k3ZhNioLsx3LiIkjpqlWa_zm_cWE5kr97Jtojv3d',
+            // production: '3W8F5EEJKUJP4KSY'  // Switch to ‘production’ when live.
+        },
+
+        commit: true,
+
+        payment: function (data, actions) {
+            return actions.payment.create({
+                payment: {
+                    transactions: [{
+                        custom: 'Custom data goes here!',
+                        amount: {
+                            total:
+                                @Html.DisplayFor(model => model.Price)
+                            , currency:
+                                "CAD"
+                        }
+                    }]
+                }
+            });
+        },
+
+        onAuthorize: function (data, actions) {
+            return actions.payment.execute().then(function (payment) {
+                console.log(payment)
+                var dataObject = {
+                    "cart": payment.cart,
+                    "intent": payment.intent,
+                    "paymentID": payment.id,
+                    "create_time": payment.create_time,
+                    "paymentState": payment.state,
+                    "payerEmail": payment.payer.payer_info.email,
+                    "payerID": payment.payer.payer_info.payer_id,
+                    "payerFirstName": payment.payer.payer_info.first_name,
+                    "payerLastName": payment.payer.payer_info.last_name,
+                    "payerMiddleName": payment.payer.payer_info.middle_name,
+                    "payerCountryCode": payment.payer.payer_info.country_code,
+                    "paymentMethod": payment.payer.payment_method,
+                    "payerStatus": payment.payer.status,
+                    "amount": payment.transactions[0].amount.total,
+                    "currency": payment.transactions[0].amount.currency,
+                    "custom": "@Html.DisplayFor(model => model.BookingId)"
+                }
+                console.log(dataObject)
+
+                $.ajax({
+                    type: "post",
+                    url: "/Booking/PaySuccess",
+                    data: JSON.stringify(dataObject),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+
+                    success: function (msg) {
+                        window.location.href
+                            = "/Booking/BookingDetails?bookingID=" + @Html.DisplayFor(model => model.BookingId);
+                    },
+
+                    error: function (msg) {
+                        alert("fail: " + JSON.stringify(msg));
+                    }
+                });
+            })
+        },
+
+        onCancel: function (data, actions) {
+        },
+    }, '#paypal-button');
+</script>

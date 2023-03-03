@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
+using SendGrid.Helpers.Mail;
+using System.Security.Principal;
 
 namespace PetSitter.Controllers
 {
@@ -52,33 +54,17 @@ namespace PetSitter.Controllers
             return View(sitter);
         }
 
-        // possible code for selecting particular pets for a booking
-        //// GET: Select Pets
-        //public IActionResult SelectPets()
-        //{
-        //    // temp user ID for use during dev
-        //    int userID = 3;
-
-        //    // Get user's pets
-        //    BookingRepo bookingRepo = new BookingRepo(_db);
-        //    IQueryable<SelectPetsVM> pets = bookingRepo.GetSelectPetVMsByUserId(userID);
-
-        //    return View(pets);
-        //}
-
-        //// POST: Select Pets
-        //[HttpPost]
-        //public IActionResult SelectPets(List<SelectPetsVM> pets)
-        //{
-        //    var selectedPets = pets.Where(p => p.IsChecked).ToList();
-        //    return RedirectToAction("Book", new { selectedPets = selectedPets });
-        //}
-
         // GET: Initial Book
         public IActionResult Book(int sitterID)
         {
             BookingFormVM booking = new BookingFormVM();
             booking.SitterId= sitterID;
+
+            // temporary values while developing
+            int userID = 3;
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            List<BookingPetVM> pets = bookingRepo.GetBookingPetVMsByUserId(userID);
+            booking.Pets = pets;
 
             return View(booking);
         }
@@ -87,50 +73,74 @@ namespace PetSitter.Controllers
         [HttpPost]
         public IActionResult Book(BookingFormVM bookingForm)
         {
-            if (ModelState.IsValid)
+            // If the message is null, set to an empty string.
+            bookingForm.Message ??= "";
+
+            // Check that at least one pet was selected.
+            int selectedPets = 0;
+            foreach (var pet in bookingForm.Pets)
             {
-                // temporary values while developing
-                int userID = 3;
-                BookingRepo bookingRepo = new BookingRepo(_db);
-                List<int> petIds = bookingRepo.GetPetIdsByUserId(userID);
+                if (pet.IsChecked)
+                {
+                    selectedPets++;
+                }
+            }
 
-                // Create BookingVM
-                BookingVM booking = new BookingVM();
-                booking.SitterId = bookingForm.SitterId;
-                booking.UserId = userID;
-                booking.PetIDs = petIds;
-                booking.StartDate = bookingForm.StartDate;
-                booking.EndDate = bookingForm.EndDate;
-                booking.SpecialRequests = bookingForm.SpecialRequests;
+            if (selectedPets > 0)
+            {
+                if (ModelState.IsValid)
+                {
+                    // temporary values while developing
+                    int userID = 3;
+                    BookingRepo bookingRepo = new BookingRepo(_db);
 
-                // Add price to BookingVM
-                BookingVM fullBooking = bookingRepo.AddPriceToBooking(booking);
+                    // Create BookingVM
+                    BookingVM booking = new BookingVM();
+                    booking.SitterId = bookingForm.SitterId;
+                    booking.UserId = userID;
 
-                // Redirect to confirmation page
-                return Redirect(Url.Action("ConfirmBooking", "Booking", fullBooking));
+                    List<BookingPetVM> pets = new List<BookingPetVM>();
+                    foreach (var pet in bookingForm.Pets)
+                    {
+                        if (pet.IsChecked)
+                        {
+                            pets.Add(pet);
+                        }
+                    }
+                    booking.Pets = pets;
+
+                    booking.StartDate = bookingForm.StartDate;
+                    booking.EndDate = bookingForm.EndDate;
+                    booking.SpecialRequests = bookingForm.SpecialRequests;
+
+                    // Add price to BookingVM and add to database
+                    int bookingId = bookingRepo.Create(booking);
+
+                    // Redirect to confirmation page
+                    return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+                }
+            } else
+            {
+                bookingForm.Message = "Please select at least one pet for this booking.";
             }
 
             // Show booking page again.
             return View(bookingForm);
         }
 
-        public IActionResult ConfirmBooking(BookingVM booking)
+        public IActionResult ConfirmBooking(int bookingId)
         {
-            return View(booking);
-        }
-
-        public IActionResult Pay(BookingVM booking)
-        {
-            return View(booking);
-        }
-
-        public IActionResult CompleteBooking(BookingVM booking)
-        {
-            // Add confirmed + paid for booking to the database.
             BookingRepo bookingRepo = new BookingRepo(_db);
-            Booking newBooking = bookingRepo.Create(booking);
+            BookingVM confirmBooking = bookingRepo.GetBookingVM(bookingId);
+            return View(confirmBooking);
+        }
 
-            return View(newBooking);
+        [HttpPost]
+        public JsonResult PaySuccess([FromBody] IPN ipn)
+        {
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            IPN completeIPN = bookingRepo.AddTransaction(ipn);
+            return Json(ipn);
         }
 
         public IActionResult BookingDetails(int bookingID)
