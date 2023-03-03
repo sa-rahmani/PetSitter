@@ -35,13 +35,13 @@ namespace PetSitter.Repositories
             return customers;
         }
 
-        public CustomerVM GetProfile(int userID)
+        public CustomerVM GetProfile(int customerID)
         {
-            var singleUser = _db.Users.Where(u => u.UserId == userID).FirstOrDefault();
+            var singleUser = _db.Users.Where(u => u.UserId == customerID).FirstOrDefault();
 
             CustomerVM vm = new CustomerVM
             {
-                UserId = userID,
+                CustomerId = customerID,
                 FirstName = singleUser.FirstName,
                 LastName = singleUser.LastName,
                 Email = singleUser.Email,

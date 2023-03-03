@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
 using PetSitter.Models;
 using PetSitter.ViewModels;
 using System.Runtime.InteropServices;
@@ -46,7 +47,7 @@ namespace PetSitter.Repositories
             List<BookingVM> myBookings = new List<BookingVM>();
             foreach (var booking in bookings)
             {
-                if(booking.UserId == userID)
+                if (booking.UserId == userID)
                 {
                     myBookings.Add(booking);
                 }
@@ -99,5 +100,28 @@ namespace PetSitter.Repositories
         {
             return _db.Pets.Where(p => p.UserId == userId).Select(p => (int)p.PetId).ToList();
         }
+
+        //Get All sitter's booking
+        public List<Booking> GetBookingsBySitter(int sitterID)
+        {
+            var bookings = _db.Bookings.Where(s => s.SitterId == sitterID).ToList();
+
+            return bookings;
+        }
+        public List<DateTime> GetBookedDates(List<Booking> bookings)
+        {
+            var bookedDates = new List<DateTime>();
+            foreach (var booking in bookings)
+            {
+                for (DateTime date = (DateTime)booking.StartDate; date <= (DateTime)booking.EndDate; date = date.AddDays(1))
+                {
+                    bookedDates.Add(date);
+                }
+            }
+            return bookedDates;
+        }
+
+
+
     }
 }

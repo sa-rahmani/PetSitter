@@ -49,7 +49,7 @@ INSERT INTO [User](firstName, lastName, phoneNumber, email, streetAddress, city,
 CREATE TABLE Sitter (
 	sitterID				INT PRIMARY KEY IDENTITY (1,1),
 	ratePerPetPerDay		MONEY NOT NULL,
-	profileBio				VARCHAR(1000) NOT NULL,
+	profileBio				VARCHAR(1000),
 	userID					INT NOT NULL,
 	FOREIGN KEY(userID) REFERENCES [User](userID)
 );

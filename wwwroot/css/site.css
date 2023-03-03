@@ -58,7 +58,7 @@ img{
     min-width: 400px;*/
 align-items:center;
 }
-.btn {
+.wrapper .btn {
     border: solid 1px #6366F1;
     color: white;
     background-color: #6366F1;
