@@ -1,14 +1,16 @@
 ﻿@model PetSitter.ViewModels.BookingVM
 
 @{
-    ViewData["Title"] = "ConfirmBooking";
+    ViewData["Title"] = "Confirm Booking";
 }
 
-<h1>ConfirmBooking</h1>
+<h1>Confirm Booking</h1>
 
 <div>
-    <h4>Booking</h4>
     <hr />
+    <div>
+        <a asp-action="Edit" asp-route-clientID="@Model.BookingId">Edit Booking</a>
+    </div>
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.SitterId)

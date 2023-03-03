@@ -77,44 +77,18 @@ namespace PetSitter.Controllers
             bookingForm.Message ??= "";
 
             // Check that at least one pet was selected.
-            int selectedPets = 0;
-            foreach (var pet in bookingForm.Pets)
-            {
-                if (pet.IsChecked)
-                {
-                    selectedPets++;
-                }
-            }
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
 
-            if (selectedPets > 0)
+            if (petsSelected)
             {
                 if (ModelState.IsValid)
                 {
                     // temporary values while developing
-                    int userID = 3;
-                    BookingRepo bookingRepo = new BookingRepo(_db);
+                    int userId = 3;
 
-                    // Create BookingVM
-                    BookingVM booking = new BookingVM();
-                    booking.SitterId = bookingForm.SitterId;
-                    booking.UserId = userID;
-
-                    List<BookingPetVM> pets = new List<BookingPetVM>();
-                    foreach (var pet in bookingForm.Pets)
-                    {
-                        if (pet.IsChecked)
-                        {
-                            pets.Add(pet);
-                        }
-                    }
-                    booking.Pets = pets;
-
-                    booking.StartDate = bookingForm.StartDate;
-                    booking.EndDate = bookingForm.EndDate;
-                    booking.SpecialRequests = bookingForm.SpecialRequests;
-
-                    // Add price to BookingVM and add to database
-                    int bookingId = bookingRepo.Create(booking);
+                    // Create booking
+                    int bookingId = bookingRepo.Create(bookingForm, userId);
 
                     // Redirect to confirmation page
                     return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
@@ -133,6 +107,45 @@ namespace PetSitter.Controllers
             BookingRepo bookingRepo = new BookingRepo(_db);
             BookingVM confirmBooking = bookingRepo.GetBookingVM(bookingId);
             return View(confirmBooking);
+        }
+
+        // GET: Edit
+        public IActionResult Edit(int bookingId)
+        {
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingFormVM booking = bookingRepo.GetBookingFormVM(bookingId);
+            return View(booking);
+        }
+
+        // POST: Edit
+        [HttpPost]
+        public IActionResult Edit(BookingFormVM bookingForm)
+        {
+            // If the message is null, set to an empty string.
+            bookingForm.Message ??= "";
+
+            // Check that at least one pet was selected.
+            BookingRepo bookingRepo = new BookingRepo(_db);
+            bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
+
+            if (petsSelected)
+            {
+                if (ModelState.IsValid)
+                {
+                    // Update booking
+                    int bookingId = bookingRepo.Update(bookingForm);
+
+                    // Redirect to confirmation page
+                    return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+                }
+            }
+            else
+            {
+                bookingForm.Message = "Please select at least one pet for this booking.";
+            }
+
+            // Show booking page again.
+            return View(bookingForm);
         }
 
         [HttpPost]

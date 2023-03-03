@@ -24,9 +24,8 @@ namespace PetSitter.Models
         public virtual Sitter? Sitter { get; set; }
         public virtual User? User { get; set; }
 
-        public Booking(decimal? price, DateTime? startDate, DateTime? endDate, string? specialRequests, int? sitterId, int? userId)
+        public Booking(DateTime? startDate, DateTime? endDate, string? specialRequests, int? sitterId, int? userId)
         {
-            Price = price;
             StartDate = startDate;
             EndDate = endDate;
             SpecialRequests = specialRequests;
