@@ -1,0 +1,33 @@
+﻿/* Find A Sitter Page */
+
+.find-a-sitter-section .name-rate {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.find-a-sitter-section h2 {
+    margin-bottom: 0;
+}
+
+.find-a-sitter-section .rating, .sitter-detail .rating {
+    font-size: 1.5em;
+    line-height: 1.5em;
+}
+
+.find-a-sitter-section .highlight, .sitter-detail .highlight {
+    color: gold;
+}
+
+.find-a-sitter-section .no-highlight, .sitter-detail .no-highlight {
+    color: lightgrey;
+}
+
+.find-a-sitter-section .price, .sitter-detail .price {
+    font-weight: bold;
+    color: red;
+}
+
+.find-a-sitter-section .more-info-link {
+    margin-top: 0.75em;
+}
