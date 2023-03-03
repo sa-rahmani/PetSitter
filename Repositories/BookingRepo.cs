@@ -78,36 +78,69 @@ namespace PetSitter.Repositories
             return GetAllBookingVMs().Where(b => b.BookingId == bookingID).FirstOrDefault();
         }
 
-        public BookingVM AddPriceToBooking(BookingVM booking)
+        public BookingFormVM GetBookingFormVM(int bookingID)
         {
+            BookingVM booking = GetAllBookingVMs().Where(b => b.BookingId == bookingID).FirstOrDefault();
+            BookingFormVM bookingForm = new BookingFormVM();
+            bookingForm.BookingId = bookingID;
+            bookingForm.SitterId = booking.SitterId;
+            bookingForm.Pets = booking.Pets;
+            bookingForm.StartDate = booking.StartDate;
+            bookingForm.EndDate = booking.EndDate;
+            bookingForm.SpecialRequests = booking.SpecialRequests;
+
+            return bookingForm;
+        }
+
+        public Booking GetBooking(int bookingId)
+        {
+            return _db.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefault();
+        }
+
+        public Booking AddPriceToBooking(Booking booking, int petsCount)
+        {
+            // Convert nullable data types.
+            DateTime startDate = (DateTime)booking.StartDate;
+            DateTime endDate = (DateTime)booking.EndDate;
+
             // Calculate number of days in booking.
-            int days = booking.EndDate.Subtract(booking.StartDate).Days;
+            int days = endDate.Subtract(startDate).Days;
 
             // Get sitter.
             CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
             SitterVM sitter = sitterRepo.GetSitterVM((int)booking.SitterId);
 
-            decimal price = sitter.Rate * days * booking.Pets.Count;
+            decimal price = sitter.Rate * days * petsCount;
 
             booking.Price = price;
 
             return booking;
         }
 
-        public int Create(BookingVM booking)
+        public int Create(BookingFormVM booking, int userId)
         {
-            // Add price to booking.
-            BookingVM fullBooking = AddPriceToBooking(booking);
-
             // Create a new Booking object.
-            Booking newBooking = new Booking((decimal)fullBooking.Price, fullBooking.StartDate, fullBooking.EndDate, fullBooking.SpecialRequests, (int)fullBooking.SitterId, (int)fullBooking.UserId);
+            Booking newBooking = new Booking(booking.StartDate, booking.EndDate, booking.SpecialRequests, (int)booking.SitterId, userId);
+
+            // List pets in booking.
+            List<BookingPetVM> pets = new List<BookingPetVM>();
+            foreach (var pet in booking.Pets)
+            {
+                if (pet.IsChecked)
+                {
+                    pets.Add(pet);
+                }
+            }
+
+            // Add price to booking.
+            newBooking = AddPriceToBooking(newBooking, pets.Count);
 
             // Save to database.
             _db.Add(newBooking);
             _db.SaveChanges();
 
             // Create BookingPet objects and add to database.
-            foreach (var pet in booking.Pets)
+            foreach (var pet in pets)
             {
                 BookingPet bookingPet = new BookingPet(newBooking.BookingId, pet.PetId);
                 _db.Add(bookingPet);
@@ -115,6 +148,55 @@ namespace PetSitter.Repositories
             }
 
             return newBooking.BookingId;
+        }
+
+        public int Update(BookingFormVM bookingForm)
+        {
+            // Get the booking to be updated.
+            Booking booking = GetBooking(bookingForm.BookingId);
+
+            // Update the properties.
+            booking.StartDate = bookingForm.StartDate;
+            booking.EndDate = bookingForm.EndDate;
+            booking.SpecialRequests = bookingForm.SpecialRequests;
+
+            // List pets in booking.
+            List<BookingPetVM> pets = new List<BookingPetVM>();
+            foreach (var pet in bookingForm.Pets)
+            {
+                if (pet.IsChecked)
+                {
+                    pets.Add(pet);
+                }
+            }
+
+            // Recalculate price and update on the booking.
+            booking = AddPriceToBooking(booking, pets.Count);
+
+            // Save changes to the database.
+            _db.Update(booking);
+            _db.SaveChanges();
+
+            // Delete all previous BookingPet records.
+            foreach (var pet in bookingForm.Pets)
+            {
+                // Get the BookingPet record.
+                BookingPet bookingPet = _db.BookingPets.Where(b => b.BookingId == bookingForm.BookingId && b.PetId == pet.PetId).FirstOrDefault();
+
+                // Delete from the database.
+                _db.Remove(bookingPet);
+                _db.SaveChanges();
+            }
+
+            // Add BookingPet records.
+            foreach (var pet in pets)
+            {
+                BookingPet bookingPet = new BookingPet(booking.BookingId, pet.PetId);
+                _db.Add(bookingPet);
+                _db.SaveChanges();
+            }
+
+            return booking.BookingId;
         }
 
         public IPN AddTransaction(IPN ipn)
@@ -134,9 +216,6 @@ namespace PetSitter.Repositories
 
         public List<BookingPetVM> GetBookingPetVMsByUserId(int userId)
         {
-            //var pets = _db.Pets.Where(p => p.UserId == userId)
-            //return _db.Pets.Where(p => p.UserId == userId).ToList();
-
             IQueryable<BookingPetVM> bookingPetVMs =    from p in _db.Pets
                                                         where p.UserId == userId
                                                         select new BookingPetVM
@@ -148,6 +227,26 @@ namespace PetSitter.Repositories
             List<BookingPetVM> result = bookingPetVMs.ToList();
 
             return result;
+        }
+
+        public bool CheckPetSelection(BookingFormVM bookingForm)
+        {
+            int selectedPets = 0;
+            foreach (var pet in bookingForm.Pets)
+            {
+                if (pet.IsChecked)
+                {
+                    selectedPets++;
+                }
+            }
+
+            if (selectedPets > 0)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
         }
     }
 }
