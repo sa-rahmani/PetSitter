@@ -17,6 +17,13 @@ namespace PetSitter.Repositories
             _db = db;
         }
 
+        // SECTION: Read Methods
+
+        public Booking GetBooking(int bookingId)
+        {
+            return _db.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefault();
+        }
+
         public List<BookingVM> GetAllBookingVMs()
         {
             IQueryable<BookingVM> bookings = from b in _db.Bookings
@@ -59,11 +66,17 @@ namespace PetSitter.Repositories
 
             return bookingsList;
         }
+        public BookingVM GetBookingVM(int bookingID)
+        {
+            return GetAllBookingVMs().Where(b => b.BookingId == bookingID).FirstOrDefault();
+        }
 
         public List<BookingVM> GetBookingVMsByUserId(int userID)
         {
             List<BookingVM> bookings = GetAllBookingVMs();
             List<BookingVM> myBookings = new List<BookingVM>();
+
+            // Get only confirmed and paid for bookings.
             foreach (var booking in bookings)
             {
                 if(booking.UserId == userID && booking.PaymentId != null)
@@ -72,11 +85,6 @@ namespace PetSitter.Repositories
                 }
             }
             return myBookings;
-        }
-
-        public BookingVM GetBookingVM(int bookingID)
-        {
-            return GetAllBookingVMs().Where(b => b.BookingId == bookingID).FirstOrDefault();
         }
 
         public BookingFormVM GetBookingFormVM(int bookingID)
@@ -93,30 +101,41 @@ namespace PetSitter.Repositories
             return bookingForm;
         }
 
-        public Booking GetBooking(int bookingId)
+        public List<BookingPetVM> GetBookingPetVMsByUserId(int userId)
         {
-            return _db.Bookings.Where(b => b.BookingId == bookingId).FirstOrDefault();
+            IQueryable<BookingPetVM> bookingPetVMs = from p in _db.Pets
+                                                     where p.UserId == userId
+                                                     select new BookingPetVM
+                                                     {
+                                                         PetId = p.PetId,
+                                                         Name = p.Name
+                                                     };
+
+            List<BookingPetVM> result = bookingPetVMs.ToList();
+
+            return result;
         }
 
-        public Booking AddPriceToBooking(Booking booking, int petsCount)
+
+        public List<Booking> GetBookingsBySitter(int sitterID)
         {
-            // Convert nullable data types.
-            DateTime startDate = (DateTime)booking.StartDate;
-            DateTime endDate = (DateTime)booking.EndDate;
-
-            // Calculate number of days in booking.
-            int days = endDate.Subtract(startDate).Days;
-
-            // Get sitter.
-            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            SitterVM sitter = sitterRepo.GetSitterVM((int)booking.SitterId);
-
-            decimal price = sitter.Rate * days * petsCount;
-
-            booking.Price = price;
-
-            return booking;
+            var bookings = _db.Bookings.Where(b => b.SitterId == sitterID && b.PaymentId != null).ToList();
+            return bookings;
         }
+        public List<DateTime> GetBookedDates(List<Booking> bookings)
+        {
+            var bookedDates = new List<DateTime>();
+            foreach (var booking in bookings)
+            {
+                for (DateTime date = (DateTime)booking.StartDate; date <= (DateTime)booking.EndDate; date = date.AddDays(1))
+                {
+                    bookedDates.Add(date);
+                }
+            }
+            return bookedDates;
+        }
+
+        // SECTION: Create and Update Methods
 
         public int Create(BookingFormVM booking, int userId)
         {
@@ -200,36 +219,6 @@ namespace PetSitter.Repositories
             return booking.BookingId;
         }
 
-        public IPN AddTransaction(IPN ipn)
-        {
-            // Add IPN record.
-            _db.IPNs.Add(ipn);
-            _db.SaveChanges();
-
-            // Update Booking record with payment ID.
-            Booking booking = _db.Bookings.Where(b => b.BookingId.ToString() == ipn.custom).FirstOrDefault();
-            booking.PaymentId = ipn.paymentID;
-            _db.Bookings.Update(booking);
-            _db.SaveChanges();
-
-            return ipn;
-        }
-
-        public List<BookingPetVM> GetBookingPetVMsByUserId(int userId)
-        {
-            IQueryable<BookingPetVM> bookingPetVMs =    from p in _db.Pets
-                                                        where p.UserId == userId
-                                                        select new BookingPetVM
-                                                        {
-                                                            PetId = p.PetId,
-                                                            Name = p.Name
-                                                        };
-
-            List<BookingPetVM> result = bookingPetVMs.ToList();
-
-            return result;
-        }
-
         public bool CheckPetSelection(BookingFormVM bookingForm)
         {
             int selectedPets = 0;
@@ -251,24 +240,39 @@ namespace PetSitter.Repositories
             }
         }
 
-        //Get All sitter's booking
-        public List<Booking> GetBookingsBySitter(int sitterID)
+        public Booking AddPriceToBooking(Booking booking, int petsCount)
         {
-            var bookings = _db.Bookings.Where(s => s.SitterId == sitterID).ToList();
+            // Convert nullable data types.
+            DateTime startDate = (DateTime)booking.StartDate;
+            DateTime endDate = (DateTime)booking.EndDate;
 
-            return bookings;
+            // Calculate number of days in booking.
+            int days = endDate.Subtract(startDate).Days;
+
+            // Get sitter.
+            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+            SitterVM sitter = sitterRepo.GetSitterVM((int)booking.SitterId);
+
+            decimal price = sitter.Rate * days * petsCount;
+
+            booking.Price = price;
+
+            return booking;
         }
-        public List<DateTime> GetBookedDates(List<Booking> bookings)
+
+        public IPN AddTransaction(IPN ipn)
         {
-            var bookedDates = new List<DateTime>();
-            foreach (var booking in bookings)
-            {
-                for (DateTime date = (DateTime)booking.StartDate; date <= (DateTime)booking.EndDate; date = date.AddDays(1))
-                {
-                    bookedDates.Add(date);
-                }
-            }
-            return bookedDates;
+            // Add IPN record.
+            _db.IPNs.Add(ipn);
+            _db.SaveChanges();
+
+            // Update Booking record with payment ID.
+            Booking booking = _db.Bookings.Where(b => b.BookingId.ToString() == ipn.custom).FirstOrDefault();
+            booking.PaymentId = ipn.paymentID;
+            _db.Bookings.Update(booking);
+            _db.SaveChanges();
+
+            return ipn;
         }
     }
 }
