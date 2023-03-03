@@ -19,6 +19,7 @@ namespace PetSitter.ViewModels
         public int SitterId { get; set; }
         public decimal? RatePerPetPerDay { get; set; }
         public string? ProfileBio { get; set; }
+        
 
         [NotMapped]
         public IFormFile ProfileImage { get; set; }
