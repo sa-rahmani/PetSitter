@@ -1,7 +1,11 @@
 ﻿namespace PetSitter.ViewModels
 {
-    public class ReviewVM
+    public class CreateReviewVM
     {
+        //public string? FirstName { get; set; }
+        //public string? LastName { get; set; }
+
+
         public string? petParent { get; set; }
 
         public string? sitter { get; set; }

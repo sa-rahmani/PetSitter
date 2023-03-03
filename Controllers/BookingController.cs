@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PetSitter.Models;
 using PetSitter.Repositories;
@@ -9,11 +10,15 @@ namespace PetSitter.Controllers
     public class BookingController : Controller
     {
         private readonly PetSitterContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BookingController(PetSitterContext db)
+
+        public BookingController(PetSitterContext db, IWebHostEnvironment webHost)
         {
             _db = db;
-        }   
+            _webHostEnvironment = webHost;
+
+        }
 
         public IActionResult Index()
         {
@@ -140,6 +145,34 @@ namespace PetSitter.Controllers
 
             return View(booking);
         }
+
+
+
+
+
+        public IActionResult CreateReview(int sitterID)
+
+        {
+
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+            SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
+            SitterProfileVM sitterInfor = sRepos.GetSitterById(sitterID);
+
+            CreateReviewVM reviewCreating = new CreateReviewVM {
+                sitter = sitterInfor.FirstName + sitterInfor.LastName,
+                //LastName = sitterInfor.LastName,
+
+                
+             };
+
+            //reviewCreating.SitterId = sitterID;
+
+
+            return View(reviewCreating);
+        }
+
+
 
         
     }

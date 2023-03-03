@@ -43,13 +43,11 @@ namespace PetSitter.Repositories
                           select s).FirstOrDefault();
             return sitter;
         }
-        //Add new sitter
         public void AddSiter(Sitter sitter)
         {
             _db.Sitters.Add(sitter);
             _db.SaveChanges();
         }
-
         public User getUser(int? userId)
         {
             var user = (from u in _db.Users
@@ -57,22 +55,12 @@ namespace PetSitter.Repositories
                         select u).FirstOrDefault();
             return user;
         }
-        /// <summary>
-        /// get siiter by email
-        /// </summary>
-        /// <param name="email"></param>
-        /// <returns></returns>
         public Sitter GetSitterByEmail(string email)
         {
             var sitter = _db.Sitters.Where(s => s.User.Email == email).FirstOrDefault();
 
             return sitter;
         }
-        /// <summary>
-        /// Get all the informations of a sitter
-        /// </summary>
-        /// <param name="sitterId"></param>
-        /// <returns></returns>
         public SitterProfileVM GetSitterById(int sitterId)
         {
             var sitter = (from u in _db.Users
@@ -121,12 +109,6 @@ namespace PetSitter.Repositories
 
             return sitterProfileVM;
         }
-
-        /// <summary>
-        /// EditProfie of a sitter
-        /// </summary>
-        /// <param name="sitterProfileVM"></param>
-        /// <returns></returns>
         public Tuple<int, string> EditSitter(SitterProfileVM sitterProfileVM)
         {
             string stringFileName = UploadCustomerFile(sitterProfileVM);
@@ -240,7 +222,7 @@ namespace PetSitter.Repositories
                            join u in _db.Users on b.UserId equals u.UserId
                            join bp in _db.BookingPets on b.BookingId equals bp.BookingId
                            join p in _db.Pets on bp.PetId equals p.PetId
-                           where b.SitterId == sitterId
+                           where b.SitterId == sitter.SitterId
                            select new
                            {
                                b.StartDate,
@@ -342,7 +324,44 @@ namespace PetSitter.Repositories
             return vm;
 
         }
- 
+        public Tuple<int, string> AddAvailability(SitterAvailabilityVM availabilityVM)
+
+        {
+            Availability availability = new Availability
+            {
+                StartDate = availabilityVM.StartDate,
+                EndDate = availabilityVM.EndDate
+
+            };
+            string message = String.Empty;
+
+            try
+            {
+                // Add the availability to the database
+                _db.Availabilities.Add(availability);
+                _db.SaveChanges();
+
+                // Get the current sitter and add the availability to their list of availabilities
+                var currentSitter = _db.Sitters.Include(s => s.Availabilities).FirstOrDefault(s => s.SitterId == availabilityVM.SitterId);
+                currentSitter.Availabilities.Add(availability);
+                _db.SaveChanges();
+
+
+                message = $"Success adding new availability";
+
+            }
+            catch (Exception e)
+            {
+                availability.AvailabilityId = -1;
+
+                message = e.Message + " "
+    + "The sitter account may not exist or "
+    + "there could be a foreign key restriction.";
+
+            }
+
+            return Tuple.Create(availability.AvailabilityId, message);
+        }
 
 
 
