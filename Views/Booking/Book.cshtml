@@ -8,6 +8,9 @@
 
 <h4>Booking</h4>
 <hr />
+<div>
+    <a asp-action="FindASitter">Back to List</a>
+</div>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Book">
@@ -18,6 +21,10 @@
             <div class="form-group">
                 <p>Pets</p>
                 @Model.Message
+                @if(Model.Pets.Count() == 0)
+                {
+                    <p>Please go to your profile and add a pet in order to proceed with booking!</p>
+                }
                 @for (var i = 0; i < Model.Pets.Count(); i++)
                 {
                     <input type="hidden" asp-for="Pets[i].PetId"/>
@@ -46,10 +53,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
