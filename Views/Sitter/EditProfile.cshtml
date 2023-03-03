@@ -1,4 +1,4 @@
-﻿@model PetSitter.ViewModels.CustomerVM
+﻿@model PetSitter.ViewModels.SitterProfileVM
 @{
     ViewData["Title"] = "EditProfile";
 }
@@ -10,7 +10,9 @@
     <div class="col-md-4">
         <form asp-action="EditProfile" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="CustomerId" />
+            <input type="hidden" asp-for="UserId"/>
+            <input type="hidden" asp-for="SitterId" />
+
             <input type="hidden" asp-for="UserType"/>
 @*            <input type="hidden" asp-for="PetId"/>
 *@           <div class="row profile-pic">
@@ -20,7 +22,18 @@
                     <input asp-for="ProfileImage" class="form-control" />
                     <span asp-validation-for="ProfileImage" class="text-danger"></span>
                 </div>
+               
            </div>
+            <div class="row">
+
+            <div class="form-group">
+                    <label asp-for="ProfileBio" class="control-label"></label>
+
+                    <textarea asp-for="ProfileBio" rows="3" class="form-control" autocomplete="username" aria-required="true"></textarea>
+                    <span asp-validation-for="ProfileBio" class="text-danger"></span>
+
+                </div>
+            </div>
            <div class="row">
                <h3>CONTACT DETAILS</h3>
                 <div class="form-group">
@@ -63,8 +76,25 @@
                 </div>
             </div>
             <div class="row">
-                <h3>ADD PET</h3>
-                <a asp-action="CreatePet" asp-route-id="@Model.CustomerId" class="text-decoration-none">Add a pet</a>
+                <h3>Pet preferences</h3>
+            <div class="form-group">
+                <h6> What type of pets do you accept?</h6>
+
+                <label for="SelectedPetTypes" class="control-label"></label>
+                @foreach (var petType in Model.PetTypesAvailable)
+                {
+                    <input class="form-check-input" type="checkbox" name="SelectedPetTypes" value="@petType"
+                       @(Model.SelectedPetTypes.Contains(petType) ? "checked" : "")>
+                    <label class="form-check-label">@petType</label>
+                }
+            </div>
+           
+
+                <div class="form-group">
+                    <label asp-for="RatePerPetPerDay"></label>
+                    <input asp-for="RatePerPetPerDay" type="text" class="form-control" autocomplete="username" aria-required="true" readonly="readonly" />
+                    <span asp-validation-for="RatePerPetPerDay" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group mt-3">
                 <input type="submit" value="Save" class="btn btn-primary" />

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PetSitter.Models;
 using PetSitter.ViewModels;
@@ -243,10 +244,33 @@ namespace PetSitter.Repositories
             if (selectedPets > 0)
             {
                 return true;
-            } else
+            }
+            else
             {
                 return false;
             }
         }
+
+        //Get All sitter's booking
+        public List<Booking> GetBookingsBySitter(int sitterID)
+        {
+            var bookings = _db.Bookings.Where(s => s.SitterId == sitterID).ToList();
+
+            return bookings;
+        }
+        public List<DateTime> GetBookedDates(List<Booking> bookings)
+        {
+            var bookedDates = new List<DateTime>();
+            foreach (var booking in bookings)
+            {
+                for (DateTime date = (DateTime)booking.StartDate; date <= (DateTime)booking.EndDate; date = date.AddDays(1))
+                {
+                    bookedDates.Add(date);
+                }
+            }
+            return bookedDates;
+        }
     }
+
+}
 }

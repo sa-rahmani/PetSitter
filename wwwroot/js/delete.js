@@ -23,10 +23,10 @@
                     </div>`);
 
     //Delete Action
-    $(".delete").on('click', (e) => {
+    $(".btn-delete").on('click', (e) => {
         e.preventDefault();
 
-        target = e.target;
+        target = e.currentTarget;
         var Id = $(target).data('id');
         var controller = $(target).data('controller');
         var action = $(target).data('action');
@@ -42,15 +42,18 @@
         $.get(url)
             .done((result) => {
                 if (!redirectUrl) {
-                    return $(target).parent().parent().hide("slow");
+                    $(target).closest("tr").remove();
                 }
-                window.location.href = redirectUrl;
+                else {
+                    window.location.href = redirectUrl;
+                }
+                $("#deleteModal").modal('hide'); // Move this statement here
             })
             .fail((error) => {
-                if (redirectUrl)
+                if (redirectUrl) {
                     window.location.href = redirectUrl;
-            }).always(() => {
-                $("#deleteModal").modal('hide');
+                }
+                $("#deleteModal").modal('hide'); // Also move this statement here
             });
     });
 
