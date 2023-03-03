@@ -271,6 +271,4 @@ namespace PetSitter.Repositories
             return bookedDates;
         }
     }
-
-}
 }
