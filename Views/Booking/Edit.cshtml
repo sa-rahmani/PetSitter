@@ -1,0 +1,59 @@
+﻿@model PetSitter.ViewModels.BookingFormVM
+
+@{
+    ViewData["Title"] = "Book";
+}
+
+<h1>Book</h1>
+
+<h4>Edit Booking</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Book">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="SitterId" class="form-control" value="@Model.SitterId" type="hidden" />
+            </div>
+            <div class="form-group">
+                <p>Pets</p>
+                @Model.Message
+                @for (var i = 0; i < Model.Pets.Count(); i++)
+                {
+                    <input type="hidden" asp-for="Pets[i].PetId" />
+                    <input type="hidden" asp-for="Pets[i].Name" />
+                    <input asp-for="Pets[i].IsChecked" checked="Pets[i].IsChecked"/>
+                    <label asp-for="Pets[i].IsChecked">@Model.Pets[i].Name</label>
+                }
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label"></label>
+                <input asp-for="StartDate" class="form-control" type="date" asp-value="@Model.StartDate" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label"></label>
+                <input asp-for="EndDate" class="form-control" type="date" asp-value="@Model.EndDate" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SpecialRequests" class="control-label"></label>
+                <input asp-for="SpecialRequests" class="form-control" asp-value="@Model.SpecialRequests" />
+                <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Book Now" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
