@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 var sendgridApiKey = builder.Configuration["SendGrid:ApiKey"];
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<PetSitterContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IEmailService,EmailService>();

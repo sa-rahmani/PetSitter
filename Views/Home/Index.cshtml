@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PetSitter.Models.User>
+﻿@model PetSitter.Models.User
 
 @{
     ViewData["Title"] = "Index";
@@ -6,7 +6,9 @@
 }
 
 
-
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
 @*<div class="text-center">
     
@@ -101,4 +103,6 @@
         </div>
 
     </div>
+
+
   
