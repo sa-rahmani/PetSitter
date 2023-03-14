@@ -188,21 +188,23 @@ namespace PetSitter.Controllers
 
 
 
-        public IActionResult CreateReview(int sitterID)
+        public IActionResult CreateReview(int sitterID,int bookingID)
 
         {
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
+
             SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
-            SitterProfileVM sitterInfor = sRepos.GetSitterById(sitterID);
+            var sitterInfor = sRepos.GetSitterById(sitterID);
 
-            CreateReviewVM reviewCreating = new CreateReviewVM {
-                sitter = sitterInfor.FirstName + sitterInfor.LastName,
+                CreateReviewVM reviewCreating = new CreateReviewVM {
+
+                sitter = sitterInfor.FirstName + " " + sitterInfor.LastName,
                 //LastName = sitterInfor.LastName,
-
-                
              };
+
+            ViewBag.SitterName = reviewCreating.sitter;
 
             //reviewCreating.SitterId = sitterID;
 
@@ -211,7 +213,27 @@ namespace PetSitter.Controllers
         }
 
 
+        [HttpPost]
+        public IActionResult CreateReview(CreateReviewVM createReviewVM)
+        {
 
-        
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+            ReviewRepo reviewRepo = new ReviewRepo(_db);
+
+
+            Tuple<int, string> response =
+                reviewRepo.UpdateReview(createReviewVM, customerID);
+
+            //int petID = response.Item1;
+            //string createMessage = response.Item2;
+
+
+            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });//,
+             //    new { id = petID, message = createMessage });
+        }
+
+
+
     }
 }
