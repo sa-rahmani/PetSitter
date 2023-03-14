@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using PetSitter.Models;
+using System.ComponentModel;
+using System.Security.Policy;
 
 namespace PetSitter.ViewModels
 {
@@ -20,5 +22,9 @@ namespace PetSitter.ViewModels
 
         public List<string>? Reviews { get; set; }
 
+        public List<string>? petTypes { get; set; }
+
+        public List<DateTime>? availableDates { get; set; }
+       public List<Availability>? availabilities  { get; set; }
     }
 }
