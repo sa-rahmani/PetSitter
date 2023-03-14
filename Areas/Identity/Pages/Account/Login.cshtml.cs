@@ -140,8 +140,6 @@ namespace PetSitter.Areas.Identity.Pages.Account
                     {
                         HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
                     }
-
-                   
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
@@ -15,12 +16,15 @@ namespace PetSitter.Controllers
     {
         private readonly PetSitterContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IEmailService _emailService;
 
-        public BookingController(PetSitterContext db, IWebHostEnvironment webHost)
+        public BookingController(PetSitterContext db, IEmailService emailService, IWebHostEnvironment webHost)
         {
             _db = db;
+            _emailService = emailService;
             _webHostEnvironment = webHost;
-        }
+
+        }   
 
         public IActionResult Index()
         {
@@ -37,15 +41,31 @@ namespace PetSitter.Controllers
                 userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
             }
 
-            BookingRepo bookingRepo = new BookingRepo(_db);
-            List<BookingVM> myBookings = bookingRepo.GetBookingVMsByUserId(userId);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
+            List<BookingVM> myBookings = bookingRepo.GetUpcomingBookingVMsByUserId(userId);
+
+            return View(myBookings);
+        }
+
+        public IActionResult ViewPastBookings()
+        {
+            // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
+            int userId = 3;
+
+            if (HttpContext.Session.GetString("UserID") != null)
+            {
+                userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            }
+
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
+            List<BookingVM> myBookings = bookingRepo.GetPastBookingVMsByUserId(userId);
 
             return View(myBookings);
         }
 
         public IActionResult BookingDetails(int bookingID)
         {
-            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             BookingVM booking = bookingRepo.GetBookingVM(bookingID);
 
             return View(booking);
@@ -131,7 +151,7 @@ namespace PetSitter.Controllers
                 userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
             }
 
-            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             List<BookingPetVM> pets = bookingRepo.GetBookingPetVMsByUserId(userId);
             booking.Pets = pets;
 
@@ -146,7 +166,7 @@ namespace PetSitter.Controllers
             bookingForm.Message ??= "";
 
             // Check that at least one pet was selected.
-            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
 
             if (petsSelected)
@@ -179,7 +199,7 @@ namespace PetSitter.Controllers
 
         public IActionResult ConfirmBooking(int bookingId)
         {
-            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             BookingVM confirmBooking = bookingRepo.GetBookingVM(bookingId);
             return View(confirmBooking);
         }
@@ -187,7 +207,7 @@ namespace PetSitter.Controllers
         // GET: Edit
         public IActionResult Edit(int bookingId)
         {
-            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             BookingFormVM booking = bookingRepo.GetBookingFormVM(bookingId);
             return View(booking);
         }
@@ -200,7 +220,7 @@ namespace PetSitter.Controllers
             bookingForm.Message ??= "";
 
             // Check that at least one pet was selected.
-            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
 
             if (petsSelected)
@@ -226,8 +246,18 @@ namespace PetSitter.Controllers
         [HttpPost]
         public JsonResult PaySuccess([FromBody] IPN ipn)
         {
-            BookingRepo bookingRepo = new BookingRepo(_db);
-            IPN completeIPN = bookingRepo.AddTransaction(ipn);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
+
+            // FOR DEVELOPMENT: GET EMAIL IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
+            string email = "laurenemilybyrne@gmail.com";
+
+            if (HttpContext.Session.GetString("Email") != null)
+            {
+                email = HttpContext.Session.GetString("Email");
+            }
+
+            IPN completeIPN = bookingRepo.AddTransaction(ipn, email);
+
             return Json(completeIPN);
         }
 

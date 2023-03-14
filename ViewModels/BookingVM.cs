@@ -10,6 +10,7 @@ namespace PetSitter.ViewModels
         [Key]
         public int BookingId { get; set; }
         public int SitterId { get; set; }
+        public string SitterName { get; set; }
         public int UserId { get; set; }
         public List<BookingPetVM> Pets { get; set; }
 

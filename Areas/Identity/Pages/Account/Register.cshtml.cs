@@ -22,7 +22,6 @@ using Microsoft.Extensions.Logging;
 using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
-using PetSitter.ViewModels;
 using static PetSitter.Services.ReCAPTCHA;
 
 namespace PetSitter.Areas.Identity.Pages.Account
@@ -198,19 +197,6 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         UserType = Input.UserType,
                     };
 
-                    // usertype == 'admin' can go here this will make more clean code structure in terms of user roles
-                    if (newUser.UserType == "Admin")
-                    {
-                        CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
-                        SitterRepos sitterRepos = new SitterRepos(_context, webHostEnvironment);
-
-                        var customerID = customerRepo.GetCustomerId(Input.Email);
-                        var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
-
-                        HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
-                        HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
-
-                    }
                     if (newUser.UserType == "Sitter")
                     {
                         SitterRepos sitterRepos = new SitterRepos(_context, webHostEnvironment);
@@ -228,8 +214,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         };
                         sitterRepos.AddSiter(newSitter);
 
-                        var sitterID = sitterRepos.GetSitterByEmail(Input.Email);   
-
+                        var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
                         HttpContext.Session.SetString("UserName", customerID.FirstName);
                         HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
                         HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
@@ -243,7 +228,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         HttpContext.Session.SetString("UserName", customerID.FirstName);
                         HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
                     }
-                    
+                    // usertype == 'admin' can go here this will make more clean code structure in terms of user roles
 
                     _logger.LogInformation("User created a new account with password.");
 

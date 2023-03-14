@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<PetSitter.ViewModels.BookingVM>
 
 @{
-    ViewData["Title"] = "Upcoming Bookings";
+    ViewData["Title"] = "My Bookings";
 }
 
-<h1>Upcoming Bookings</h1>
+<h1>Past Bookings</h1>
 
-<a asp-action="ViewPastBookings">Past Bookings</a>
+<a asp-action="ViewMyBookings">Upcoming Bookings</a>
 
 @foreach (var item in Model)
 {
@@ -14,17 +14,18 @@
         <div>@Html.DisplayFor(modelItem => item.StartDate) - @Html.DisplayFor(modelItem => item.EndDate)</div>
         <div>
             <span class="sitter-name">@Html.DisplayFor(modelItem => item.SitterName)</span> caring for <span>@item.Pets[0].Name</span>
-            @for (int i = 1; i < @item.Pets.Count-1; i++)
-                {
-                    <span>, @item.Pets[i].Name</span>
-                }
+            @for (int i = 1; i < @item.Pets.Count - 1; i++)
+            {
+                <span>, @item.Pets[i].Name</span>
+            }
             @if (@item.Pets.Count > 1)
-                {
-                    <span> & @item.Pets[item.Pets.Count]</span>
-                }
+            {
+                <span> & @item.Pets[item.Pets.Count]</span>
+            }
         </div>
         <div>
             <a asp-action="BookingDetails" asp-route-bookingID="@item.BookingId">More Info</a>
+            <a asp-action="CreateReview" asp-route-bookingID="@item.BookingId">Review This Booking</a>
         </div>
     </section>
 }

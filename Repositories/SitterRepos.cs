@@ -148,7 +148,7 @@ namespace PetSitter.Repositories
                 PhoneNumber = sitterProfileVM.PhoneNumber,
                 UserType = sitterProfileVM.UserType,
 
-                ProfileImage = stringFileName
+                //ProfileImage = sitterProfileVM
 
 
 
