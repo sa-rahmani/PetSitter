@@ -65,42 +65,62 @@ namespace PetSitter.Repositories
         public Tuple<int, string> EditProfile(CustomerVM customerVM, int userID)
         {
             string updateMessage;
-
-            string stringFileName = UploadCustomerFile(customerVM);
-
-            User user = new User
-            {
-                UserId = userID,
-                FirstName = customerVM.FirstName,
-                LastName = customerVM.LastName,
-                Email = customerVM.Email,
-                PostalCode = customerVM.PostalCode,
-                PhoneNumber = customerVM.PhoneNumber,
-                StreetAddress = customerVM.StreetAddress,
-                City = customerVM.City,
-                UserType = customerVM.UserType,
-                ProfileImage = stringFileName
-            };
+            User user = new User();
+            //string stringFileName = UploadCustomerFile(customerVM);
 
             try
             {
-                _db.Entry(user).State = EntityState.Modified;
-                if (user.ProfileImage == null)
+                if (customerVM.ProfileImage != null && !IsImageFileTypeValid(customerVM.ProfileImage.ContentType))
                 {
-                    _db.Entry(user).Property(u => u.ProfileImage).IsModified = false;
-
+                    updateMessage = "imageUpload" + "Please upload a PNG, " + "JPG, or JPEG file.";
                 }
-                _db.SaveChanges();
+                else
+                {
+                    byte[] imageData = null;
+                    if (customerVM.ProfileImage != null)
+                    {
+                        using var binaryReader = new BinaryReader(customerVM.ProfileImage.OpenReadStream());
+                        imageData = binaryReader.ReadBytes((int)customerVM.ProfileImage.Length);
+                    }
 
-                updateMessage = $"Success editing {user.FirstName} user account " + $"Your edited user number is: {user.UserId}";
+                    user = new User
+                    {
+                        UserId = userID,
+                        FirstName = customerVM.FirstName,
+                        LastName = customerVM.LastName,
+                        Email = customerVM.Email,
+                        PostalCode = customerVM.PostalCode,
+                        PhoneNumber = customerVM.PhoneNumber,
+                        StreetAddress = customerVM.StreetAddress,
+                        City = customerVM.City,
+                        UserType = customerVM.UserType,
+                        ProfileImage = imageData
+                    };
+
+                    try
+                    {
+                        _db.Entry(user).State = EntityState.Modified;
+                        if (user.ProfileImage == null)
+                        {
+                            _db.Entry(user).Property(u => u.ProfileImage).IsModified = false;
+                        }
+                        _db.SaveChanges();
+
+                        updateMessage = $"Success editing {user.FirstName} user account " + $"Your edited user number is: {user.UserId}";
+                    }
+                    catch (Exception ex)
+                    {
+                        updateMessage = ex.Message;
+                    }
+                }
+                return Tuple.Create(user.UserId, updateMessage);
             }
             catch (Exception ex)
             {
                 updateMessage = ex.Message;
+                return Tuple.Create(userID, updateMessage);
             }
-            return Tuple.Create(user.UserId, updateMessage);
         }
-
 
         private string UploadCustomerFile(CustomerVM customerVM)
         {
@@ -117,6 +137,15 @@ namespace PetSitter.Repositories
             } 
             return fileName;
         }
+
+
+        private bool IsImageFileTypeValid(string contentType)
+        {
+            return contentType == "image/png" ||
+                   contentType == "image/jpeg" ||
+                   contentType == "image/jpg";
+        }
+
     }
 }
 
