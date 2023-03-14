@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PetSitter.Data;
 using PetSitter.Models;
 using System.Diagnostics;
@@ -32,8 +31,7 @@ namespace PetSitter.Controllers
         {
             return View();
         }
-
-
+        
         //[Authorize]
         //public IActionResult SecureArea()
         //{

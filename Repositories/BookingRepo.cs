@@ -1,20 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.ViewModels;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text.Encodings.Web;
 
 namespace PetSitter.Repositories
 {
     public class BookingRepo
     {
         private readonly PetSitterContext _db;
+        private readonly IEmailService _emailService;
 
-        public BookingRepo(PetSitterContext db)
+        public BookingRepo(PetSitterContext db, IEmailService emailService)
         {
             _db = db;
+            _emailService = emailService;
         }
 
         // SECTION: Read Methods
@@ -50,7 +54,7 @@ namespace PetSitter.Repositories
                                                          Name = p.Name
                                                      };
 
-            // Assign the appropriate BookingPetVM to each BookingVM.
+            // Assign the appropriate BookingPetVM to each BookingVM, along with Sitter names.
             foreach (var booking in bookingsList)
             {
                 List<int> petIds = _db.BookingPets.Where(bp => bp.BookingId == booking.BookingId).Where(bp => bp.PetId.HasValue).Select(bp => bp.PetId.GetValueOrDefault()).ToList();
@@ -62,6 +66,11 @@ namespace PetSitter.Repositories
                 }
 
                 booking.Pets = pets;
+
+                // Add sitter name.
+                Sitter sitter = _db.Sitters.Where(s => s.SitterId == booking.SitterId).FirstOrDefault();
+                User user = _db.Users.Where(u => u.UserId == sitter.UserId).FirstOrDefault();
+                booking.SitterName = user.FirstName;
             }
 
             return bookingsList;
@@ -85,6 +94,46 @@ namespace PetSitter.Repositories
                 }
             }
             return myBookings;
+        }
+
+        public List<BookingVM> GetUpcomingBookingVMsByUserId(int userID)
+        {
+            List<BookingVM> myBookings = GetBookingVMsByUserId(userID);
+            List<BookingVM> upcomingBookings = new List<BookingVM>();
+
+            // Filter for upcoming bookings only
+            foreach (var booking in myBookings)
+            {
+                if (booking.EndDate > DateTime.Now)
+                {
+                    upcomingBookings.Add(booking);
+                }
+            }
+
+            // Sort soonest to furthest away
+            upcomingBookings = upcomingBookings.OrderBy(b => b.StartDate).ToList();
+
+            return upcomingBookings;
+        }
+
+        public List<BookingVM> GetPastBookingVMsByUserId(int userID)
+        {
+            List<BookingVM> myBookings = GetBookingVMsByUserId(userID);
+            List<BookingVM> pastBookings = new List<BookingVM>();
+
+            // Filter for past bookings only
+            foreach (var booking in myBookings)
+            {
+                if (booking.EndDate < DateTime.Now)
+                {
+                    pastBookings.Add(booking);
+                }
+            }
+
+            // Sort most recent to oldest
+            pastBookings = pastBookings.OrderByDescending(b => b.StartDate).ToList();
+
+            return pastBookings;
         }
 
         public BookingFormVM GetBookingFormVM(int bookingID)
@@ -260,7 +309,7 @@ namespace PetSitter.Repositories
             return booking;
         }
 
-        public IPN AddTransaction(IPN ipn)
+        public IPN AddTransaction(IPN ipn, string email)
         {
             // Add IPN record.
             _db.IPNs.Add(ipn);
@@ -272,7 +321,45 @@ namespace PetSitter.Repositories
             _db.Bookings.Update(booking);
             _db.SaveChanges();
 
+            // Send confirmation email to the customer.
+            SendConfirmationEmail(email, booking);
+
             return ipn;
+        }
+
+        public async void SendConfirmationEmail(string email, Booking booking)
+        {
+            // Get BookingVM
+            BookingVM bookingVM = GetBookingVM(booking.BookingId);
+
+            // Create pets string
+            string pets = "<ul>";
+            foreach (var pet in bookingVM.Pets) 
+            {
+                pets += $"<li>{pet.Name}</li>";
+            }
+
+            // Convert nullables
+            DateTime startDate = (DateTime)booking.StartDate;
+            DateTime endDate = (DateTime)booking.EndDate;
+            decimal price = (decimal)bookingVM.Price;    
+
+            var response = await _emailService.SendSingleEmail(new ComposeEmailModel
+            {
+                FirstName = "TeamGreen",
+                LastName = "SSD",
+                Subject = "Booking Confirmed!",
+                Email = email,
+                Body = $"<h1 style=\"font-weight:normal;\">Thank you for booking with Sitter Care!</h1>" +
+                       $"<h2>Booking Details</h2>" +
+                       $"<ul><li>Sitter: {bookingVM.SitterName}</li>" +
+                       $"<li>Pets: {pets}</li>" +
+                       $"<li>Start Date: {startDate.ToString("MMMM dd, yyyy")}</li>" +
+                       $"<li>End Date: {endDate.ToString("MMMM dd, yyyy")}</li>" +
+                       $"<li>Special Requests: {booking.SpecialRequests}</li>" +
+                       $"<li>Price: {price.ToString("C")}</li>" +
+                       $"<li>Payment Confirmation: {booking.PaymentId}</li></ul>"
+            });
         }
     }
 }
