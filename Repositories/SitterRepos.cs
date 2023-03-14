@@ -42,6 +42,7 @@ namespace PetSitter.Repositories
         //                  select s).FirstOrDefault();
         //    return sitter;
         //}
+
         //Add new sitter
         public void AddSiter(Sitter sitter)
         {
