@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PetSitter.Data;
 using PetSitter.Models;
 using PetSitter.ViewModels;
+using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
@@ -36,13 +37,14 @@ namespace PetSitter.Repositories
             return petTypeSitter;
 
         }
-        public Sitter getSitterById(int sitterId)
-        {
-            var sitter = (from s in _db.Sitters
-                          where s.SitterId == sitterId
-                          select s).FirstOrDefault();
-            return sitter;
-        }
+        //public Sitter getSitterById(int sitterId)
+        //{
+        //    var sitter = (from s in _db.Sitters
+        //                  where s.SitterId == sitterId
+        //                  select s).FirstOrDefault();
+        //    return sitter;
+        //}
+        //Add new sitter
         public void AddSiter(Sitter sitter)
         {
             _db.Sitters.Add(sitter);
@@ -361,6 +363,54 @@ namespace PetSitter.Repositories
             }
 
             return Tuple.Create(availability.AvailabilityId, message);
+        }
+
+
+
+
+
+        public List<ReviewVM> GetReviews(int sitterId)
+        {
+            SitterProfileVM sitter = GetSitterById(sitterId);
+
+            List<ReviewVM> vm = new List<ReviewVM>();
+
+            //SitterProfileVM sitter = GetSitterByEmail(email);
+            var reviews = (from b in _db.Bookings
+                           join u in _db.Users on b.UserId equals u.UserId
+                           where b.SitterId == sitterId && b.Review != null
+                           select new
+                           {
+                               u.FirstName,
+                               u.LastName,
+                               b.Review,
+                               b.Rating,
+                               b.StartDate,
+                               b.EndDate
+                           });
+
+            foreach (var r in reviews)
+            {
+                vm.Add(new ReviewVM
+                {
+                    petParent = r.FirstName + " " + r.LastName,
+                    startDate = r.StartDate,
+                    endDate = r.EndDate,
+                    rating = r.Rating,
+                    review = r.Review
+
+                });
+
+
+            }
+
+
+            return vm;
+
+
+
+
+
         }
 
 

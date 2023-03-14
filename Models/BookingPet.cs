@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace PetSitter.Models
 {
     public partial class BookingPet
     {
+        [Key]
         public int? BookingId { get; set; }
+        [Key]
         public int? PetId { get; set; }
 
         public virtual Booking? Booking { get; set; }
