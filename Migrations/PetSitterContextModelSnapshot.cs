@@ -63,6 +63,9 @@ namespace PetSitter.Migrations
                         .HasColumnType("date")
                         .HasColumnName("endDate");
 
+                    b.Property<string>("PaymentId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Price")
                         .HasColumnType("money")
                         .HasColumnName("price");
@@ -114,11 +117,44 @@ namespace PetSitter.Migrations
                         .HasColumnType("int")
                         .HasColumnName("petID");
 
-                    b.HasIndex("BookingId");
+                    b.HasKey("BookingId", "PetId");
 
                     b.HasIndex("PetId");
 
                     b.ToTable("BookingPet", (string)null);
+                });
+
+            modelBuilder.Entity("PetSitter.Models.ImageStore", b =>
+                {
+                    b.Property<int>("ImageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ImageId"), 1L, 1);
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Image")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("PetId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.HasKey("ImageId");
+
+                    b.HasIndex("PetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ImageStores");
                 });
 
             modelBuilder.Entity("PetSitter.Models.IPN", b =>
@@ -438,16 +474,39 @@ namespace PetSitter.Migrations
                     b.HasOne("PetSitter.Models.Booking", "Booking")
                         .WithMany()
                         .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK__BookingPe__booki__3E52440B");
 
                     b.HasOne("PetSitter.Models.Pet", "Pet")
                         .WithMany()
                         .HasForeignKey("PetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("FK__BookingPe__petID__3F466844");
 
                     b.Navigation("Booking");
 
                     b.Navigation("Pet");
+                });
+
+            modelBuilder.Entity("PetSitter.Models.ImageStore", b =>
+                {
+                    b.HasOne("PetSitter.Models.Pet", "Pet")
+                        .WithMany()
+                        .HasForeignKey("PetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PetSitter.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pet");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PetSitter.Models.Pet", b =>
