@@ -77,6 +77,14 @@
                                 </li>
                             }
 
+                            @*Later on this should be only accessed by admin*@
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li classs="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
+                                </li>
+                            }
+
                         </ul>
                     }
                         <partial name="_LoginPartial" />
