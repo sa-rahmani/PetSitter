@@ -16,8 +16,8 @@
 
         public int BookingId { get; set; }
 
-        //public DateTime? startDate { get; set; }
-        //public DateTime? endDate { get; set; }
+        public DateTime? startDate { get; set; }
+        public DateTime? endDate { get; set; }
 
         public int rating { get; set; }
         public string? review { get; set; }

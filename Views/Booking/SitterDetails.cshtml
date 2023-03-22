@@ -3,45 +3,79 @@
 @{
     ViewData["Title"] = "SitterDetail";
 }
-
-<h1>Details</h1>
-
-<div>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AvgRating)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AvgRating)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProfileBio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProfileBio)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Reviews)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Reviews)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Book" asp-route-sitterID="@Model.SitterId">Book with @Html.DisplayFor(model => model.FirstName)</a>
+<main class="sitter-detail">
     <a asp-action="FindASitter">Back to List</a>
-</div>
+    <div class="profile">
+        <h1>@Html.DisplayFor(model => model.FirstName)</h1>
+        <div class="rating">
+            <span class="@IsStarSelected(1, @Model.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(2, @Model.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(3, @Model.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(4, @Model.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(5, @Model.AvgRating)">&#9733;</span>
+        </div>
+        <div>
+            <span class="price">$@Html.DisplayFor(model => model.Rate)</span> per day
+        </div>
+        <div>
+            <a asp-action="Book" asp-route-sitterID="@Model.SitterId">Book with @Html.DisplayFor(model => model.FirstName)</a>
+        </div>
+        <div>
+            @Html.DisplayFor(model => model.ProfileBio)
+        </div>
+    </div>
+    <div class="reviews">
+        <h2>Reviews</h2>
+@*        @Html.DisplayFor(model => model.Reviews)
+*@  
+        <div class="row">
+            @foreach (var item in Model.Reviews)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.petParent)</h5>
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.review)</p>
+                            <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.startDate) - @Html.DisplayFor(modelItem => item.endDate)</small></p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= item.rating)
+                                    {
+                                        <i class="fas fa-star text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                }
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+
+
+
+
+    </div>
+</main>
+
+@functions {
+    public string IsStarSelected(int star, double? rating)
+    {
+        if (star <= rating)
+        {
+            return "highlight";
+        }
+        else
+        {
+            return "no-highlight";
+        }
+    }
+}

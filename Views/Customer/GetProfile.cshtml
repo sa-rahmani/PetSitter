@@ -38,7 +38,8 @@
                     else
                     {
                         <div class="d-flex align-items-center w-100">
-                            <img src="~/images/@user.ProfileImage" class="rounded-top rounded-bottom" asp-append-version="true" />
+                            <img style="max-width: 400px;" src="data:image/png;base64,
+                            @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
                             <div>
                                 <h3 class="text-decoration-underline">PROFILE BIO</h3>
                                 <p>This is the first photo pet owners will see. We recommend using a well-lit, clear photo of your face (without sunglasses).</p>

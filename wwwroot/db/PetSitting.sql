@@ -38,7 +38,7 @@ CREATE TABLE [User] (
 	city					VARCHAR(50) NOT NULL,
 	postalCode				CHAR(6) NOT NULL,
 	userType				VARCHAR(50) NOT NULL,
-	profileImage			VARCHAR(8000)
+	profileImage			VARBINARY(MAX)
 	FOREIGN KEY(userType) REFERENCES UserType(userType)
 );
 
@@ -83,7 +83,7 @@ CREATE TABLE Pet (
 	instructions			VARCHAR(2000) NOT NULL,
 	userID					INT NOT NULL,
 	petType					VARCHAR(25) NOT NULL,
-	petImage				VARCHAR(8000)
+	petImage				VARBINARY(MAX)
 	FOREIGN KEY(userID) REFERENCES [User](userID),
 	FOREIGN KEY(petType) REFERENCES PetType(petType)
 );
@@ -144,3 +144,13 @@ SELECT * FROM Availability
 SELECT * FROM SitterAvailability
 SELECT * FROM Booking
 SELECT * FROM BookingPet
+
+-----------------------------------------------------
+ALTER TABLE Booking
+ADD paymentId VARCHAR(255);
+
+-------change image type to VARBINARY-----------------
+ALTER TABLE Pet
+DROP COLUMN petImage
+
+ALTER TABLE Pet ADD petImage VARBINARY(MAX);

@@ -33,10 +33,10 @@
                     }
                     else
                     {
-
                         <dd class="pet-image">
-                            <img src="~/images/@pet.PetImage" asp-append-version="true" />
-                        </dd>
+                            <img src="data:image/png;base64,
+                            @Convert.ToBase64String(pet.PetImage)" alt="Pet Image" />
+                         </dd>
                     }
                 }
             </div>

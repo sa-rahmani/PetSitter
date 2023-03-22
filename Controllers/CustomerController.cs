@@ -56,6 +56,7 @@ namespace PetSitter.Controllers
             return View(vm);
         }
 
+
         [HttpPost]
         public IActionResult EditProfile(CustomerVM customerVM)
         {
@@ -68,8 +69,6 @@ namespace PetSitter.Controllers
             Tuple<int, string> editCustomerRecord = customerRepo.EditProfile(customerVM, customerID);
 
             updateMessage = editCustomerRecord.Item2;
-
-            
 
             return RedirectToAction("GetProfile", "Customer",
                  new { id = customerID, message = updateMessage });
@@ -117,6 +116,7 @@ namespace PetSitter.Controllers
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
             ViewData["PetData"] = petRepo.GetPetData(id);
+
 
             return View(pet);
         }

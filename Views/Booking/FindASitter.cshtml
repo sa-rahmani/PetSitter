@@ -4,45 +4,93 @@
     ViewData["Title"] = "Find A Sitter";
 }
 
-<h1>Find A Sitter</h1>
+<h1>Find a Sitter</h1>
+@*<form method="get" action="@Url.Action("FindASitter")">
+    <label for="petTypes">Filter by Pet Types:</label>
+    <select name="petTypes" id="petTypes" multiple>
+        @foreach (var petType in ViewBag.PetTypes)
+        {
+            <option value="@petType.Value">@petType.Text</option>
+        }
+    </select>
+    <button type="submit">Filter</button>
+</form>*@
+<form method="get" action="@Url.Action("FindASitter")" id="filterForm">
+    <label>Filter by Pet Types:</label>
+    <div>
+        @foreach (var petType in ViewBag.PetTypes)
+        {
+            <label>
+                <input type="checkbox" name="petTypes" value="@petType"
+                @(ViewBag.SelectedPetTypes != null && ViewBag.SelectedPetTypes.Contains(petType) ? "checked" : "") />
+                @petType
+            </label>
+        }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProfileBio)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AvgRating)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProfileBio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AvgRating)
-            </td>
-            <td>
-                <a asp-action="SitterDetails" asp-route-sitterID="@item.SitterId">Details</a>
-            </td>
-        </tr>
+    </div>
+    <div>
+        <label for="selectedDates">Select dates:</label>
+        <input type="text" class="form-control date" placeholder="Pick the multiple dates"
+        id="selectedDates" name="selectedDates" value="@ViewBag.SelectedDates"/>
+        
+        </div>
+   <button type="submit">Filter</button>
+
+</form>
+@if (Model.Any())
+{
+    @foreach (var item in Model)
+    {
+        <section class="find-a-sitter-section">
+            <div class="name-rate">
+                <h2>@Html.DisplayFor(modelItem => item.FirstName)</h2>
+                <span><span class="price">$@Html.DisplayFor(modelItem => item.Rate)</span> per day</span>
+            </div>
+            <div class="rating">
+                <span class="@IsStarSelected(1, @item.AvgRating)">&#9733;</span>
+                <span class="@IsStarSelected(2, @item.AvgRating)">&#9733;</span>
+                <span class="@IsStarSelected(3, @item.AvgRating)">&#9733;</span>
+                <span class="@IsStarSelected(4, @item.AvgRating)">&#9733;</span>
+                <span class="@IsStarSelected(5, @item.AvgRating)">&#9733;</span>
+            </div>
+            <div>@Html.DisplayFor(modelItem => item.ProfileBio)</div>
+            <div class="more-info-link">
+                <a asp-action="SitterDetails" asp-route-sitterID="@item.SitterId">More Info</a>
+            </div>
+        </section>
+        <hr/>
+    }
 }
-    </tbody>
-</table>
+else
+{
+    <p>No sitters found.</p>
+}
+
+<script>
+    function submitFilterForm() {
+        document.getElementById("filterForm").submit();
+    }
+</script>
+@functions {
+    public string IsStarSelected(int star, double? rating)
+    {
+        if(star <= rating)
+        {
+            return "highlight";
+        } else
+        {
+            return "no-highlight";
+        }
+    }
+}
+@section scripts {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.en-GB.min.js"></script>
+    
+<script>
+    $('.date').datepicker({
+        multidate: true,
+        format: 'dd-mm-yyyy'
+    });
+</script>}

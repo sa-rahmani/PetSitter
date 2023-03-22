@@ -25,27 +25,44 @@ namespace PetSitter.Repositories
         {
             Pet pet = new Pet();
             string message;
-            string stringFileName = UploadPetImageFile(petVM);
+            //string stringFileName = UploadPetImageFile(petVM);
 
             try
             {
-                pet = new Pet
+                if (petVM.PetImage != null && !IsImageFileTypeValid(petVM.PetImage.ContentType))
                 {
-                    Name = petVM.Name,
-                    BirthYear = petVM.BirthYear,
-                    Sex = petVM.Sex,
-                    PetSize = petVM.PetSize,
-                    Instructions = petVM.Instructions,
-                    UserId = userID,
-                    PetType = petVM.PetType,
-                    PetImage = stringFileName
-                };
+                    message = "imageUpload" + "Please upload a PNG, " + "JPG, or JPEG file.";
+                }
+                else
+                {
+                    byte[] imageData = null;
+                    if (petVM.PetImage != null)
+                    {
+                        using (var binaryReader = new BinaryReader(petVM.PetImage.OpenReadStream()))
+                        {
+                            imageData = binaryReader.ReadBytes((int)petVM.PetImage.Length);
+                        }
+                    }
 
-                _db.Pets.Add(pet);
-                _db.SaveChanges();
+                    pet = new Pet
+                    {
+                        Name = petVM.Name,
+                        BirthYear = petVM.BirthYear,
+                        Sex = petVM.Sex,
+                        PetSize = petVM.PetSize,
+                        Instructions = petVM.Instructions,
+                        UserId = userID,
+                        PetType = petVM.PetType,
+                        PetImage = imageData
+                    };
 
-                message = $"Success creating your new pet. " +
-                               $"Your new pet number is: {pet.PetId}";
+                    _db.Pets.Add(pet);
+                    _db.SaveChanges();
+
+                    message = $"Success creating your new pet. " +
+                                   $"Your new pet number is: {pet.PetId}";
+
+                }
             }
             catch(Exception e)
             {
@@ -115,8 +132,8 @@ namespace PetSitter.Repositories
         public Tuple<int, string> EditPet(PetVM petVM, int userID)
         {
             string updateMessage;
-
-            string stringFileName = UploadPetImageFile(petVM);
+            byte[] imageData = null;
+            //string stringFileName = UploadPetImageFile(petVM);
 
             Pet pet = new Pet
             {
@@ -127,31 +144,43 @@ namespace PetSitter.Repositories
                 PetSize = petVM.PetSize,
                 Instructions = petVM.Instructions,
                 UserId = userID,
-                PetType = petVM.PetType,
-                PetImage = stringFileName
+                PetType = petVM.PetType
             };
+
+            if (petVM.PetImage != null)
+            {
+                if (!IsImageFileTypeValid(petVM.PetImage.ContentType))
+                {
+                    updateMessage = "imageUpload" + "Please upload a PNG, " + "JPG, or JPEG file.";
+                    return Tuple.Create(pet.PetId, updateMessage);
+                }
+
+                using var binaryReader = new BinaryReader(petVM.PetImage.OpenReadStream());
+                imageData = binaryReader.ReadBytes((int)petVM.PetImage.Length);
+            }
+
+            pet.PetImage = imageData;
 
             try
             {
                 _db.Entry(pet).State = EntityState.Modified;
+
                 if (pet.PetImage == null)
                 {
                     _db.Entry(pet).Property(p => p.PetImage).IsModified = false;
-
                 }
+
                 _db.SaveChanges();
 
                 updateMessage = $"Success editing {pet.Name} pet account " + $"Your edited pet number is: {pet.PetId}";
-               
             }
             catch (Exception ex)
             {
                 updateMessage = ex.Message;
             }
+
             return Tuple.Create(pet.PetId, updateMessage);
         }
-
-      
 
         public string UploadPetImageFile(PetVM petVM)
         {
@@ -193,5 +222,13 @@ namespace PetSitter.Repositories
             }
             return deleteMessage;
         }
+
+        private bool IsImageFileTypeValid(string contentType)
+        {
+            return contentType == "image/png" ||
+                   contentType == "image/jpeg" ||
+                   contentType == "image/jpg";
+        }
+
     }
 }

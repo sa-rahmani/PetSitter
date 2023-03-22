@@ -44,6 +44,7 @@ namespace PetSitter.Repositories
         //                  select s).FirstOrDefault();
         //    return sitter;
         //}
+
         //Add new sitter
         public void AddSiter(Sitter sitter)
         {
@@ -132,7 +133,7 @@ namespace PetSitter.Repositories
                 PhoneNumber = sitterProfileVM.PhoneNumber,
                 UserType = sitterProfileVM.UserType,
 
-                ProfileImage = stringFileName
+                //ProfileImage = sitterProfileVM
 
 
 
@@ -364,6 +365,9 @@ namespace PetSitter.Repositories
 
             return Tuple.Create(availability.AvailabilityId, message);
         }
+
+
+
 
 
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
@@ -22,15 +23,16 @@ namespace PetSitter.Controllers
         private readonly PetSitterContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<CustomerController> _logger;
+        private readonly IEmailService _emailService;
 
 
         public static int clientID;
-        public SitterController(ILogger<CustomerController> logger, PetSitterContext db, IWebHostEnvironment webHost)
+        public SitterController(ILogger<CustomerController> logger, PetSitterContext db, IWebHostEnvironment webHost, IEmailService emailService)
         {
             _db = db;
             _logger = logger;
             _webHostEnvironment = webHost;
-
+            _emailService = emailService;
 
         }
         /// <summary>
@@ -186,7 +188,7 @@ namespace PetSitter.Controllers
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
-            BookingRepo bookingRepo = new BookingRepo(_db);
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             AvailabilityRepo availabilityRepo = new AvailabilityRepo(_db);
 
             var bookings = bookingRepo.GetBookingsBySitter(sitterID);

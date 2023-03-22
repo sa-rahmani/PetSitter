@@ -59,6 +59,10 @@
 
 <h2>@ViewBag.SitterName</h2>
 
+ <div>
+    @Html.DisplayFor(model => model.startDate) -  @Html.DisplayFor(model => model.endDate)
+                </div>
+
 <style>
     /* Set the size and color of the star */
     .rating {
@@ -130,6 +134,8 @@
             <div class="form-group">
 
                 <label asp-for="review" class="control-label" style="text-transform: uppercase;"></label>
+
+
                 <textarea asp-for="review" class="form-control"></textarea>
 
                 <span asp-validation-for="review" class="text-danger"></span>
