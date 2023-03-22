@@ -1,0 +1,64 @@
+﻿@model IQueryable<PetSitter.ViewModels.AdminDashboardVM>  
+   
+@{  
+    ViewBag.Title = "Users With Roles";  
+    Layout = "~/Views/Shared/_Layout.cshtml";  
+}  
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
+<div class="panel panel-primary">  
+    <div class="panel-heading">  
+        <h3 class="box-title">  
+            <b>Users</b>  
+        </h3>  
+    </div>  
+    <!-- /.box-header -->  
+    <div class="panel-body">  
+        <table class="table table-hover table-bordered table-condensed" id="UsersWithRoles">  
+            <thead>  
+                <tr>  
+                    <td><b>User ID</b></td>  
+                    <td><b>Email</b></td>
+                    <td><b>First Name</b></td>
+                    <td><b>Last Name</b></td>
+                    <td><b>Role</b></td>
+                </tr>  
+            </thead>  
+            @foreach (var user in Model)  
+            {  
+                <tr>  
+                    <td>@user.UserID</td>  
+                    <td>@user.Email</td>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Role</td>
+                    @*@if (@user.Role == "Sitter")
+                    {
+                        <td></td>
+                    }*@
+
+                </tr>  
+            }  
+        </table>  
+    </div>  
+   
+    <div class="panel-footer">  
+        <p class="box-title"><b>Total Users Registered as of @String.Format("{0 : dddd, MMMM d, yyyy}", DateTime.Now)  : </b><span class="label label-primary">@Model.Count()</span></p>  
+    </div>  
+</div>  
+
+@section scripts{
+    <script>
+        $(function () {
+            $('#UsersWithRoles').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true
+            });
+        });
+    </script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+}
