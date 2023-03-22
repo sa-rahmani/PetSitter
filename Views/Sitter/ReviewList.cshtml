@@ -1,0 +1,134 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@*
+@model IEnumerable<PetSitter.ViewModels.ReviewVM>
+
+@{
+    ViewData["Title"] = "ReviewList";
+}
+
+<h1>Review</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.petParent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.startDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.endDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.rating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.review)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.petParent)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.startDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.endDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.rating)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.review)
+                </td>
+    
+            </tr>
+        }
+    </tbody>
+</table>
+*@
+
+
+@model IEnumerable<PetSitter.ViewModels.ReviewVM>
+
+@{
+    ViewData["Title"] = "ReviewList";
+}
+
+<h1>Review</h1>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.petParent)</h5>
+                    <p class="card-text">@Html.DisplayFor(modelItem => item.review)</p>
+                    <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.startDate) - @Html.DisplayFor(modelItem => item.endDate)</small></p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= item.rating)
+                            {
+                                        <i class="fas fa-star text-warning"></i>
+                            }
+                            else
+                            {
+                                        <i class="far fa-star"></i>
+                            }
+                        }
+                    </small>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+
+@*<style>
+    .rating {
+        unicode-bidi: bidi-override;
+        direction: rtl;
+        text-align: center;
+        position: relative;
+    }
+
+        .rating .star {
+            display: inline-block;
+            font-size: 1.5em;
+            color: #ccc;
+            transition: color 200ms ease-in-out;
+            cursor: pointer;
+        }
+
+            .rating .star.checked,
+            .rating .star:hover {
+                color: yellow;
+            }
+</style>*@
+
+
+
+
+
+
+
+

@@ -26,7 +26,43 @@
     </div>
     <div class="reviews">
         <h2>Reviews</h2>
-        @Html.DisplayFor(model => model.Reviews)
+@*        @Html.DisplayFor(model => model.Reviews)
+*@  
+        <div class="row">
+            @foreach (var item in Model.Reviews)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.petParent)</h5>
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.review)</p>
+                            <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.startDate) - @Html.DisplayFor(modelItem => item.endDate)</small></p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= item.rating)
+                                    {
+                                        <i class="fas fa-star text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                }
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+
+
+
+
     </div>
 </main>
 

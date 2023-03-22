@@ -59,9 +59,9 @@ img{
 align-items:center;
 }
 .wrapper .btn {
-    border: solid 1px red;
+    border: solid 1px #6366F1;
     color: white;
-    background-color: red;
+    background-color: #6366F1;
     padding: 10px 30px;
     border-radius: 20px;
     text-decoration: none;
