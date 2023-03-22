@@ -129,16 +129,17 @@ namespace PetSitter.Repositories
         /// <returns></returns>
         public Tuple<int, string> EditSitter(SitterProfileVM sitterProfileVM)
         {
-            string stringFileName = UploadCustomerFile(sitterProfileVM);
+            //string stringFileName = UploadCustomerFile(sitterProfileVM);
 
             List<string> petTypeSitter = getPetTypeSitter(sitterProfileVM.SitterId).Select(p => p.PetType1).ToList();
             PetType petTypeObj = null;
 
+            string message = String.Empty;
 
 
-            User sitterBasicInfo = new User
+            CustomerVM sitterUserInfo = new CustomerVM
             {
-                UserId = sitterProfileVM.UserId,
+                CustomerId = sitterProfileVM.UserId,
                 FirstName = sitterProfileVM.FirstName,
                 LastName = sitterProfileVM.LastName,
                 City = sitterProfileVM.City,
@@ -148,17 +149,20 @@ namespace PetSitter.Repositories
                 PhoneNumber = sitterProfileVM.PhoneNumber,
                 UserType = sitterProfileVM.UserType,
 
-                //ProfileImage = sitterProfileVM
-
-
+                ProfileImage = sitterProfileVM.ProfileImage
 
 
             };
+          
+                CustomerRepo customerRepo = new CustomerRepo(_db, _webHostEnvironment);
+                Tuple<int, string> editCustomerRecord = customerRepo.EditProfile(sitterUserInfo, sitterProfileVM.UserId);
+
+               
+
             var petTypesToInsert = sitterProfileVM.SelectedPetTypes.Except(petTypeSitter).ToList();
             var petTypesToDelete = petTypeSitter.Except(sitterProfileVM.SelectedPetTypes).ToList();
 
 
-            string message = String.Empty;
             //Sitter sitterObj = (from s in _db.Sitters
             //                 where s.SitterId == sitterProfileVM.SitterId
             //                 select s).FirstOrDefault();
@@ -192,7 +196,7 @@ namespace PetSitter.Repositories
                 }
 
                 // Check for nulls.
-                _db.Users.Update(sitterBasicInfo);
+                //_db.Users.Update(sitterBasicInfo);
                 _db.Sitters.Update(sitterObj);
                 _db.SaveChanges();
 
