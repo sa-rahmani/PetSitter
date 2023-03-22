@@ -22,7 +22,7 @@ namespace PetSitter.ViewModels
         
 
         [NotMapped]
-        public IFormFile ProfileImage { get; set; }
+        public IFormFile? ProfileImage { get; set; }
         public List<string>? PetTypesAvailable { get; set; }
         public List<string>? SelectedPetTypes { get; set; }
 

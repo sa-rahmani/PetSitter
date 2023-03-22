@@ -21,7 +21,7 @@
         @foreach (var petType in ViewBag.PetTypes)
         {
             <label>
-                <input type="checkbox" name="petTypes" value="@petType"
+                <input type="checkbox" name="petTypes" value="@petType" onclick="submitFilterForm()"
                 @(ViewBag.SelectedPetTypes != null && ViewBag.SelectedPetTypes.Contains(petType) ? "checked" : "") />
                 @petType
             </label>

@@ -19,6 +19,7 @@ builder.Services.AddDbContext<PetSitterContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IEmailService,EmailService>();
