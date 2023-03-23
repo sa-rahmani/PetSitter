@@ -391,6 +391,7 @@ namespace PetSitter.Repositories
                            {
                                u.FirstName,
                                u.LastName,
+                               u.ProfileImage,
                                b.Review,
                                b.Rating,
                                b.StartDate,
@@ -402,6 +403,7 @@ namespace PetSitter.Repositories
                 vm.Add(new ReviewVM
                 {
                     petParent = r.FirstName + " " + r.LastName,
+                    profileImage = r.ProfileImage,
                     startDate = r.StartDate,
                     endDate = r.EndDate,
                     rating = r.Rating,
