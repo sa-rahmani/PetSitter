@@ -13,6 +13,10 @@
 
         public int? rating { get; set; }
         public string? review { get; set; }
+
+
+        public byte[]? profileImage { get; set; }
+
     }
 }
 
