@@ -37,13 +37,12 @@
                 {
                     <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
                 }
-                @if (user.ProfileImage != null)
-
+                else
                 {
-                <dd>
-                    <img src="~/images/@user.ProfileImage" class="rounded-circle" width="200" height="140" asp-append-version="true" />
-                </dd>
-               }
+                    <img style={{ width: "50%" , height: "50%" , border: "2px solid black" , borderRadius: "50%" , margin: "10px" , padding: "5px" }} src="data:image/png;base64,
+                            @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
+                   
+                }
             
 
         </dd>

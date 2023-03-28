@@ -11,6 +11,8 @@ using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
 using SendGrid;
+using System.Collections.Generic;
+using System;
 using System.Drawing.Drawing2D;
 using System.Linq;
 
@@ -233,6 +235,24 @@ namespace PetSitter.Controllers
             return Json(events);
 
 
+        }
+
+
+
+        public IActionResult ReviewList()
+        {
+
+            // Get the logged in sitter ID
+            int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
+
+
+            //var rating 
+
+            SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+
+            List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+            return View(response);
         }
 
     }
