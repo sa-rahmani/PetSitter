@@ -349,8 +349,8 @@ namespace PetSitter.Controllers
 
             CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
 
-            User a = cfsRepo.getUserById(sitterID);
-            ViewData["SitterProfileImg"] = a;
+            User user = cfsRepo.getUserById(sitterID);
+            ViewData["SitterProfileImg"] = user;
 
             //ViewData["UserName"] = HttpContext.Session.GetString("UserName");
 
@@ -388,7 +388,6 @@ namespace PetSitter.Controllers
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
             ReviewRepo reviewRepo = new ReviewRepo(_db);
-
 
             Tuple<int, string> response =
                 reviewRepo.UpdateReview(createReviewVM);
