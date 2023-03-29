@@ -15,7 +15,7 @@ namespace PetSitter.Repositories
         }
 
 
-        public Tuple<int, string> UpdateReview(CreateReviewVM createReviewVM, int userID)
+        public Tuple<int, string> UpdateReview(CreateReviewVM createReviewVM)
         {
             string message;
 
@@ -34,7 +34,6 @@ namespace PetSitter.Repositories
             }
             catch (Exception e)
             {
-                //pet.PetId = -1;
                 message = $"Error creating your new Review, error: {e.Message}";
 
             }
