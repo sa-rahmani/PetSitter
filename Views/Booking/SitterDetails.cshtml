@@ -6,6 +6,14 @@
 <main class="sitter-detail">
     <a asp-action="FindASitter">Back to List</a>
     <div class="profile">
+        @if (Model.ProfileImage != null)
+        {
+            <img src="data:image/png;base64, @Convert.ToBase64String(Model.ProfileImage)" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+        }
+        else
+        {
+            <img src="~/Image/ImageUpload.png" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+        }
         <h1>@Html.DisplayFor(model => model.FirstName)</h1>
         <div class="rating">
             <span class="@IsStarSelected(1, @Model.AvgRating)">&#9733;</span>

@@ -19,18 +19,10 @@ namespace PetSitter.ViewModels
         public int SitterId { get; set; }
         public decimal? RatePerPetPerDay { get; set; }
         public string? ProfileBio { get; set; }
-        
-
         [NotMapped]
         public IFormFile? ProfileImage { get; set; }
         public List<string>? PetTypesAvailable { get; set; }
         public List<string>? SelectedPetTypes { get; set; }
-
-
         public string? Message { get; set; }
-
-      
-
-
     }
 }

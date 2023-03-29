@@ -4,20 +4,12 @@
     ViewData["Title"] = "Find A Sitter";
 }
 
-<h1>Find a Sitter</h1>
-@*<form method="get" action="@Url.Action("FindASitter")">
-    <label for="petTypes">Filter by Pet Types:</label>
-    <select name="petTypes" id="petTypes" multiple>
-        @foreach (var petType in ViewBag.PetTypes)
-        {
-            <option value="@petType.Value">@petType.Text</option>
-        }
-    </select>
-    <button type="submit">Filter</button>
-</form>*@
-<form method="get" action="@Url.Action("FindASitter")" id="filterForm">
-    <label>Filter by Pet Types:</label>
+<h1 class="text-center">Find a Sitter</h1>
+
+<form method="get" action="@Url.Action("FindASitter")" id="filterForm" class="bg-light p-4 mb-4 border border-secondary rounded mx-auto find-a-sitter-filter-form">
     <div>
+    <label class="fw-bold">Filter By Pet</label>
+    <div class="d-flex gap-4 pet-types">
         @foreach (var petType in ViewBag.PetTypes)
         {
             <label>
@@ -26,22 +18,32 @@
                 @petType
             </label>
         }
-
+    </div>
     </div>
     <div>
-        <label for="selectedDates">Select dates:</label>
-        <input type="text" class="form-control date" placeholder="Pick the multiple dates"
-        id="selectedDates" name="selectedDates" value="@ViewBag.SelectedDates"/>
-        
+        <label for="selectedDates" class="fw-bold">Filter By Available Dates</label>
+        <div class="d-flex gap-2">
+            <input type="text" class="form-control date" placeholder="Select all dates service is needed"
+                   id="selectedDates" name="selectedDates" value="@ViewBag.SelectedDates" />
+            <button type="submit" class="btn btn-dark">Filter</button>
         </div>
-   <button type="submit">Filter</button>
-
+    </div>
+    <button type="button" class="btn btn-secondary mt-2 w-100 clear-button"><a asp-action="FindASitter" class="link-light">Reset Filters</a></button>
 </form>
+<div class="list-of-sitters">
 @if (Model.Any())
 {
     @foreach (var item in Model)
     {
-        <section class="find-a-sitter-section">
+            <section class="find-a-sitter-section">
+                @if (item.ProfileImage != null)
+                {
+                    <img src="data:image/png;base64, @Convert.ToBase64String(item.ProfileImage)" alt="@Html.DisplayFor(modelItem => item.FirstName) Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+                } else
+                {
+                    <img src="~/Image/ImageUpload.png" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+                }
+                <div>
             <div class="name-rate">
                 <h2>@Html.DisplayFor(modelItem => item.FirstName)</h2>
                 <span><span class="price">$@Html.DisplayFor(modelItem => item.Rate)</span> per day</span>
@@ -55,16 +57,17 @@
             </div>
             <div>@Html.DisplayFor(modelItem => item.ProfileBio)</div>
             <div class="more-info-link">
-                <a asp-action="SitterDetails" asp-route-sitterID="@item.SitterId">More Info</a>
+            <button class="btn btn-info mx-auto col-12 col-md-6"><a asp-action="SitterDetails" asp-route-sitterID="@item.SitterId" class="link-light">Book with @Html.DisplayFor(modelItem => item.FirstName)</a></button>
             </div>
+            </div>     
         </section>
-        <hr/>
     }
 }
 else
 {
     <p>No sitters found.</p>
 }
+</div>
 
 <script>
     function submitFilterForm() {

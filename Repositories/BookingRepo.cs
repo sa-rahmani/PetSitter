@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PetSitter.Data.Services;
 using PetSitter.Models;
+using PetSitter.Repositories;
 using PetSitter.ViewModels;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -30,7 +32,7 @@ namespace PetSitter.Repositories
 
         public List<BookingVM> GetAllBookingVMs()
         {
-            IQueryable<BookingVM> bookings = from b in _db.Bookings
+            IQueryable<BookingVM> bookings = from b in _db.Bookings                                            
                                              select new BookingVM
                                              {
                                                  BookingId = b.BookingId,
@@ -142,6 +144,7 @@ namespace PetSitter.Repositories
             BookingFormVM bookingForm = new BookingFormVM();
             bookingForm.BookingId = bookingID;
             bookingForm.SitterId = booking.SitterId;
+            bookingForm.SitterName = booking.SitterName;
             bookingForm.Pets = booking.Pets;
             bookingForm.StartDate = booking.StartDate;
             bookingForm.EndDate = booking.EndDate;
@@ -171,6 +174,7 @@ namespace PetSitter.Repositories
             var bookings = _db.Bookings.Where(b => b.SitterId == sitterID && b.PaymentId != null).ToList();
             return bookings;
         }
+
         public List<DateTime> GetBookedDates(List<Booking> bookings)
         {
             var bookedDates = new List<DateTime>();
@@ -182,6 +186,36 @@ namespace PetSitter.Repositories
                 }
             }
             return bookedDates;
+        }
+
+        public bool CheckSitterAvailability(BookingFormVM booking)
+        {
+            // Get dates that sitter has open for new bookings.
+            AvailabilityRepo availabilityRepo = new AvailabilityRepo(_db);
+            var availabilities = availabilityRepo.GetAvailabilities(booking.SitterId);
+            var bookings = GetBookingsBySitter(booking.SitterId);
+            var bookedDates = GetBookedDates(bookings);
+            var availableDates = availabilityRepo.GetAvailableDates(availabilities);
+            var openDates = availableDates.Except(bookedDates);
+
+            // Get all the dates of the booking.
+            var bookingDates = new List<DateTime>();
+            for (DateTime date = booking.StartDate; date <= booking.EndDate; date = date.AddDays(1))
+            {
+                bookingDates.Add(date);
+            }
+
+            // Check if any booking dates are dates that the sitter does not have open.
+            var unfulfilledDates = bookingDates.Except(openDates).ToList();
+
+            // If all booking dates are open, return true.
+            if (unfulfilledDates.Count == 0)
+            {
+                return true;
+            } else // If not all booking dates are open, return false.
+            {
+                return false;
+            }
         }
 
         // SECTION: Create and Update Methods
