@@ -34,7 +34,6 @@ namespace PetSitter.Repositories
             }
             catch (Exception e)
             {
-                //pet.PetId = -1;
                 message = $"Error creating your new Review, error: {e.Message}";
 
             }

@@ -75,7 +75,6 @@ namespace PetSitter.Repositories
                           && s.UserId == u.UserId
                           select new
                           {
-
                               SitterId = s.SitterId,
                               UserId = u.UserId,
                               FirstName = u.FirstName,
