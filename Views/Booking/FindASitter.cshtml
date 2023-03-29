@@ -38,7 +38,7 @@
             <section class="find-a-sitter-section">
                 @if (item.ProfileImage != null)
                 {
-                    <img src="data:image/png;base64, @Convert.ToBase64String(item.ProfileImage)" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+                    <img src="data:image/png;base64, @Convert.ToBase64String(item.ProfileImage)" alt="@Html.DisplayFor(modelItem => item.FirstName) Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
                 } else
                 {
                     <img src="~/Image/ImageUpload.png" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
