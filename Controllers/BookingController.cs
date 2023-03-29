@@ -372,7 +372,7 @@ namespace PetSitter.Controllers
 
 
             Tuple<int, string> response =
-                reviewRepo.UpdateReview(createReviewVM, customerID);
+                reviewRepo.UpdateReview(createReviewVM);
 
             //int petID = response.Item1;
             //string createMessage = response.Item2;

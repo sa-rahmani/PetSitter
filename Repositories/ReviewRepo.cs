@@ -15,7 +15,7 @@ namespace PetSitter.Repositories
         }
 
 
-        public Tuple<int, string> UpdateReview(CreateReviewVM createReviewVM, int userID)
+        public Tuple<int, string> UpdateReview(CreateReviewVM createReviewVM)
         {
             string message;
 
