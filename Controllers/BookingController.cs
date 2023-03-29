@@ -126,14 +126,14 @@ namespace PetSitter.Controllers
             return View(PaginatedList<SitterVM>.Create(allSitters.AsQueryable().AsNoTracking(), page ?? 1, pageSize));
         }
 
-        public IActionResult SitterDetails(int sitterID)
-        {
-            // Get the SitterVM.
-            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+        //public IActionResult SitterDetails(int sitterID)
+        //{
+        //    // Get the SitterVM.
+        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
 
-            return View(sitter);
-        }
+        //    return View(sitter);
+        //}
 
 
         // GET: Initial Book
@@ -287,30 +287,7 @@ namespace PetSitter.Controllers
 
 
 
-        //    public IActionResult ReviewList(int sitterID)
-        //    {
-
-
-        //        //var rating 
-
-        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-        //        return View(response);
-        //    }
-
-        //}
-
-
-
-        //public IActionResult SitterDetails(int sitterID)
-        //{
-        //    // Get the SitterVM.
-        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-
-        //    return View(sitter);
-        //}
+   
 
 
 
@@ -369,8 +346,8 @@ namespace PetSitter.Controllers
                 endDate= bookInfo.EndDate,
             };
 
-            ViewBag.SitterName = createReview.sitter;
-            return View(createReview);
+            ViewBag.SitterName = reviewCreating.sitter;
+            return View(reviewCreating);
         }
 
 
