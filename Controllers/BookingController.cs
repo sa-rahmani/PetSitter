@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PetSitter.Data.Services;
 using PetSitter.Models;
@@ -138,8 +139,12 @@ namespace PetSitter.Controllers
         // GET: Initial Book
         public IActionResult Book(int sitterID)
         {
+            // Add sitter details to the booking form.
             BookingFormVM booking = new BookingFormVM();
             booking.SitterId = sitterID;
+            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+            var sitter = sitterRepo.GetSitterVM(sitterID);
+            booking.SitterName = sitter.FirstName;
 
             // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
             int userId = 3;
@@ -167,28 +172,38 @@ namespace PetSitter.Controllers
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
 
-            if (petsSelected)
+            // Check that sitter is available for selected dates.
+            bool sitterAvailable = bookingRepo.CheckSitterAvailability(bookingForm);
+
+            if (sitterAvailable)
             {
-                if (ModelState.IsValid)
+                if (petsSelected)
                 {
-                    // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
-                    int userId = 3;
-
-                    if (HttpContext.Session.GetString("UserID") != null)
+                    if (ModelState.IsValid)
                     {
-                        userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+                        // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
+                        int userId = 3;
+
+                        if (HttpContext.Session.GetString("UserID") != null)
+                        {
+                            userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+                        }
+
+                        // Create booking
+                        int bookingId = bookingRepo.Create(bookingForm, userId);
+
+                        // Redirect to confirmation and payment page
+                        return RedirectToAction("ConfirmBooking", "Booking", new { bookingId });
                     }
-
-                    // Create booking
-                    int bookingId = bookingRepo.Create(bookingForm, userId);
-
-                    // Redirect to confirmation and payment page
-                    return RedirectToAction("ConfirmBooking", "Booking", new { bookingId });
+                }
+                else // else if no pets have been selected
+                {
+                    bookingForm.Message = "Please select at least one pet for this booking.";
                 }
             }
-            else
+            else // else if sitter is not available
             {
-                bookingForm.Message = "Please select at least one pet for this booking.";
+                bookingForm.Message = $"Sorry, {bookingForm.SitterName} is not available those days.";
             }
 
             // Show booking page again.
@@ -221,20 +236,30 @@ namespace PetSitter.Controllers
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
 
-            if (petsSelected)
-            {
-                if (ModelState.IsValid)
-                {
-                    // Update booking
-                    int bookingId = bookingRepo.Update(bookingForm);
+            // Check that sitter is available for selected dates.
+            bool sitterAvailable = bookingRepo.CheckSitterAvailability(bookingForm);
 
-                    // Redirect to confirmation page
-                    return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+            if (sitterAvailable)
+            {
+                if (petsSelected)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        // Update booking
+                        int bookingId = bookingRepo.Update(bookingForm);
+
+                        // Redirect to confirmation page
+                        return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+                    }
+                }
+                else // if no pets selected
+                {
+                    bookingForm.Message = "Please select at least one pet for this booking.";
                 }
             }
-            else
+            else // if sitter is not available
             {
-                bookingForm.Message = "Please select at least one pet for this booking.";
+                bookingForm.Message = $"Sorry, {bookingForm.SitterName} is not available those days.";
             }
 
             // Show booking page again.

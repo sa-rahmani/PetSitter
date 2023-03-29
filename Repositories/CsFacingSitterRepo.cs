@@ -31,6 +31,7 @@ namespace PetSitter.Repositories
                                  FirstName = u.FirstName,
                                  Rate = (decimal)s.RatePerPetPerDay,
                                  ProfileBio = s.ProfileBio,
+                                 ProfileImage = u.ProfileImage,
                                  AvgRating = (double)_db.Bookings.Where(b => b.SitterId == s.SitterId).Average(b => b.Rating),
                                  petTypes = _db.Sitters.Where(b => b.SitterId == s.SitterId).SelectMany(s => s.PetTypes).Select(p => p.PetType1).ToList(),
                                  availabilities = s.Availabilities.ToList(),

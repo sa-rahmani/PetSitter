@@ -17,6 +17,8 @@ namespace PetSitter.ViewModels
         [DisplayName("About")]
         public string ProfileBio { get; set; }
 
+        public byte[]? ProfileImage { get; set; }
+
         [DisplayName("Average Rating")]
         public double? AvgRating { get; set; }
         public List<ReviewVM>? Reviews { get; set; }
