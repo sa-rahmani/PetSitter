@@ -73,5 +73,21 @@ namespace PetSitter.Repositories
 
             return sitter;
         }
+
+
+
+
+
+        public User getUserById(int sitterId)
+        {
+            var user = (from s in _db.Sitters
+                        join u in _db.Users on s.UserId equals u.UserId
+                        where s.SitterId == sitterId
+                        select u).FirstOrDefault();
+
+            return user;
+        }
+
+
     }
 }

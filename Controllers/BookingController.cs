@@ -308,6 +308,7 @@ namespace PetSitter.Controllers
 
 
             return View(sitter);
+
         }
 
 
@@ -326,6 +327,20 @@ namespace PetSitter.Controllers
 
             BookingRepo bRepo = new BookingRepo(_db, _emailService);
             var bookInfo = bRepo.GetBookingVM(bookingID);
+
+            CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+
+            User a  = cfsRepo.getUserById(sitterID);
+            ViewData["SitterProfileImg"] = a;
+
+            //ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            //int userID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            //ViewData["SitterProfileImg"] = sRepos.getUser(userID);
+
+
+
+
 
             CreateReviewVM reviewCreating = new CreateReviewVM
             {
