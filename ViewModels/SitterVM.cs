@@ -27,6 +27,6 @@ namespace PetSitter.ViewModels
         public List<string>? petTypes { get; set; }
 
         public List<DateTime>? availableDates { get; set; }
-       public List<Availability>? availabilities  { get; set; }
+        public List<Availability>? availabilities  { get; set; }
     }
 }
