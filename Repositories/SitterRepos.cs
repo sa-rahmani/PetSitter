@@ -58,6 +58,8 @@ namespace PetSitter.Repositories
                         select u).FirstOrDefault();
             return user;
         }
+
+
         public Sitter GetSitterByEmail(string email)
         {
             var sitter = _db.Sitters.Where(s => s.User.Email == email).FirstOrDefault();
@@ -386,6 +388,7 @@ namespace PetSitter.Repositories
             var reviews = (from b in _db.Bookings
                            join u in _db.Users on b.UserId equals u.UserId
                            where b.SitterId == sitterId && b.Review != null
+                           orderby b.EndDate descending, b.StartDate descending
                            select new
                            {
                                u.FirstName,

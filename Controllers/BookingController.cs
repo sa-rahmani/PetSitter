@@ -284,6 +284,56 @@ namespace PetSitter.Controllers
             return Json(completeIPN);
         }
 
+
+
+
+        //    public IActionResult ReviewList(int sitterID)
+        //    {
+
+
+        //        //var rating 
+
+        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+        //        return View(response);
+        //    }
+
+        //}
+
+
+
+        //public IActionResult SitterDetails(int sitterID)
+        //{
+        //    // Get the SitterVM.
+        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+
+        //    return View(sitter);
+        //}
+
+
+
+        public IActionResult SitterDetails(int sitterID)
+        {
+            // Get the SitterVM.
+            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+
+
+            //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+            //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+            //return View(response);
+
+
+            return View(sitter);
+
+        }
+
+
+
+
         public IActionResult CreateReview(int sitterID, int bookingID)
         {
             // Get sitter details.
@@ -294,8 +344,24 @@ namespace PetSitter.Controllers
             BookingRepo bRepo = new BookingRepo(_db, _emailService);
             var bookInfo = bRepo.GetBookingVM(bookingID);
 
+
+            CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+
+            User a  = cfsRepo.getUserById(sitterID);
+            ViewData["SitterProfileImg"] = a;
+
+            //ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            //int userID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            //ViewData["SitterProfileImg"] = sRepos.getUser(userID);
+
+
+
+
             // Add sitter and booking details to the CreateReviewVM.
-            CreateReviewVM createReview = new CreateReviewVM
+
+            CreateReviewVM reviewCreating = new CreateReviewVM
+
             {
                 sitter = sitterInfo.FirstName + " " + sitterInfo.LastName,
                 BookingId= bookingID,
@@ -316,6 +382,10 @@ namespace PetSitter.Controllers
             // Update the booking to add the review.
             Tuple<int, string> response =
                 reviewRepo.UpdateReview(createReviewVM);
+
+            //int petID = response.Item1;
+            //string createMessage = response.Item2;
+
 
             return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
         }
