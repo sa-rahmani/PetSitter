@@ -70,5 +70,10 @@
     }
 }
 
-/* Sitter Details Page */
+/* Booking + Editing Forms */
+
+.booking-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
 

@@ -32,7 +32,7 @@ namespace PetSitter.Repositories
 
         public List<BookingVM> GetAllBookingVMs()
         {
-            IQueryable<BookingVM> bookings = from b in _db.Bookings
+            IQueryable<BookingVM> bookings = from b in _db.Bookings                                            
                                              select new BookingVM
                                              {
                                                  BookingId = b.BookingId,
@@ -144,6 +144,7 @@ namespace PetSitter.Repositories
             BookingFormVM bookingForm = new BookingFormVM();
             bookingForm.BookingId = bookingID;
             bookingForm.SitterId = booking.SitterId;
+            bookingForm.SitterName = booking.SitterName;
             bookingForm.Pets = booking.Pets;
             bookingForm.StartDate = booking.StartDate;
             bookingForm.EndDate = booking.EndDate;
