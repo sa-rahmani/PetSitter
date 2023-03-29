@@ -171,6 +171,7 @@ namespace PetSitter.Repositories
             var bookings = _db.Bookings.Where(b => b.SitterId == sitterID && b.PaymentId != null).ToList();
             return bookings;
         }
+
         public List<DateTime> GetBookedDates(List<Booking> bookings)
         {
             var bookedDates = new List<DateTime>();
