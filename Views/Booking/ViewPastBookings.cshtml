@@ -25,7 +25,7 @@
         </div>
         <div>
             <a asp-action="BookingDetails" asp-route-bookingID="@item.BookingId">More Info</a>
-            <a asp-action="CreateReview" asp-route-bookingID="@item.BookingId">Review This Booking</a>
+            <a asp-action="CreateReview" asp-route-bookingID="@item.BookingId" asp-route-sitterID="@item.SitterId">Review This Booking</a>
         </div>
     </section>
 }

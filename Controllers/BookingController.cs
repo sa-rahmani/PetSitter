@@ -75,8 +75,8 @@ namespace PetSitter.Controllers
 
         public IActionResult FindASitter(int? page, List<string> petTypes, string selectedDates)
         {
+            // Assign ViewBag values for customer's filter options.
             ViewBag.SelectedDates = selectedDates;
-
             ViewBag.SelectedPetTypes = petTypes;
 
             List<DateTime> dates = new List<DateTime>();
@@ -84,7 +84,7 @@ namespace PetSitter.Controllers
             {
                 string[] selectedDatesString = selectedDates.Split(',');
 
-                // Convert selected dates to DateTime objects
+                // Convert selected dates to DateTime objects.
                 foreach (string date in selectedDatesString)
                 {
                     DateTime dt;
@@ -95,7 +95,7 @@ namespace PetSitter.Controllers
                 }
             }
 
-            //Get all pettypes 
+            // Get all pet types. 
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
             var allPetTypes = sitterRepos.getPetTypes();
             ViewBag.PetTypes = allPetTypes;
@@ -105,23 +105,18 @@ namespace PetSitter.Controllers
 
             var allSitters = sitterRepo.GetAllSitterVMs().ToList();
 
-
+            // Filter sitters.
             if ((petTypes != null && petTypes.Count > 0) && (dates != null && dates.Count > 0))
             {
-
                 allSitters = allSitters.Where(s => s.petTypes.Any(pt => petTypes.Contains(pt)) && s.availableDates.Any(d => dates.Contains(d))).ToList();
             }
             else if (dates != null && dates.Count > 0)
             {
-
                 allSitters = allSitters.Where(s => dates.All(d => s.availableDates.Contains(d))).ToList();
-
             }
             else if (petTypes != null && petTypes.Count > 0)
             {
-
                 allSitters = allSitters.Where(s => s.petTypes.Any(pt => petTypes.Contains(pt))).ToList();
-
             }
 
             // Display 10 sitters per page.
@@ -130,15 +125,14 @@ namespace PetSitter.Controllers
             return View(PaginatedList<SitterVM>.Create(allSitters.AsQueryable().AsNoTracking(), page ?? 1, pageSize));
         }
 
-        //public IActionResult SitterDetails(int sitterID)
-        //{
-        //    // Get the SitterVM.
-        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+        public IActionResult SitterDetails(int sitterID)
+        {
+            // Get the SitterVM.
+            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
 
-        //    return View(sitter);
-        //}
-
+            return View(sitter);
+        }
 
 
         // GET: Initial Book
@@ -265,107 +259,40 @@ namespace PetSitter.Controllers
             return Json(completeIPN);
         }
 
-
-
-        //    public IActionResult ReviewList(int sitterID)
-        //    {
-
-
-        //        //var rating 
-
-        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-        //        return View(response);
-        //    }
-
-        //}
-
-
-
-        //public IActionResult SitterDetails(int sitterID)
-        //{
-        //    // Get the SitterVM.
-        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-
-        //    return View(sitter);
-        //}
-
-
-
-        public IActionResult SitterDetails(int sitterID)
-        {
-            // Get the SitterVM.
-            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-
-
-            //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-            //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-            //return View(response);
-
-
-            return View(sitter);
-        }
-
-
-
-
-
         public IActionResult CreateReview(int sitterID, int bookingID)
-
         {
-
-            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-
-
+            // Get sitter details.
             SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
-            var sitterInfor = sRepos.GetSitterById(sitterID);
+            var sitterInfo = sRepos.GetSitterById(sitterID);
 
+            // Get booking details.
             BookingRepo bRepo = new BookingRepo(_db, _emailService);
             var bookInfo = bRepo.GetBookingVM(bookingID);
 
-            CreateReviewVM reviewCreating = new CreateReviewVM
+            // Add sitter and booking details to the CreateReviewVM.
+            CreateReviewVM createReview = new CreateReviewVM
             {
-
-                sitter = sitterInfor.FirstName + " " + sitterInfor.LastName,
+                sitter = sitterInfo.FirstName + " " + sitterInfo.LastName,
                 BookingId= bookingID,
                 startDate= bookInfo.StartDate,
                 endDate= bookInfo.EndDate,
-
-                //LastName = sitterInfor.LastName,
             };
 
-            ViewBag.SitterName = reviewCreating.sitter;
-
-            //reviewCreating.SitterId = sitterID;
-
-
-            return View(reviewCreating);
+            ViewBag.SitterName = createReview.sitter;
+            return View(createReview);
         }
 
 
         [HttpPost]
         public IActionResult CreateReview(CreateReviewVM createReviewVM)
         {
-
-            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-
             ReviewRepo reviewRepo = new ReviewRepo(_db);
 
-
+            // Update the booking to add the review.
             Tuple<int, string> response =
-                reviewRepo.UpdateReview(createReviewVM, customerID);
+                reviewRepo.UpdateReview(createReviewVM);
 
-            //int petID = response.Item1;
-            //string createMessage = response.Item2;
-
-
-            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });//,
-                                                                                                 //    new { id = petID, message = createMessage });
+            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
         }
-
     }
 }
