@@ -46,12 +46,15 @@ namespace PetSitter.Controllers
         public IActionResult EditProfile()
         {
             CustomerRepo customerRepo = new CustomerRepo(_db, webHostEnvironment);
+            PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
             CustomerVM vm = customerRepo.GetProfile(customerID);
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            ViewData["PetLists"] = petRepo.GetPetLists(customerID);
 
             return View(vm);
         }
