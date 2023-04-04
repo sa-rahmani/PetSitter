@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System;
 using System.Drawing.Drawing2D;
 using System.Linq;
-
+//using PetSitter.Utilities;
 namespace PetSitter.Controllers
 {
     public class SitterController : Controller
@@ -251,19 +251,34 @@ namespace PetSitter.Controllers
 
 
 
-        public IActionResult ReviewList()
+
+        //public IActionResult ReviewList(string currentFilter, string searchString, int? page)
+        public IActionResult ReviewList(int? page)
         {
 
             // Get the logged in sitter ID
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
+
             //var rating 
 
             SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
 
+
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-            return View(response);
+            //return View(response);
+
+            int pageSize = 1;
+            return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
+                                                     , page ?? 1, pageSize));
+
         }
 
     }
+
+
+
+ 
+
+
 }

@@ -47,7 +47,6 @@
 <div class="comment-form">
 
 </div>*@
-
 @model PetSitter.ViewModels.CreateReviewVM
 
 @{
@@ -55,20 +54,78 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>CreateReview</h1>
+@{
+    User user = ViewData["SitterProfileImg"] as User;
+}
 
-<h2>@ViewBag.SitterName</h2>
+<h2 class="text-center text-uppercase">Create Review</h2>
+<hr class="mt-4">
 
- <div>
+<h4>SITTER: @ViewBag.SitterName</h4>
+@if (user.ProfileImage == null)
+{
+    <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
+}
+else
+{
+    <img style="width: 50%; height: 50%; border: 2px solid black; margin: 10px; padding: 5px;" src="data:image/png;base64, @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
+}
+<hr class="mt-4">
+
+<div>
+    <h4>Service Date: </h4>
     @Html.DisplayFor(model => model.startDate) -  @Html.DisplayFor(model => model.endDate)
+</div>
+
+<hr class="mt-4">
+
+<div class="row">
+    <div class="col-md-4 w-100">
+        <form asp-action="CreateReview" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="SitterId" />
+            <input type="hidden" asp-for="BookingId" />
+
+            <div class="form-group">
+                <label class="control-label">RATING:</label>
+                <div class="rating" style="text-align: left; margin-left: 0;">
+                    <input type="radio" id="star5" name="rating" value="5" />
+                    <label for="star5" title="5 stars">★</label>
+                    <input type="radio" id="star4" name="rating" value="4" />
+                    <label for="star4" title="4 stars">★</label>
+                    <input type="radio" id="star3" name="rating" value="3" />
+                    <label for="star3" title="3 stars">★</label>
+                    <input type="radio" id="star2" name="rating" value="2" />
+                    <label for="star2" title="2 stars">★</label>
+                    <input type="radio" id="star1" name="rating" value="1" />
+                    <label for="star1" title="1 star">★</label>
                 </div>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                <label asp-for="review" class="control-label" style="text-transform: uppercase;"></label>
+                <textarea asp-for="review" class="form-control" style="width: 500px; height: 200px; float: left;"></textarea>
+                <span asp-validation-for="review" class="text-danger"></span>
+            </div>
+
+            <div class="form-group" style="clear: both;">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+
+</div>
+@*<div class="review-form"></div>
+<div class="comment>*@
 
 <style>
     /* Set the size and color of the star */
     .rating {
         display: flex;
         flex-direction: row-reverse;
-        justify-content: center;
+        justify-content: flex-end;
         font-size: 30px;
     }
 
@@ -86,9 +143,10 @@
             cursor: pointer;
         }
 
-   /*         .rating:not(:checked) > label:before {
-                content: '★';
-            }*/
+            .rating:not(:checked) > label:before {
+                /*                content: '★';
+    */
+            }
 
         .rating > input:checked ~ label {
             color: #ffc700;
@@ -106,47 +164,49 @@
         .rating > label:hover ~ input:checked ~ label {
             color: #c59b08;
         }
+
+    /* Form styling */
+/*    form {
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+*/
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 5px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="submit"],
+    button {
+        background-color: #6366F1;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+        input[type="submit"]:hover,
+        button:hover {
+            background-color: #ff4c2f;
+        }
 </style>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="CreateReview" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="SitterId" />
-            <input type="hidden" asp-for="BookingId" />
 
-            <div class="form-group">
-                <label class="control-label">RATING:</label>
-                <div class="rating">
-                    <input type="radio" id="star5" name="rating" value="5" />
-                    <label for="star5" title="5 stars">★</label>
-                    <input type="radio" id="star4" name="rating" value="4" />
-                    <label for="star4" title="4 stars">★</label>
-                    <input type="radio" id="star3" name="rating" value="3" />
-                    <label for="star3" title="3 stars">★</label>
-                    <input type="radio" id="star2" name="rating" value="2" />
-                    <label for="star2" title="2 stars">★</label>
-                    <input type="radio" id="star1" name="rating" value="1" />
-                    <label for="star1" title="1 star">★</label>
-                </div>
-            </div>
-
-            <div class="form-group">
-
-                <label asp-for="review" class="control-label" style="text-transform: uppercase;"></label>
-
-
-                <textarea asp-for="review" class="form-control"></textarea>
-
-                <span asp-validation-for="review" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="review-form"></div>
-<div class="comment
