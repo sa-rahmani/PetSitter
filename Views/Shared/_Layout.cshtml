@@ -50,34 +50,30 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="ViewMyBookings">View My Bookings</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Dashboard">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Availability">Availability</a>
-                            </li>
+                         
 
                             @*This two nav item should be accessed only by admin*@
                             @*I didn't set this two nav as same as below in order to allow everyone create a admin account in development mode*@
-                            <li>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
-                            </li>
-                            <li>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="UserRole" asp-action="Index">User Role</a>
-                            </li>
+                           
                             @*--------------------------------------------------------------------------------------------------------*@
 
                             @if (User.IsInRole("Customer"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="GetProfile">Customer Profile</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="GetProfile">My Profile</a>
                                 </li>
                             }
 
                             @if (User.IsInRole("Sitter"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Profile">Sitter Profile</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Dashboard">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Availability">Availability</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Profile">My Profile</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="ReviewList">Review</a>
@@ -87,9 +83,16 @@
                             @*Later on this should be only accessed by admin*@
                             @if (User.IsInRole("Admin"))
                             {
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="UserRole" asp-action="Index">User Role</a>
+                                </li>
                                 <li classs="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
                                 </li>
+
                             }
 
                         </ul>

@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using PetSitter.Controllers;
 using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
@@ -186,7 +187,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
-                var defaultImageFilePath = Path.Combine(webHostEnvironment.WebRootPath, "images/default-image.jpeg");
+                var defaultImageFilePath = Path.Combine(webHostEnvironment.WebRootPath, "images/default-image.jpg");
                 byte[] defaultImageBytes;
                 using (var fileStream = new FileStream(defaultImageFilePath, FileMode.Open))
                 {
@@ -237,8 +238,11 @@ namespace PetSitter.Areas.Identity.Pages.Account
                     else if (newUser.UserType == "Customer")
                     {
                         CustomerRepo customerRepo = new CustomerRepo(_context, webHostEnvironment);
+                       
                         customerRepo.AddUser(newUser);
                         var customerID = customerRepo.GetCustomerId(Input.Email);
+
+                        // assign roles
 
                         HttpContext.Session.SetString("UserName", customerID.FirstName);
                         HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
