@@ -88,10 +88,6 @@
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <h3 class="pet-title font-monospace">Add Pet</h3>
-                    <a asp-action="CreatePet" asp-route-id="@Model.CustomerId" class="pet-btn font-monospace lead rounded-2">🐶 Add Pet 🐱</a>
-                </div>
                 <div class="form-group mt-5">
                     <button class="save-btn rounded-3 font-monospace lead">Save</button>
                 </div>
@@ -111,6 +107,9 @@
             }
             else
             {
+                 <div class="mb-4 mt-4" style="margin-left:20px;">
+                    <a asp-action="CreatePet" asp-route-id="@Model.CustomerId" class="pet-btn font-monospace lead rounded-2">🐶 Add Pet 🐱</a>
+                </div>
                 <table class="table" style="margin-left:20px;">
                     <tr>
                         <th>Name</th>
