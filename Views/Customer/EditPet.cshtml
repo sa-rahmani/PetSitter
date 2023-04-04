@@ -4,76 +4,77 @@
     ViewData["Title"] = "EditPet";
 }
 
-<h1>Edit Pet</h1>
+<h1 class="text-center">Update @Model.Name's information</h1>
 
 @{
 
     IEnumerable<Pet> pets = ViewData["PetData"] as IEnumerable<Pet>;
 }
 
-<hr />
-<div class="row">
+<div class="row justify-content-center">
     <div class="col-md-4">
         <form asp-action="EditPet" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="UserId" />
             <input type="hidden" asp-for="PetId" />
-            <div class="row profile-pic">
-                <div class="form-group">
-                    <label asp-for="PetImage" class="control-label"></label>
-                    <input asp-for="PetImage" class="form-control" />
-                    <span asp-validation-for="PetImage" class="text-danger"></span>
+
+            <div class="form-group text-center">
+                <label asp-for="PetImage" class="control-label"></label>
+                <div class="d-flex justify-content-center">
+                    @foreach (Pet pet in pets)
+                    {
+                        if (pet.PetImage == null)
+                        {
+                            <p>No Pet Image Given, add new Pet Image!</p>
+                        }
+                        else
+                        {
+                           <dd class="pet-image">
+                                <img src="data:image/png;base64,
+                                @Convert.ToBase64String(pet.PetImage)" alt="Pet Image" class="img-fluid" />
+                            </dd>
+                        }
+                    }
                 </div>
-
-                @foreach (Pet pet in pets)
-                {
-                    if (pet.PetImage == null)
-                    {
-                        <p>No Pet Image Given, add new Pet Image!</p>
-                    }
-                    else
-                    {
-                        <dd class="pet-image">
-                            <img src="data:image/png;base64,
-                            @Convert.ToBase64String(pet.PetImage)" alt="Pet Image" />
-                         </dd>
-                    }
-                }
+                <input asp-for="PetImage" class="form-control-file mt-2" onchange="readURL(this);" accept="image/*" />
+                <span asp-validation-for="PetImage" class="text-danger"></span>
             </div>
 
-            <div class="form-group mt-4 mb-4">
-                <p class="m-0">Pet Type</p>
-                <label for="dog" class="radio-label">
-                    <input asp-for="PetType" type="radio" value="Dog" id="dog" class="hidden-radio" />
-                    <span class="radio-icon">
-                        <i class="fas fa-dog fa-4x"></i>
-                        <span class="radio-circle"></span>
-                    </span>
-                </label>
-                <label for="cat" class="radio-label">
-                    <input asp-for="PetType" type="radio" value="Cat" id="cat" class="hidden-radio" />
-                    <span class="radio-icon">
-                        <i class="fas fa-cat fa-4x"></i>
-                        <span class="radio-circle"></span>
-                    </span>
-                </label>
+            <div class="form-group text-center">
+                <label class="control-label">What type of pet?</label>
+                <div class="d-flex justify-content-center">
+                    <label for="dog" class="radio-label m-4">
+                        <input asp-for="PetType" type="radio" value="Dog" id="dog" class="hidden-radio" />
+                        <span class="radio-icon">
+                            <i class="fas fa-dog fa-4x"></i>
+                            <span class="radio-circle"></span>
+                        </span>
+                    </label>
+                    <label for="cat" class="radio-label m-4">
+                        <input asp-for="PetType" type="radio" value="Cat" id="cat" class="hidden-radio" />
+                        <span class="radio-icon">
+                            <i class="fas fa-cat fa-4x"></i>
+                            <span class="radio-circle"></span>
+                        </span>
+                    </label>
+                </div>
             </div>
 
-            <div class="row">
-                <div class="form-group">
+            <div class="form-group row">
+                <div class="col-md-6">
                     <label asp-for="Name" class="control-label"></label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-                <div class="form-group">
+                <div class="col-md-6">
                     <label asp-for="PetSize" class="control-label"></label>
-                    <select asp-for="PetSize" asp-items="@(new SelectList(Model.AvailableSizes))" class="form-control"></select>
+                    <input asp-for="PetSize" class="form-control" />
+                    <span asp-validation-for="PetSize" class="text-danger"></span>
                 </div>
+            </div>
 
-              </div>
-    
-            <div class="row">
-                <div class="form-group">
+            <div class="form-group row">
+                <div class="col-md-6">
                     <label asp-for="BirthYear" class="control-label"></label>
                     <select asp-for="BirthYear" class="form-control">
                         <option value="">--Select Year--</option>
