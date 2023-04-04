@@ -302,14 +302,7 @@ namespace PetSitter.Controllers
 
 
 
-        //public IActionResult SitterDetails(int sitterID)
-        //{
-        //    // Get the SitterVM.
-        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-
-        //    return View(sitter);
-        //}
+   
 
 
 
@@ -347,6 +340,7 @@ namespace PetSitter.Controllers
             BookingRepo bRepo = new BookingRepo(_db, _emailService);
             var bookInfo = bRepo.GetBookingVM(bookingID);
 
+
             CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
 
             User user = cfsRepo.getUserById(sitterID);
@@ -360,6 +354,7 @@ namespace PetSitter.Controllers
 
 
 
+            // Add sitter and booking details to the CreateReviewVM.
 
             CreateReviewVM reviewCreating = new CreateReviewVM
             {
