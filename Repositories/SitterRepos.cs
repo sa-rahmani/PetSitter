@@ -292,6 +292,10 @@ namespace PetSitter.Repositories
             return vm;
 
         }
+        public List<SitterDashboardVM> GetBookingByStatus(IEnumerable<SitterDashboardVM> bookings,string status)
+        {
+            return bookings.Where(b => b.status == status).ToList();
+        }
         public SitterDashboardVM GetBookingDetails(int bookingId)
         {
             var booking = (from b in _db.Bookings
