@@ -39,18 +39,30 @@ namespace PetSitter.Controllers
         /// get  bookings  list 
         /// </summary>
         /// <returns></returns>
-        public IActionResult Dashboard()
+        public IActionResult Dashboard(int? page,string status)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
-            IEnumerable<SitterDashboardVM> bookings = sitterRepos.GetBooking(sitterID);
+            IEnumerable<SitterDashboardVM> bookings= sitterRepos.GetBooking(sitterID); ;
             ViewData["UpComing"] = bookings.Select(b => b.upComingNbr).LastOrDefault();
             ViewData["Complete"] = bookings.Select(b => b.completeNbr).LastOrDefault();
             ViewData["Reviews"] = bookings.Select(b => b.reviewsNbr).LastOrDefault();
+            if (!string.IsNullOrEmpty(status))
+            {
+              
+              
+                    bookings = sitterRepos.GetBookingByStatus(bookings, status);
+
+                
+
+            }
 
 
-            return View(bookings);
+            int pageSize = 4;
+
+            return View(PaginatedList<SitterDashboardVM>.Create(bookings.AsQueryable().AsNoTracking(), page ?? 1, pageSize));
+
         }
         /// <summary>
         /// get details of booking with pet parent informatins

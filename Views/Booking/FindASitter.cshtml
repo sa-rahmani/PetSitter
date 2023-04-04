@@ -5,16 +5,7 @@
 }
 
 <h1>Find a Sitter</h1>
-@*<form method="get" action="@Url.Action("FindASitter")">
-    <label for="petTypes">Filter by Pet Types:</label>
-    <select name="petTypes" id="petTypes" multiple>
-        @foreach (var petType in ViewBag.PetTypes)
-        {
-            <option value="@petType.Value">@petType.Text</option>
-        }
-    </select>
-    <button type="submit">Filter</button>
-</form>*@
+
 <form method="get" action="@Url.Action("FindASitter")" id="filterForm">
     <label>Filter by Pet Types:</label>
     <div>
@@ -94,3 +85,5 @@ else
         format: 'dd-mm-yyyy'
     });
 </script>}
+
+
