@@ -1,63 +1,105 @@
-﻿@model IEnumerable<PetSitter.ViewModels.SitterDashboardVM>
+﻿@*@model IEnumerable<PetSitter.ViewModels.SitterDashboardVM>
+*@
+@using PetSitter.Controllers
+@model PaginatedList<PetSitter.ViewModels.SitterDashboardVM>
+
 
 @{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+<div class="dashboard-filter">
+    <div>
+        <a asp-action="Dashboard">
 
-<h1>Dashboard
-</h1>
-<dl class="row">
-   <dl class="row">
+            Back to Full List
+        </a>
+    </div>
 
-    <dt class="col">
-        @Html.DisplayNameFor(model => model.upComingNbr)
-    </dt>
-    <dd class="col">
-        @ViewBag.UpComing
-    </dd>
+    <form method="get" action="/Sitter/Dashboard">
+        <label for="booking-status-filter">Filter by Status:</label>
+        <select id="booking-status-filter" name="status" onchange="this.form.submit()">
+            <option value="">-- Select Status --</option>
+            <option value="UpComing">Upcoming</option>
+            <option value="Complete">Complete</option>
+        </select>
+    </form>
+
+
+</div>
+<div class="dashboard">
+    <dl class="row">
+
         <dt class="col">
-            @Html.DisplayNameFor(model => model.completeNbr)
+            <h2>UpComing</h2>
+            <h3>Bookings upcoming</h3>
+            <span> @ViewBag.UpComing</span>
         </dt>
-        <dd class="col">
-        @ViewBag.Complete
-        </dd>
-      
-         <dt class="col">
-            @Html.DisplayNameFor(model => model.reviewsNbr)
+        <dt class="col">
+            <h2>Complete</h2>
+            <h3>Bookings complete</h3>
+            <span>
+
+                @ViewBag.Complete
+            </span>
         </dt>
-        <dd class="col">
-        @ViewBag.Reviews
-        </dd>
-        </dd>
-  </dl>
-  </dl>
-<table class="table">
+
+        <dt class="col">
+            <h2>Reviews</h2>
+            <h3>Customers reviews</h3>
+
+            <span>
+                @ViewBag.Reviews
+            </span>
+        </dt>
+    </dl>
+
+</div>
+<div class="dashboard-pagination">
+    <div class="btn btn-default @prevDisabled prev">
+        <a asp-action="Dashboard"
+           asp-route-page="@(Model.PageIndex - 1)">
+            <i style="font-size:24px" class="fa">&#xf137;</i>
+        </a><span> Previous </span>
+    </div>
+    <div class="btn btn-default @nextDisabled next">
+        <span> Next </span>
+        <a asp-action="Dashboard"
+           asp-route-page="@(Model.PageIndex + 1)">
+            <i style="font-size:24px" class="fa">&#xf138;</i>
+        </a>
+    </div>
+</div>
+<table class="dashboard-table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.bookingId)
+                bookingId
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.petParent)
+                petParent
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.petType)
+                petType
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.status)
+                status
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.startDate)
+                startDate
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.endDate)
+                endDate
             </th>
 
-          
+
 
             <th></th>
-      
+
         </tr>
     </thead>
     <tbody>
@@ -65,7 +107,7 @@
         {
             <tr>
                 <td>
-                  <a>  @Html.DisplayFor(modelItem => item.bookingId)</a>
+                    <a>  @Html.DisplayFor(modelItem => item.bookingId)</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.petParent)
@@ -76,15 +118,17 @@
                 <td>
                     @if (item.status == "Complete")
                     {
-                        <div class="alert alert-success">
+                        <div class="status complete">
 
-                    @Html.DisplayFor(modelItem => item.status)</div>}
+                            @Html.DisplayFor(modelItem => item.status)
+                        </div>
+                    }
                     @if (item.status == "UpComing")
                     {
-                    <div class="alert alert-danger">
+                        <div class="status upcoming">
 
-                        @Html.DisplayFor(modelItem => item.status)
-                    </div>
+                            @Html.DisplayFor(modelItem => item.status)
+                        </div>
                     }
                 </td>
                 <td>
@@ -96,9 +140,177 @@
 
 
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.bookingId">Details</a> |
+                    <a asp-action="Details" asp-route-id="@item.bookingId">Details</a>
                 </td>
             </tr>
         }
     </tbody>
+
 </table>
+
+
+<style>
+    .dashboard-filter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 20px;
+    }
+        /* Style the headings */
+        .dashboard-filter form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .dashboard-filter form label {
+                font-size: 16px;
+                margin-right: 10px;
+            }
+
+            .dashboard-filter form select {
+                padding: 8px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+                font-size: 16px;
+            }
+
+                .dashboard-filter form select:focus {
+                    outline: none;
+                    border-color: #555;
+                }
+
+            .dashboard-filter form option {
+                color: #333;
+                font-size: 16px;
+            }
+
+    .dashboard-pagination {
+        display: flex;
+        justify-content: space-between;
+   
+    margin-top: 20px;
+    }
+
+    .dashboard-pagination .prev *, .dashboard-pagination .next *  {
+        margin-right: 10px;
+    }
+
+    .dashboard-pagination .prev, .dashboard-pagination .next {
+        display: flex;
+    }
+
+    .dashboard h2 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        /*        color: #084298;
+    */
+    }
+
+    .dashboard h3 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: dimgray;
+        text-decoration: underline;
+    }
+
+    /* Style the list */
+    .dashboard .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .dashboard .col {
+        flex: 1;
+        padding: 10px;
+    }
+
+    /* Add a border around each section */
+    .dashboard .col {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        align-items: center;
+        flex-direction: column;
+        background: #dce6f496
+    }
+
+        /* Add some spacing between sections */
+        .dashboard .col + .col {
+            margin-left: 10px;
+        }
+
+        .dashboard .col span {
+            /*            background-color:palegreen;
+                border-radius:30%;
+                    width: 40px;
+                    height: 40px;*/
+            font-size: xxx-large;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /*            border:2px solid green;
+    */
+        }
+
+    .dashboard dt:nth-of-type(1) span, .dashboard dt:nth-of-type(1) h2 {
+        color: #842029;
+    }
+
+    .dashboard dt:nth-of-type(2) span, .dashboard dt:nth-of-type(2) h2 {
+        color: #4a7863;
+    }
+
+    .dashboard dt:nth-of-type(3) span, .dashboard dt:nth-of-type(3) h2 {
+        color: #084298;
+    }
+
+    /* Style the table */
+    .dashboard-table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+        /* Style the table headers */
+        .dashboard-table th {
+            text-align: center;
+            background-color: #dce6f496;
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        /* Style the table cells */
+        .dashboard-table td {
+            border: 1px solid #ccc;
+            text-align: center;
+            padding: 8px;
+        }
+
+            /* Style the booking ID link */
+            .dashboard-table td a {
+                color: #007bff;
+                text-decoration: none;
+            }
+
+    .status {
+        position: relative;
+        padding: 1rem 1rem;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+    }
+
+    .complete {
+        color: #0f5132;
+        background-color: #d1e7dd;
+        border-color: #badbcc;
+    }
+
+    .upcoming {
+        color: #842029;
+        background-color: #f8d7da;
+        border-color: #f5c2c7;
+    }
+
+</style>

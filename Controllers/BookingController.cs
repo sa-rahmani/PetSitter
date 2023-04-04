@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
 using SendGrid.Helpers.Mail;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Security.Principal;
@@ -73,8 +76,8 @@ namespace PetSitter.Controllers
 
         public IActionResult FindASitter(int? page, List<string> petTypes, string selectedDates)
         {
+            // Assign ViewBag values for customer's filter options.
             ViewBag.SelectedDates = selectedDates;
-
             ViewBag.SelectedPetTypes = petTypes;
 
             List<DateTime> dates = new List<DateTime>();
@@ -82,7 +85,7 @@ namespace PetSitter.Controllers
             {
                 string[] selectedDatesString = selectedDates.Split(',');
 
-                // Convert selected dates to DateTime objects
+                // Convert selected dates to DateTime objects.
                 foreach (string date in selectedDatesString)
                 {
                     DateTime dt;
@@ -93,7 +96,7 @@ namespace PetSitter.Controllers
                 }
             }
 
-            //Get all pettypes 
+            // Get all pet types. 
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
             var allPetTypes = sitterRepos.getPetTypes();
             ViewBag.PetTypes = allPetTypes;
@@ -103,23 +106,18 @@ namespace PetSitter.Controllers
 
             var allSitters = sitterRepo.GetAllSitterVMs().ToList();
 
-
+            // Filter sitters.
             if ((petTypes != null && petTypes.Count > 0) && (dates != null && dates.Count > 0))
             {
-
                 allSitters = allSitters.Where(s => s.petTypes.Any(pt => petTypes.Contains(pt)) && s.availableDates.Any(d => dates.Contains(d))).ToList();
             }
             else if (dates != null && dates.Count > 0)
             {
-
                 allSitters = allSitters.Where(s => dates.All(d => s.availableDates.Contains(d))).ToList();
-
             }
             else if (petTypes != null && petTypes.Count > 0)
             {
-
                 allSitters = allSitters.Where(s => s.petTypes.Any(pt => petTypes.Contains(pt))).ToList();
-
             }
 
             // Display 10 sitters per page.
@@ -128,20 +126,25 @@ namespace PetSitter.Controllers
             return View(PaginatedList<SitterVM>.Create(allSitters.AsQueryable().AsNoTracking(), page ?? 1, pageSize));
         }
 
-        public IActionResult SitterDetails(int sitterID)
-        {
-            // Get the SitterVM.
-            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+        //public IActionResult SitterDetails(int sitterID)
+        //{
+        //    // Get the SitterVM.
+        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
 
-            return View(sitter);
-        }
+        //    return View(sitter);
+        //}
+
 
         // GET: Initial Book
         public IActionResult Book(int sitterID)
         {
+            // Add sitter details to the booking form.
             BookingFormVM booking = new BookingFormVM();
             booking.SitterId = sitterID;
+            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+            var sitter = sitterRepo.GetSitterVM(sitterID);
+            booking.SitterName = sitter.FirstName;
 
             // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
             int userId = 3;
@@ -169,28 +172,38 @@ namespace PetSitter.Controllers
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
 
-            if (petsSelected)
+            // Check that sitter is available for selected dates.
+            bool sitterAvailable = bookingRepo.CheckSitterAvailability(bookingForm);
+
+            if (sitterAvailable)
             {
-                if (ModelState.IsValid)
+                if (petsSelected)
                 {
-                    // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
-                    int userId = 3;
-
-                    if (HttpContext.Session.GetString("UserID") != null)
+                    if (ModelState.IsValid)
                     {
-                        userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+                        // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
+                        int userId = 3;
+
+                        if (HttpContext.Session.GetString("UserID") != null)
+                        {
+                            userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+                        }
+
+                        // Create booking
+                        int bookingId = bookingRepo.Create(bookingForm, userId);
+
+                        // Redirect to confirmation and payment page
+                        return RedirectToAction("ConfirmBooking", "Booking", new { bookingId });
                     }
-
-                    // Create booking
-                    int bookingId = bookingRepo.Create(bookingForm, userId);
-
-                    // Redirect to confirmation and payment page
-                    return RedirectToAction("ConfirmBooking", "Booking", new { bookingId });
+                }
+                else // else if no pets have been selected
+                {
+                    bookingForm.Message = "Please select at least one pet for this booking.";
                 }
             }
-            else
+            else // else if sitter is not available
             {
-                bookingForm.Message = "Please select at least one pet for this booking.";
+                bookingForm.Message = $"Sorry, {bookingForm.SitterName} is not available those days.";
             }
 
             // Show booking page again.
@@ -223,20 +236,30 @@ namespace PetSitter.Controllers
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
 
-            if (petsSelected)
-            {
-                if (ModelState.IsValid)
-                {
-                    // Update booking
-                    int bookingId = bookingRepo.Update(bookingForm);
+            // Check that sitter is available for selected dates.
+            bool sitterAvailable = bookingRepo.CheckSitterAvailability(bookingForm);
 
-                    // Redirect to confirmation page
-                    return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+            if (sitterAvailable)
+            {
+                if (petsSelected)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        // Update booking
+                        int bookingId = bookingRepo.Update(bookingForm);
+
+                        // Redirect to confirmation page
+                        return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+                    }
+                }
+                else // if no pets selected
+                {
+                    bookingForm.Message = "Please select at least one pet for this booking.";
                 }
             }
-            else
+            else // if sitter is not available
             {
-                bookingForm.Message = "Please select at least one pet for this booking.";
+                bookingForm.Message = $"Sorry, {bookingForm.SitterName} is not available those days.";
             }
 
             // Show booking page again.
@@ -261,6 +284,116 @@ namespace PetSitter.Controllers
             return Json(completeIPN);
         }
 
+
+
+        //    public IActionResult ReviewList(int sitterID)
+        //    {
+
+
+        //        //var rating 
+
+        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+        //        return View(response);
+        //    }
+
+        //}
+
+
+
+   
+
+
+
+        public IActionResult SitterDetails(int sitterID)
+        {
+            // Get the SitterVM.
+            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+
+
+            //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+            //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+            //return View(response);
+
+
+            return View(sitter);
+
+        }
+
+
+
+
+
+        public IActionResult CreateReview(int sitterID, int bookingID)
+
+        {
+
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+
+            SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
+            var sitterInfor = sRepos.GetSitterById(sitterID);
+
+            BookingRepo bRepo = new BookingRepo(_db, _emailService);
+            var bookInfo = bRepo.GetBookingVM(bookingID);
+
+
+            CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+
+            User user = cfsRepo.getUserById(sitterID);
+            ViewData["SitterProfileImg"] = user;
+
+            //ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            //int userID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            //ViewData["SitterProfileImg"] = sRepos.getUser(userID);
+
+
+
+
+            // Add sitter and booking details to the CreateReviewVM.
+
+            CreateReviewVM reviewCreating = new CreateReviewVM
+            {
+
+                sitter = sitterInfor.FirstName + " " + sitterInfor.LastName,
+                BookingId = bookingID,
+                startDate = bookInfo.StartDate,
+                endDate = bookInfo.EndDate,
+
+                //LastName = sitterInfor.LastName,
+            };
+
+            ViewBag.SitterName = reviewCreating.sitter;
+
+            //reviewCreating.SitterId = sitterID;
+
+
+            return View(reviewCreating);
+        }
+
+
+        [HttpPost]
+        public IActionResult CreateReview(CreateReviewVM createReviewVM)
+        {
+
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+            ReviewRepo reviewRepo = new ReviewRepo(_db);
+
+            Tuple<int, string> response =
+                reviewRepo.UpdateReview(createReviewVM);
+
+            //int petID = response.Item1;
+            //string createMessage = response.Item2;
+
+
+            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });//,
+                                                                                                 //    new { id = petID, message = createMessage });
+        }
 
     }
 }

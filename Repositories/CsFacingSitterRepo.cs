@@ -1,4 +1,5 @@
-﻿using PetSitter.Models;
+﻿using Microsoft.AspNetCore.Hosting;
+using PetSitter.Models;
 using PetSitter.ViewModels;
 using System.Data.Entity;
 using System.Security.Policy;
@@ -7,8 +8,8 @@ namespace PetSitter.Repositories
 {
     public class CsFacingSitterRepo
     {
-
         private readonly PetSitterContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public CsFacingSitterRepo(PetSitterContext db)
         {
@@ -17,9 +18,9 @@ namespace PetSitter.Repositories
 
         public IQueryable<SitterVM> GetAllSitterVMs()
         {
+            SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
 
-
-
+            // Get all sitters and convert to list.
             var allSitters = (from s in _db.Sitters.Include(s=> s.Availabilities)
                              join u in _db.Users
                                     on s.UserId equals u.UserId
@@ -30,22 +31,21 @@ namespace PetSitter.Repositories
                                  FirstName = u.FirstName,
                                  Rate = (decimal)s.RatePerPetPerDay,
                                  ProfileBio = s.ProfileBio,
+                                 ProfileImage = u.ProfileImage,
                                  AvgRating = (double)_db.Bookings.Where(b => b.SitterId == s.SitterId).Average(b => b.Rating),
-                                 Reviews = _db.Bookings.Where(b => b.SitterId == s.SitterId).Select(b => b.Review).ToList(),
                                  petTypes = _db.Sitters.Where(b => b.SitterId == s.SitterId).SelectMany(s => s.PetTypes).Select(p => p.PetType1).ToList(),
-                                 availabilities = s.Availabilities.ToList()
+                                 availabilities = s.Availabilities.ToList(),
+                                 Reviews = sRepos.GetReviews(s.SitterId).ToList(),
+                                 }).ToList();
 
 
-
-                             }).ToList();
-
+            // Add availabilities.
             AvailabilityRepo availabilityRepo = new AvailabilityRepo(_db);
             foreach (var sitter in allSitters)
             {
                 if (sitter.availabilities != null)
                 {
                     sitter.availableDates = availabilityRepo.GetAvailableDates(sitter.availabilities);
-
                 }
             }
 
@@ -54,9 +54,23 @@ namespace PetSitter.Repositories
 
         public SitterVM GetSitterVM(int sitterID)
         {
-            SitterVM sitter = GetAllSitterVMs().Where(s => s.SitterId == sitterID).FirstOrDefault();
-
-            return sitter;
+            return GetAllSitterVMs().Where(s => s.SitterId == sitterID).FirstOrDefault();
         }
+
+
+
+
+
+        public User getUserById(int sitterId)
+        {
+            var user = (from s in _db.Sitters
+                        join u in _db.Users on s.UserId equals u.UserId
+                        where s.SitterId == sitterId
+                        select u).FirstOrDefault();
+
+            return user;
+        }
+
+
     }
 }

@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -22,12 +24,14 @@ using Microsoft.Extensions.Logging;
 using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
+using PetSitter.ViewModels;
 using static PetSitter.Services.ReCAPTCHA;
 
 namespace PetSitter.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
+
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserStore<IdentityUser> _userStore;
@@ -182,6 +186,13 @@ namespace PetSitter.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                var defaultImageFilePath = Path.Combine(webHostEnvironment.WebRootPath, "images/default-image.jpeg");
+                byte[] defaultImageBytes;
+                using (var fileStream = new FileStream(defaultImageFilePath, FileMode.Open))
+                {
+                    using var binaryReader = new BinaryReader(fileStream);
+                    defaultImageBytes = binaryReader.ReadBytes((int)fileStream.Length);
+                }
 
                 if (result.Succeeded)
                 {
@@ -195,6 +206,10 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         PostalCode = Input.PostalCode,
                         StreetAddress = Input.StreetAddress,
                         UserType = Input.UserType,
+                        ProfileImage = defaultImageBytes
+
+
+
                     };
 
                     if (newUser.UserType == "Sitter")

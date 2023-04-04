@@ -6,6 +6,14 @@
 <main class="sitter-detail">
     <a asp-action="FindASitter">Back to List</a>
     <div class="profile">
+        @if (Model.ProfileImage != null)
+        {
+            <img src="data:image/png;base64, @Convert.ToBase64String(Model.ProfileImage)" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+        }
+        else
+        {
+            <img src="~/Image/ImageUpload.png" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+        }
         <h1>@Html.DisplayFor(model => model.FirstName)</h1>
         <div class="rating">
             <span class="@IsStarSelected(1, @Model.AvgRating)">&#9733;</span>
@@ -26,7 +34,54 @@
     </div>
     <div class="reviews">
         <h2>Reviews</h2>
-        @Html.DisplayFor(model => model.Reviews)
+@*        @Html.DisplayFor(model => model.Reviews)
+*@  
+       <div class="row">
+            @foreach (var item in Model.Reviews)
+            {
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center;">
+                                @if (item.profileImage == null)
+                                {
+                                                <div style="width: 50px; height: 50px; border: 1px solid black; border-radius: 50%; margin-right: 10px;"></div>
+                                }
+                                else
+                                {
+                                                <img style="width: 50px; height: 50px; border: 1px solid black; border-radius: 50%; margin-right: 10px;" src="data:image/png;base64,
+                        @Convert.ToBase64String(item.profileImage)" alt="User Profile Image" />
+                                }
+                                <h5 class="card-title" style="margin: 0;">@Html.DisplayFor(modelItem => item.petParent)</h5>
+                            </div>
+                            <p class="card-text">@Html.DisplayFor(modelItem => item.review)</p>
+                            <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.startDate) - @Html.DisplayFor(modelItem => item.endDate)</small></p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= item.rating)
+                                    {
+                                                                <i class="fas fa-star text-warning"></i>
+                                    }
+                                    else
+                                    {
+                                                                <i class="far fa-star"></i>
+                                    }
+                                }
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+</div>
+
+
+
+
+
+
     </div>
 </main>
 
