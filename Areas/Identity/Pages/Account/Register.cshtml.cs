@@ -231,9 +231,11 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         sitterRepos.AddSiter(newSitter);
 
                         var sitterID = sitterRepos.GetSitterByEmail(Input.Email);
+                        HttpContext.Session.SetString("Email", Input.Email);
                         HttpContext.Session.SetString("UserName", customerID.FirstName);
                         HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
                         HttpContext.Session.SetString("SitterID", sitterID.SitterId.ToString());
+
                     }
                     else if (newUser.UserType == "Customer")
                     {

@@ -1,17 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PetSitter.Data.Services;
 using PetSitter.Models;
 using PetSitter.Repositories;
 using PetSitter.ViewModels;
-using SendGrid.Helpers.Mail;
-using System;
 using System.Globalization;
-using System.Linq;
-using System.Security.Principal;
 
 namespace PetSitter.Controllers
 {
@@ -26,23 +20,12 @@ namespace PetSitter.Controllers
             _db = db;
             _emailService = emailService;
             _webHostEnvironment = webHost;
-
         }   
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
+        [Authorize]
         public IActionResult ViewMyBookings()
         {
-            // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
-            int userId = 3;
-
-            if (HttpContext.Session.GetString("UserID") != null)
-            {
-                userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-            }
+            int userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             List<BookingVM> myBookings = bookingRepo.GetUpcomingBookingVMsByUserId(userId);
@@ -50,15 +33,10 @@ namespace PetSitter.Controllers
             return View(myBookings);
         }
 
+        [Authorize]
         public IActionResult ViewPastBookings()
         {
-            // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
-            int userId = 3;
-
-            if (HttpContext.Session.GetString("UserID") != null)
-            {
-                userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-            }
+            int userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
 
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             List<BookingVM> myBookings = bookingRepo.GetPastBookingVMsByUserId(userId);
@@ -66,6 +44,7 @@ namespace PetSitter.Controllers
             return View(myBookings);
         }
 
+        [Authorize]
         public IActionResult BookingDetails(int bookingID)
         {
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
@@ -126,16 +105,7 @@ namespace PetSitter.Controllers
             return View(PaginatedList<SitterVM>.Create(allSitters.AsQueryable().AsNoTracking(), page ?? 1, pageSize));
         }
 
-        //public IActionResult SitterDetails(int sitterID)
-        //{
-        //    // Get the SitterVM.
-        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-
-        //    return View(sitter);
-        //}
-
-
+        [Authorize]
         // GET: Initial Book
         public IActionResult Book(int sitterID)
         {
@@ -146,14 +116,8 @@ namespace PetSitter.Controllers
             var sitter = sitterRepo.GetSitterVM(sitterID);
             booking.SitterName = sitter.FirstName;
 
-            // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
-            int userId = 3;
-
-            if (HttpContext.Session.GetString("UserID") != null)
-            {
-                userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-            }
-
+            // Get the current users pets to display on the form.
+            int userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             List<BookingPetVM> pets = bookingRepo.GetBookingPetVMsByUserId(userId);
             booking.Pets = pets;
@@ -161,6 +125,7 @@ namespace PetSitter.Controllers
             return View(booking);
         }
 
+        [Authorize]
         // POST: Initial Book
         [HttpPost]
         public IActionResult Book(BookingFormVM bookingForm)
@@ -210,6 +175,7 @@ namespace PetSitter.Controllers
             return View(bookingForm);
         }
 
+        [Authorize]
         public IActionResult ConfirmBooking(int bookingId)
         {
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
@@ -217,6 +183,7 @@ namespace PetSitter.Controllers
             return View(confirmBooking);
         }
 
+        [Authorize]
         // GET: Edit
         public IActionResult Edit(int bookingId)
         {
@@ -225,6 +192,7 @@ namespace PetSitter.Controllers
             return View(booking);
         }
 
+        [Authorize]
         // POST: Edit
         [HttpPost]
         public IActionResult Edit(BookingFormVM bookingForm)
@@ -266,73 +234,32 @@ namespace PetSitter.Controllers
             return View(bookingForm);
         }
 
+        [Authorize]
         [HttpPost]
         public JsonResult PaySuccess([FromBody] IPN ipn)
         {
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
 
-            // FOR DEVELOPMENT: GET EMAIL IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
-            string email = "laurenemilybyrne@gmail.com";
-
-            if (HttpContext.Session.GetString("Email") != null)
-            {
-                email = HttpContext.Session.GetString("Email");
-            }
+            string email = HttpContext.Session.GetString("Email");
 
             IPN completeIPN = bookingRepo.AddTransaction(ipn, email);
 
             return Json(completeIPN);
         }
 
-
-
-        //    public IActionResult ReviewList(int sitterID)
-        //    {
-
-
-        //        //var rating 
-
-        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-        //        return View(response);
-        //    }
-
-        //}
-
-
-
-   
-
-
-
         public IActionResult SitterDetails(int sitterID)
         {
             // Get the SitterVM.
             CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
             SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-
-
-            //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-            //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-            //return View(response);
-
-
             return View(sitter);
 
         }
 
-
-
-
-
+        [Authorize]
         public IActionResult CreateReview(int sitterID, int bookingID)
-
         {
-
             int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-
 
             SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
             var sitterInfor = sRepos.GetSitterById(sitterID);
@@ -340,42 +267,25 @@ namespace PetSitter.Controllers
             BookingRepo bRepo = new BookingRepo(_db, _emailService);
             var bookInfo = bRepo.GetBookingVM(bookingID);
 
-
             CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
-
             User user = cfsRepo.getUserById(sitterID);
             ViewData["SitterProfileImg"] = user;
 
-            //ViewData["UserName"] = HttpContext.Session.GetString("UserName");
-
-            //int userID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-            //ViewData["SitterProfileImg"] = sRepos.getUser(userID);
-
-
-
-
             // Add sitter and booking details to the CreateReviewVM.
-
             CreateReviewVM reviewCreating = new CreateReviewVM
             {
-
                 sitter = sitterInfor.FirstName + " " + sitterInfor.LastName,
                 BookingId = bookingID,
                 startDate = bookInfo.StartDate,
                 endDate = bookInfo.EndDate,
-
-                //LastName = sitterInfor.LastName,
             };
 
             ViewBag.SitterName = reviewCreating.sitter;
 
-            //reviewCreating.SitterId = sitterID;
-
-
             return View(reviewCreating);
         }
 
-
+        [Authorize]
         [HttpPost]
         public IActionResult CreateReview(CreateReviewVM createReviewVM)
         {
@@ -387,13 +297,7 @@ namespace PetSitter.Controllers
             Tuple<int, string> response =
                 reviewRepo.UpdateReview(createReviewVM);
 
-            //int petID = response.Item1;
-            //string createMessage = response.Item2;
-
-
-            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });//,
-                                                                                                 //    new { id = petID, message = createMessage });
+            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
         }
-
     }
 }

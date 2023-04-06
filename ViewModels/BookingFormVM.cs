@@ -19,7 +19,7 @@ namespace PetSitter.ViewModels
         [DisplayName("Start Date")]
         public DateTime StartDate { get; set; }
         [DisplayName("End Date")]
-        [GreaterThan("StartDate")]
+        [GreaterThanOrEqualTo("StartDate")]
         public DateTime EndDate { get; set; }
         [DisplayName("Special Requests")]
         public string? SpecialRequests { get; set; }
