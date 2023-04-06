@@ -61,8 +61,10 @@
 </table>
 *@
 
+@*@model IEnumerable<PetSitter.ViewModels.ReviewVM>
+*@
+@model PaginatedList<PetSitter.ViewModels.ReviewVM>
 
-@model IEnumerable<PetSitter.ViewModels.ReviewVM>
 
 @{
     ViewData["Title"] = "ReviewList";
@@ -139,6 +141,21 @@
 
 
 
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="ReviewList"
+   asp-route-page="@(Model.PageIndex - 1)"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="ReviewList"
+   asp-route-page="@(Model.PageIndex + 1)"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
 
 
 

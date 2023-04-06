@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System;
 using System.Drawing.Drawing2D;
 using System.Linq;
-
+//using PetSitter.Utilities;
 namespace PetSitter.Controllers
 {
     public class SitterController : Controller
@@ -39,18 +39,30 @@ namespace PetSitter.Controllers
         /// get  bookings  list 
         /// </summary>
         /// <returns></returns>
-        public IActionResult Dashboard()
+        public IActionResult Dashboard(int? page,string status)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
-            IEnumerable<SitterDashboardVM> bookings = sitterRepos.GetBooking(sitterID);
+            IEnumerable<SitterDashboardVM> bookings= sitterRepos.GetBooking(sitterID); ;
             ViewData["UpComing"] = bookings.Select(b => b.upComingNbr).LastOrDefault();
             ViewData["Complete"] = bookings.Select(b => b.completeNbr).LastOrDefault();
             ViewData["Reviews"] = bookings.Select(b => b.reviewsNbr).LastOrDefault();
+            if (!string.IsNullOrEmpty(status))
+            {
+              
+              
+                    bookings = sitterRepos.GetBookingByStatus(bookings, status);
+
+                
+
+            }
 
 
-            return View(bookings);
+            int pageSize = 4;
+
+            return View(PaginatedList<SitterDashboardVM>.Create(bookings.AsQueryable().AsNoTracking(), page ?? 1, pageSize));
+
         }
         /// <summary>
         /// get details of booking with pet parent informatins
@@ -239,7 +251,9 @@ namespace PetSitter.Controllers
 
 
 
-        public IActionResult ReviewList()
+
+        //public IActionResult ReviewList(string currentFilter, string searchString, int? page)
+        public IActionResult ReviewList(int? page)
         {
 
             // Get the logged in sitter ID
@@ -252,8 +266,19 @@ namespace PetSitter.Controllers
 
 
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-            return View(response);
+            //return View(response);
+
+            int pageSize = 1;
+            return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
+                                                     , page ?? 1, pageSize));
+
         }
 
     }
+
+
+
+ 
+
+
 }

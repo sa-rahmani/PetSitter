@@ -56,5 +56,21 @@ namespace PetSitter.Repositories
         {
             return GetAllSitterVMs().Where(s => s.SitterId == sitterID).FirstOrDefault();
         }
+
+
+
+
+
+        public User getUserById(int sitterId)
+        {
+            var user = (from s in _db.Sitters
+                        join u in _db.Users on s.UserId equals u.UserId
+                        where s.SitterId == sitterId
+                        select u).FirstOrDefault();
+
+            return user;
+        }
+
+
     }
 }

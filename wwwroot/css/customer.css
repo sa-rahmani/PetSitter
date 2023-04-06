@@ -28,17 +28,17 @@ img{
 }
 
 
-.profile-container img:hover{
-    width:180px;
+.profile-container img:hover {
+    transform: scale(1.2);
 }
 
 .getprofile-container h2 {
     text-align: center;
-    font-size: 1.5em;
+    font-size: 1.8em;
 }
 
 .getprofile-container h3 {
-    font-size: 1.2em;
+    font-size: 1.5em;
 }
 
 
@@ -59,14 +59,15 @@ img{
 }
 
 
-.profile-container dt{
+.profile-container dt {
     color: var(--gray-500);
-    font-weight:500;
-    font-size:0.8rem;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.8;
 }
 
 .profile-container dd{
-    font-size: 0.8rem;
+    font-size: 1rem;
 }
 
 .profile-container th {
@@ -74,7 +75,7 @@ img{
 }
 
 .profile-container table a {
-    font-size: 0.8rem;
+    font-size: 1.1rem;
 }
 
 .profile-container table td {
@@ -98,12 +99,153 @@ img{
 
 /* End of GetProfile.cshtml */
 
+/*Start of EditProfile.cshtml*/
+
+.editprofile-container .pet-lists h3{
+    margin-left: 20px;
+}
+
+.pet-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.pet-btn {
+    background-color: var(--indigo-500);
+    color: #fff;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.pet-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.save-btn {
+    background-color: var(--indigo-500);
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.save-btn:hover {
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+/* End of EditProfile.cshtml */
 
 /*Start of GetPet.cshtml*/
-
-.getpet-container{
-
+.getpet-container {
+    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: #f8f8f8;
 }
+
+.getpet-container h3 {
+    word-spacing: 2px;
+}
+
+.getpet-container dt{
+    color:var(--gray-500);
+    font-weight:600;
+}
+
+.getpet-container dd{
+    font-size: 1.2em;
+}
+
+.pet-image img {
+    max-width: 100%;
+}
+
+.pet-image img:hover {
+    transform: scale(1.2);
+}
+
+.back-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+    font-weight: bold;
+    padding-right: 20px;
+    transition: color 0.2s ease-in-out;
+}
+
+
+.back-to-profile .arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 5px 0 7px 8px;
+    border-color: transparent transparent transparent #555;
+    transform: rotate(180deg);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(180deg);
+    animation: arrow-animation 1s infinite;
+    margin-right: 10px;
+    color: var(--indigo-500);
+}
+
+
+.back-to-profile .text{
+    margin-left: 20px;
+}
+
+.back-link .text {
+    color:black;
+}
+
+
+@media only screen and (max-width:480px) {
+    .back-to-profile .arrow {
+        border-width: 5px 0 5px 7px;
+    }
+    .back-to-profile .text {
+        font-size: 0.8em;
+    }
+    .profile-wrapper h3{
+        font-size:1.2em;
+    }
+    .profile-container h3{
+        font-size: 1.2em;
+    }
+}
+
+
+@media only screen and (max-width:770px) {
+    .editprofile-container .pet-lists {
+        display: none;
+    }
+}
+
+@keyframes arrow-animation {
+    0% {
+        left: 0;
+    }
+
+    50% {
+        left: -5px;
+    }
+
+    100% {
+        left: 0;
+    }
+}
+/*End of GetPet.cshtml*/
 
 /*Start of CreatePet.cshtml*/
 .hidden-radio {
@@ -120,7 +262,7 @@ img{
     cursor: pointer;
 }
 
-label[for="dog"]{
+label[for="dog"] {
     margin-right: 4em;
 }
 

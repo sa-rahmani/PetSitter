@@ -126,14 +126,14 @@ namespace PetSitter.Controllers
             return View(PaginatedList<SitterVM>.Create(allSitters.AsQueryable().AsNoTracking(), page ?? 1, pageSize));
         }
 
-        public IActionResult SitterDetails(int sitterID)
-        {
-            // Get the SitterVM.
-            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+        //public IActionResult SitterDetails(int sitterID)
+        //{
+        //    // Get the SitterVM.
+        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
 
-            return View(sitter);
-        }
+        //    return View(sitter);
+        //}
 
 
         // GET: Initial Book
@@ -284,40 +284,116 @@ namespace PetSitter.Controllers
             return Json(completeIPN);
         }
 
-        public IActionResult CreateReview(int sitterID, int bookingID)
-        {
-            // Get sitter details.
-            SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
-            var sitterInfo = sRepos.GetSitterById(sitterID);
 
-            // Get booking details.
+
+        //    public IActionResult ReviewList(int sitterID)
+        //    {
+
+
+        //        //var rating 
+
+        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+        //        return View(response);
+        //    }
+
+        //}
+
+
+
+   
+
+
+
+        public IActionResult SitterDetails(int sitterID)
+        {
+            // Get the SitterVM.
+            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+
+
+            //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+            //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+            //return View(response);
+
+
+            return View(sitter);
+
+        }
+
+
+
+
+
+        public IActionResult CreateReview(int sitterID, int bookingID)
+
+        {
+
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+
+            SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
+            var sitterInfor = sRepos.GetSitterById(sitterID);
+
             BookingRepo bRepo = new BookingRepo(_db, _emailService);
             var bookInfo = bRepo.GetBookingVM(bookingID);
 
+
+            CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+
+            User user = cfsRepo.getUserById(sitterID);
+            ViewData["SitterProfileImg"] = user;
+
+            //ViewData["UserName"] = HttpContext.Session.GetString("UserName");
+
+            //int userID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            //ViewData["SitterProfileImg"] = sRepos.getUser(userID);
+
+
+
+
             // Add sitter and booking details to the CreateReviewVM.
-            CreateReviewVM createReview = new CreateReviewVM
+
+            CreateReviewVM reviewCreating = new CreateReviewVM
             {
-                sitter = sitterInfo.FirstName + " " + sitterInfo.LastName,
-                BookingId= bookingID,
-                startDate= bookInfo.StartDate,
-                endDate= bookInfo.EndDate,
+
+                sitter = sitterInfor.FirstName + " " + sitterInfor.LastName,
+                BookingId = bookingID,
+                startDate = bookInfo.StartDate,
+                endDate = bookInfo.EndDate,
+
+                //LastName = sitterInfor.LastName,
             };
 
-            ViewBag.SitterName = createReview.sitter;
-            return View(createReview);
+            ViewBag.SitterName = reviewCreating.sitter;
+
+            //reviewCreating.SitterId = sitterID;
+
+
+            return View(reviewCreating);
         }
 
 
         [HttpPost]
         public IActionResult CreateReview(CreateReviewVM createReviewVM)
         {
+
+            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
             ReviewRepo reviewRepo = new ReviewRepo(_db);
 
-            // Update the booking to add the review.
             Tuple<int, string> response =
                 reviewRepo.UpdateReview(createReviewVM);
 
-            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
+            //int petID = response.Item1;
+            //string createMessage = response.Item2;
+
+
+            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });//,
+                                                                                                 //    new { id = petID, message = createMessage });
         }
+
     }
 }
