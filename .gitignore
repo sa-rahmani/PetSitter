@@ -363,3 +363,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 appsettings.json
+/Migrations/20230404051943_had error, need migration.cs
+/Migrations/20230404051943_had error, need migration.Designer.cs

@@ -1,4 +1,5 @@
-﻿using PetSitter.Models;
+﻿using PetSitter.Data;
+using PetSitter.Models;
 using PetSitter.ViewModels;
 
 namespace PetSitter.Repositories
@@ -7,16 +8,20 @@ namespace PetSitter.Repositories
     {
         private readonly PetSitterContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ApplicationDbContext _context;
 
-        public AdminRepo(PetSitterContext db, IWebHostEnvironment webHostEnvironment)
+        public AdminRepo(PetSitterContext db, IWebHostEnvironment webHostEnvironment, ApplicationDbContext context)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
+            _context = context;
         }
 
         public IQueryable GetAllUsers() 
         {
+
           var allUsers = (from user in _db.Users
+                          
                             select new AdminDashboardVM
                             {
                                 UserID = user.UserId,
