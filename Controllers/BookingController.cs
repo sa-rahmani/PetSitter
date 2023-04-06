@@ -140,35 +140,38 @@ namespace PetSitter.Controllers
             // Check that sitter is available for selected dates.
             bool sitterAvailable = bookingRepo.CheckSitterAvailability(bookingForm);
 
-            if (sitterAvailable)
+            // Check that start date is after today's date.
+            bool validDate = bookingRepo.CheckDate(bookingForm.StartDate);
+
+            if (validDate)
             {
-                if (petsSelected)
+                if (sitterAvailable)
                 {
-                    if (ModelState.IsValid)
+                    if (petsSelected)
                     {
-                        // FOR DEVELOPMENT: GET USER ID IF LOGGED IN, OTHERWISE RETURN DEFAULT FOR QUICK TESTING OF FEATURES
-                        int userId = 3;
-
-                        if (HttpContext.Session.GetString("UserID") != null)
+                        if (ModelState.IsValid)
                         {
-                            userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+                            int userId = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+
+                            // Create booking
+                            int bookingId = bookingRepo.Create(bookingForm, userId);
+
+                            // Redirect to confirmation and payment page
+                            return RedirectToAction("ConfirmBooking", "Booking", new { bookingId });
                         }
-
-                        // Create booking
-                        int bookingId = bookingRepo.Create(bookingForm, userId);
-
-                        // Redirect to confirmation and payment page
-                        return RedirectToAction("ConfirmBooking", "Booking", new { bookingId });
+                    }
+                    else // else if no pets have been selected
+                    {
+                        bookingForm.Message = "Please select at least one pet for this booking.";
                     }
                 }
-                else // else if no pets have been selected
+                else // else if sitter is not available
                 {
-                    bookingForm.Message = "Please select at least one pet for this booking.";
+                    bookingForm.Message = $"Sorry, {bookingForm.SitterName} is not available those days.";
                 }
-            }
-            else // else if sitter is not available
+            } else // else if date is invalid 
             {
-                bookingForm.Message = $"Sorry, {bookingForm.SitterName} is not available those days.";
+                bookingForm.Message = $"Please select a future date for the start date.";
             }
 
             // Show booking page again.

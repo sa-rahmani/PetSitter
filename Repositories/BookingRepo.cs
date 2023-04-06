@@ -330,7 +330,7 @@ namespace PetSitter.Repositories
             DateTime endDate = (DateTime)booking.EndDate;
 
             // Calculate number of days in booking.
-            int days = endDate.Subtract(startDate).Days;
+            int days = endDate.Subtract(startDate).Days + 1;
 
             // Get sitter.
             CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
@@ -394,6 +394,19 @@ namespace PetSitter.Repositories
                        $"<li>Price: {price.ToString("C")}</li>" +
                        $"<li>Payment Confirmation: {booking.PaymentId}</li></ul>"
             });
+        }
+
+        public bool CheckDate(DateTime startDate)
+        {
+            DateTime today = DateTime.Today;
+            
+            if (startDate > today)
+            {
+                return true;
+            } else
+            {
+                return false;
+            }
         }
     }
 }
