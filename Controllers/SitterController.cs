@@ -54,7 +54,7 @@ namespace PetSitter.Controllers
               
                     bookings = sitterRepos.GetBookingByStatus(bookings, status);
 
-                
+   
 
             }
 
@@ -255,10 +255,21 @@ namespace PetSitter.Controllers
         //public IActionResult ReviewList(string currentFilter, string searchString, int? page)
         public IActionResult ReviewList(int? page)
         {
-
-            // Get the logged in sitter ID
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
+
+            CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+            SitterVM sitterRes = cfsRepo.GetSitterVM(sitterID);
+
+            User user = cfsRepo.getUserById(sitterID);
+            ViewData["SitterProfileImg"] = user;
+
+            // Get the logged in sitter ID
+            ViewData["FirstName"] = sitterRes.FirstName;
+            ViewData["AvgRating"] = sitterRes.AvgRating;
+            ViewData["Rate"] = sitterRes.Rate.ToString("0.00");
+            ViewData["ProfileBio"] = sitterRes.ProfileBio;
+            ViewBag.ProfileImage = sitterRes.ProfileImage;
 
             //var rating 
 

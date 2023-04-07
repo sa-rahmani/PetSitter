@@ -293,14 +293,98 @@ namespace PetSitter.Controllers
             return Json(completeIPN);
         }
 
-        public IActionResult SitterDetails(int sitterID)
-        {
-            // Get the SitterVM.
-            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-            return View(sitter);
 
+
+        //    public IActionResult ReviewList(int sitterID)
+        //    {
+
+
+        //        //var rating 
+
+        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+        //        return View(response);
+        //    }
+
+        //}
+
+
+
+
+
+
+
+        //public IActionResult SitterDetails(int sitterID)
+        //{
+        //    // Get the SitterVM.
+        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+
+
+        //    //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+        //    //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+        //    //return View(response);
+
+
+        //    return View(sitter);
+
+        //}
+
+        public IActionResult SitterDetails(int sitterID, int? page)
+        {
+
+
+
+            // Get the SitterVM.
+            CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+            SitterVM sitterRes = cfsRepo.GetSitterVM(sitterID);
+            //ViewData["Sitter"] = sitterRes;
+
+
+            //CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+
+            User user = cfsRepo.getUserById(sitterID);
+            ViewData["SitterProfileImg"] = user;
+
+
+            //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+            //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+            //return View(response);
+
+            ViewData["FirstName"] = sitterRes.FirstName;
+            ViewData["AvgRating"] = sitterRes.AvgRating;
+            ViewData["Rate"] = sitterRes.Rate.ToString("0.00");
+            ViewData["ProfileBio"] = sitterRes.ProfileBio;
+            ViewBag.ProfileImage = sitterRes.ProfileImage;
+
+            //ViewData["Complete"] = bookings.Select(b => b.completeNbr).LastOrDefault();
+            //ViewData["Reviews"] = bookings.Select(b => b.reviewsNbr).LastOrDefault();
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //var rating 
+
+
+            SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+
+            List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+            //return View(response);
+
+
+            ViewData["SitterID"] = sitterID;
+
+            int pageSize = 1;
+            return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
+                                                     , page ?? 1, pageSize));
         }
+
+
+
+        
 
         [Authorize]
         public IActionResult CreateReview(int bookingID)
@@ -318,20 +402,20 @@ namespace PetSitter.Controllers
 
                 // Get the sitter's profile image
                 CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
-                User user = cfsRepo.getUserById(sitterInfo.UserId);
+                User user = cfsRepo.getUserById(sitterInfo.SitterId);
                 ViewData["SitterProfileImg"] = user;
 
                 // Add sitter and booking details to the CreateReviewVM.
                 CreateReviewVM reviewCreating = new CreateReviewVM
                 {
-                    sitter = sitterInfo.FirstName + " " + sitterInfo.LastName,
+                    Sitter = sitterInfo.FirstName + " " + sitterInfo.LastName,
                     SitterId = bookInfo.SitterId,
                     BookingId = bookingID,
-                    startDate = bookInfo.StartDate,
-                    endDate = bookInfo.EndDate,
+                    StartDate = bookInfo.StartDate,
+                    EndDate = bookInfo.EndDate,
                 };
 
-                ViewBag.SitterName = reviewCreating.sitter;
+                ViewBag.SitterName = reviewCreating.Sitter;
 
                 return View(reviewCreating);
             }
