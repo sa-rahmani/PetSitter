@@ -20,7 +20,8 @@
             <div class="col-lg-4 text-center">
                 <h1 class="display-4" id="h1-pet">Find your best friend's new best friend.'</h1>
                 <p>Over 1 million people use Petsitter.com for their pet sitting nees.</p>
-                <a class="btn">Find a pet sitter</a>
+                <a class="btn" asp-area="" asp-controller="Booking" asp-action="FindASitter">Find a pet sitter</a>
+                
                 </div>
             <div class="col-lg-8 ">
 
@@ -30,6 +31,8 @@
         </div>
 
         <img class="adv" src="~/images/HUFFPOST.svg" alt="HUFFPOST">
+
+    <hr class="mt-4">
 
 
         <div class="howItWorks">
@@ -57,6 +60,8 @@
         <a class="btn getStartedbtn">Get Started</a>
 
         </div>
+
+    <hr class="mt-4">
 
 
         <div class="wayToHireacceptProfessionalCleaner">
@@ -96,8 +101,8 @@
 
         <div class="FindPetSitter">
             <h1>Ready to find a pet sitter ?</h1>
-            <a class="btn">Find a pet sitter now</a>
-    
+        <a class="btn" asp-area="" asp-controller="Booking" asp-action="FindASitter">Find a pet sitter now</a>
+
         </div>
 
     </div>
