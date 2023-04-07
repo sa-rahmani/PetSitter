@@ -31,21 +31,12 @@ namespace PetSitter.Controllers
         {
             return View();
         }
+
+        public IActionResult NoPermission()
+        {
+            return View();
+        }
         
-        //[Authorize]
-        //public IActionResult SecureArea()
-        //{
-        //    Get user name of user who is logged in.
-        //     This line must be in the controller.
-        //    string userName = User.Identity.Name;
-
-        //    Usually this section would be in a repository.
-        //    var registeredUser = _db.Users
-        //                                 .Where(ru => ru.Email == userName)
-        //                                 .FirstOrDefault();  // return one item
-
-        //    return View(registeredUser);
-        //}
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
