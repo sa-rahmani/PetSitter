@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using GMap.NET.MapProviders;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PetSitter.Controllers;
 using PetSitter.Data.Services;
@@ -43,6 +45,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly IServiceProvider _serviceProvider;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -53,7 +56,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             PetSitterContext context,
             IWebHostEnvironment webHost,
             IEmailService emailService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IServiceProvider serviceProvider)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -63,9 +67,9 @@ namespace PetSitter.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _context = context;
             webHostEnvironment = webHost;
-            _emailService= emailService;
+            _emailService = emailService;
             _configuration = configuration;
-
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -201,6 +205,9 @@ namespace PetSitter.Areas.Identity.Pages.Account
                     using var binaryReader = new BinaryReader(fileStream);
                     defaultImageBytes = binaryReader.ReadBytes((int)fileStream.Length);
                 }
+                // store in AspNetUserRole table once user sign up as either sitter or customer
+                var UserManager = _serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                var findUser = await UserManager.FindByEmailAsync(Input.Email);
 
                 if (result.Succeeded)
                 {
@@ -216,6 +223,11 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         UserType = Input.UserType,
                         ProfileImage = defaultImageBytes
                     };
+
+                    if (findUser != null)
+                    {
+                        await UserManager.AddToRoleAsync(findUser, newUser.UserType);
+                    }
 
                     if (newUser.UserType == "Sitter")
                     {
