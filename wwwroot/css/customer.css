@@ -212,7 +212,7 @@ img{
     height: 0;
     border-style: solid;
     border-width: 5px 0 7px 8px;
-    border-color: transparent transparent transparent #555;
+    border-color: transparent transparent transparent #6366F1;
     transform: rotate(180deg);
     position: absolute;
     left: 0;
@@ -317,7 +317,6 @@ input[type="radio"]:checked + .radio-icon i {
 
 
 /*Start of EditPet.cshtml*/
-
 .pet-image img {
     width: 200px;
     max-height: 230px;
@@ -344,6 +343,11 @@ input[type="radio"]:checked + .radio-icon i {
     margin-top: 1em;
 }
 
+.editpet-container .back-link{
+    position: relative;
+    left: 8em;
+}
+
 @media only screen and (max-width:480px) {
     .editpet-container .input-group input {
         margin-top: 0 !important;
@@ -354,5 +358,13 @@ input[type="radio"]:checked + .radio-icon i {
     }
     .save-btn{
         padding: 5px;
+    }
+    .editpet-container .back-to-profile{
+        margin: 0 !important;
+    }
+    .editpet-container .back-link {
+        position: relative;
+        left: 0;
+        font-size: 0.8em;
     }
 }
