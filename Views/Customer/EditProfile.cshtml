@@ -104,6 +104,9 @@
             @if (pets.Count() == 0)
             {
                 <p class="lead" style="margin-left:20px;">You have no pets, click Add Pet button to add your first pet!</p>
+                <div class="mb-4 mt-4" style="margin-left:20px;">
+                    <a asp-action="CreatePet" asp-route-id="@Model.CustomerId" class="pet-btn font-monospace lead rounded-2">🐶 Add Pet 🐱</a>
+                </div>
             }
             else
             {

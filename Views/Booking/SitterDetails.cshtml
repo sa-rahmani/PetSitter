@@ -1,43 +1,82 @@
-﻿@model PetSitter.ViewModels.SitterVM
+﻿@model PaginatedList<PetSitter.ViewModels.ReviewVM>
 
 @{
     ViewData["Title"] = "SitterDetail";
 }
+
+
+@{
+    byte[] profileImageBytes = ViewData["ProfileImage"] as byte[];
+}
+
+
+@*@model PetSitter.ViewModels.SitterVM
+
+@{
+    ViewData["Title"] = "SitterDetail";
+}*@
+
+@{
+    User user = ViewData["SitterProfileImg"] as User;
+}
+
+
 <main class="sitter-detail">
     <a asp-action="FindASitter">Back to List</a>
     <div class="profile">
-        @if (Model.ProfileImage != null)
+
+        <h1>@ViewBag.FirstName</h1>
+        @if (profileImageBytes != null)
         {
-            <img src="data:image/png;base64, @Convert.ToBase64String(Model.ProfileImage)" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+@*            <img src="data:image/png;base64, @Convert.ToBase64String(profileImageBytes)" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
+        *@            <img src="data:image/png;base64, @Convert.ToBase64String(profileImageBytes)" alt="User Profile Image" style="width: 20%; height: 20%; border: 2px solid black; margin: 10px; padding: 5px;" />
+
         }
         else
         {
             <img src="~/Image/ImageUpload.png" alt="User Profile Image" class="img-fluid mx-auto d-block img-thumbnail sitter-image" />
         }
-        <h1>@Html.DisplayFor(model => model.FirstName)</h1>
+      
+
+      @*      @if (user.ProfileImage == null)
+            {
+                <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
+            }
+            else
+            {
+                <img style="width: 50%; height: 50%; border: 2px solid black; margin: 10px; padding: 5px;" src="data:image/png;base64, @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
+            }*@
         <div class="rating">
-            <span class="@IsStarSelected(1, @Model.AvgRating)">&#9733;</span>
-            <span class="@IsStarSelected(2, @Model.AvgRating)">&#9733;</span>
-            <span class="@IsStarSelected(3, @Model.AvgRating)">&#9733;</span>
-            <span class="@IsStarSelected(4, @Model.AvgRating)">&#9733;</span>
-            <span class="@IsStarSelected(5, @Model.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(1, @ViewBag.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(2, @ViewBag.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(3, @ViewBag.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(4, @ViewBag.AvgRating)">&#9733;</span>
+            <span class="@IsStarSelected(5, @ViewBag.AvgRating)">&#9733;</span>
         </div>
         <div>
-            <span class="price">$@Html.DisplayFor(model => model.Rate)</span> per day
+            <span class="price">@ViewBag.Rate</span> per day
         </div>
         <div>
-            <a asp-action="Book" asp-route-sitterID="@Model.SitterId">Book with @Html.DisplayFor(model => model.FirstName)</a>
+            <a asp-action="Book" asp-route-sitterID="@ViewBag.SitterID">Book with @ViewBag.FirstName</a>
         </div>
         <div>
-            @Html.DisplayFor(model => model.ProfileBio)
+            @ViewBag.ProfileBio
         </div>
     </div>
+
+    <hr class="mt-4">
+
     <div class="reviews">
         <h2>Reviews</h2>
 @*        @Html.DisplayFor(model => model.Reviews)
 *@  
        <div class="row">
-            @foreach (var item in Model.Reviews)
+           @if (Model.Count == 0)
+            {
+                <p>No Reviews Available.</p>
+            }
+            else{
+            @foreach (var item in Model)
             {
                 <div class="col-md-4">
                     <div class="card mb-4">
@@ -75,6 +114,7 @@
                     </div>
                 </div>
             }
+            }
 </div>
 
 
@@ -98,3 +138,28 @@
         }
     }
 }
+
+
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+
+<a asp-action="SitterDetails"
+   asp-route-page="@(Model.PageIndex - 1)"
+   asp-route-sitterID="@ViewBag.SitterID"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="SitterDetails"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-sitterID="@ViewBag.SitterID"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+
+
+
+

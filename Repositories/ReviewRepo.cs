@@ -22,8 +22,8 @@ namespace PetSitter.Repositories
             try
             {
                 Booking bookReview = _db.Bookings.Where(b => b.BookingId == createReviewVM.BookingId).FirstOrDefault();
-                bookReview.Rating = createReviewVM.rating;
-                bookReview.Review = createReviewVM.review;
+                bookReview.Rating = createReviewVM.Rating;
+                bookReview.Review = createReviewVM.Review;
 
                 _db.Bookings.Update(bookReview);
                 _db.SaveChanges();

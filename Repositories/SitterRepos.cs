@@ -204,22 +204,22 @@ namespace PetSitter.Repositories
 
             return Tuple.Create(sitterObj.SitterId, message);
         }
-        private string UploadCustomerFile(SitterProfileVM sitterProfileVM)
-        {
-            string fileName = null;
-            if (sitterProfileVM.ProfileImage != null)
-            {
-                string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-                fileName = Guid.NewGuid().ToString() + "_" + sitterProfileVM.ProfileImage.FileName;
-                string filePath = Path.Combine(uploadDir, fileName);
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    sitterProfileVM.ProfileImage.CopyTo(fileStream);
-                }
+        //private string UploadCustomerFile(SitterProfileVM sitterProfileVM)
+        //{
+        //    string fileName = null;
+        //    if (sitterProfileVM.ProfileImage != null)
+        //    {
+        //        string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+        //        fileName = Guid.NewGuid().ToString() + "_" + sitterProfileVM.ProfileImage.FileName;
+        //        string filePath = Path.Combine(uploadDir, fileName);
+        //        using (var fileStream = new FileStream(filePath, FileMode.Create))
+        //        {
+        //            sitterProfileVM.ProfileImage.CopyTo(fileStream);
+        //        }
 
-            }
-            return fileName;
-        }
+        //    }
+        //    return fileName;
+        //}
 
         public List<SitterDashboardVM> GetBooking(int sitterId)
         {
@@ -230,7 +230,8 @@ namespace PetSitter.Repositories
                            join u in _db.Users on b.UserId equals u.UserId
                            join bp in _db.BookingPets on b.BookingId equals bp.BookingId
                            join p in _db.Pets on bp.PetId equals p.PetId
-                           where b.SitterId == sitter.SitterId
+                           where b.SitterId == sitter.SitterId 
+                           && b.PaymentId != null
                            select new
                            {
                                b.StartDate,
