@@ -124,7 +124,9 @@ namespace PetSitter.Areas.Identity.Pages.Account
             public string City { get; set; }
 
             [Required]
+            [RegularExpression("^[A-Za-z]\\d[A-Za-z][ ]?\\d[A-Za-z]\\d$")]
             [Display(Name = "Postal Code")]
+            [MaxLength(7)]
             public string PostalCode { get; set; }
 
             [Required]
@@ -162,6 +164,11 @@ namespace PetSitter.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
+
+            // Ensure ReCaptcha doesn't disappear after invalid attempt
+            Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
+            Response.Headers.Add("Pragma", "no-cache");
+            Response.Headers.Add("Expires", "0");
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -208,9 +215,6 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         StreetAddress = Input.StreetAddress,
                         UserType = Input.UserType,
                         ProfileImage = defaultImageBytes
-
-
-
                     };
 
                     if (newUser.UserType == "Sitter")
