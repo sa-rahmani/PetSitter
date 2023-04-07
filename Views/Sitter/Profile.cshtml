@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Profile";
 
-        string message = Model != null ? Model.Message : String.Empty;
+    string message = Model != null ? Model.Message : String.Empty;
 
 
 }
@@ -12,504 +12,265 @@
 
     User user = ViewData["UserProfileImg"] as User;
 }
-<div class="profile">
-    <div class="header">
-       
+<div class="getprofile-container">
+
+    <div class="profile-wrapper">
+        <h2>Welcome @Html.DisplayFor(model => model.FirstName)!</h2>
         <h3>
-            Hello @Html.DisplayFor(model => model.FirstName)! Click here
+            Explore your profile and click
             <a asp-action="EditProfile" asp-route-id="@Model.UserId">
                 <span class="material-symbols-outlined">
-                    account_box
+                    HERE
                 </span>
             </a>
-            to edit your profile!
+            to edit your Profile!
         </h3>
     </div>
 
     <hr class="mt-4" />
-    <div class="body">
-        <div class="form-group">
-            <label asp-for="SitterId" class="control-label" hidden></label>
-            <input asp-for="SitterId" class="form-control" hidden />
-            <span asp-validation-for="SitterId" class="text-danger" read></span>
-        </div>
-                
-            <div class="form-group image">
 
-            
+    <div class="profile-container">
+        <label asp-for="SitterId" class="control-label" hidden></label>
+        <input asp-for="SitterId" class="form-control" hidden />
+        <span asp-validation-for="SitterId" class="text-danger" read></span>
+        <dl class="row">
+
+            <dd class="col-sm-10">
+
                 @if (user.ProfileImage == null)
                 {
                     <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
                 }
                 else
                 {
-                    <img src="data:image/png;base64,
+                    <div class="d-flex align-items-center w-100">
+                        <img style="max-width: 400px;" src="data:image/png;base64,
                             @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
-                   
+                        <div>
+                            @if (Model.ProfileBio != null)
+                            {
+                                <h3 class="text-decoration-underline">PROFILE BIO</h3>
+                                <p>
+                                    @Html.DisplayFor(model => model.ProfileBio)
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    click here ->
+                                    <a asp-action="EditProfile" asp-route-id="@Model.UserId">
+                                        <span class="material-symbols-outlined">
+                                            account_box
+                                        </span>
+
+                                    </a>
+                                    and add your profile bio
+                                </p>
+                            }
+
+                        </div>
+                    </div>
                 }
-            
+
+
+            </dd>
+
+
+
+
+            <h3>CONTACT DETAILS</h3>
+            <div class="row">
+                <div class="col-sm-6">
+                    <dt class="mb-2">First Name</dt>
+                    <dd>@Html.DisplayFor(model => model.FirstName)</dd>
                 </div>
+                <div class="col-sm-6">
+                    <dt class="mb-2">Last Name</dt>
+                    <dd>@Html.DisplayFor(model => model.LastName)</dd>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <dt class="mb-2">Email</dt>
+                    <dd>@Html.DisplayFor(model => model.Email)</dd>
+                </div>
+                <div class="col-sm-6">
+                    <dt class="mb-2">Phone Number</dt>
+                    <dd>@Html.DisplayFor(model => model.PhoneNumber)</dd>
+                </div>
+            </div>
+            <hr class="mt-2" />
 
-        @if (Model.ProfileBio != null)
-        {
-    @*        <dd class="col-sm-9">
-                <h4>Profile Bio</h4>
-
-                @Html.DisplayFor(model => model.ProfileBio)
-        </dd>*@
-               
-        }
-       @if (Model.ProfileBio == null)
-            {
-                <div class="form-group">
-
-        <p>
-            click here ->  
-            <a asp-action="EditProfile" asp-route-id="@Model.UserId">
-                    <span class="material-symbols-outlined">
-                        account_box
-                    </span>
-
-            </a>
-            and add your profile bio
-        </p>
-        </div>
-        }
-
-            <div class="form-group">
-           <p>
-                    @Html.DisplayFor(model => model.ProfileBio)
-           </p>
-          
+            <div class="row">
+                <div class="col-sm-12">
+                    <h3>POSTAL ADDRESS</h3>
+                </div>
             </div>
-           
-            <h4>Contact Details</h4>
-        <div class="row">
-
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" readonly />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+            <div class="row">
+                <div class="col-sm-6">
+                    <dt class="mb-2">City</dt>
+                    <dd>@Html.DisplayFor(model => model.City)</dd>
+                </div>
+                <div class="col-sm-6">
+                    <dt class="mb-2">Postal Code</dt>
+                    <dd>@Html.DisplayFor(model => model.PostalCode)</dd>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" readonly/>
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            </div>
-        <div class="row">
-
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" readonly />
-                <span asp-validation-for="Email" class="text-danger" read></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" readonly />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            </div>
-            <h4>Postal Adress</h4>
-            <div>
-        <div class="row">
-
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" readonly />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PostalCode" class="control-label"></label>
-                <input asp-for="PostalCode" class="form-control" readonly />
-                <span asp-validation-for="PostalCode" class="text-danger"></span>
-            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <dt class="mb-2">Street Address</dt>
+                    <dd>@Html.DisplayFor(model => model.StreetAddress)</dd>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="StreetAddress" class="control-label"></label>
-                <input asp-for="StreetAddress" class="form-control" readonly />
-                <span asp-validation-for="StreetAddress" class="text-danger"></span>
-            </div>
-            </div>
+        </dl>
 
-    @*   <h4>Contact Details</h4>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class="col-sm-3">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class="col-sm-3">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-            <dd class="col-sm-3">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-            <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-            <dd class="col-sm-3">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-    
-    </dl>
         <hr class="mt-2" />
 
-    <dl class="row">
-        <h4>Postal Address</h4>
-            <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.City)
-        </dt>
-            <dd class="col-sm-3">
-            @Html.DisplayFor(model => model.City)
-        </dd>
-            <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.PostalCode)
-        </dt>
-        <dd class="col-sm-3">
-            @Html.DisplayFor(model => model.PostalCode)
-        </dd>
-            <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.StreetAddress)
-        </dt>
-        <dd class="col-sm-8">
-            @Html.DisplayFor(model => model.StreetAddress)
-        </dd>
-    </dl>
-        <hr class="mt-2" />*@
+        <h3>Pet Preferences</h3>
+        <dd class="col-sm-10">
 
-            <h4>Pet Preferences</h4>
 
-    
-            <div class="form-group">
-       <h6> What type of pets do you accept?</h6>
+            <div class="d-flex align-items-start justify-content-between w-100">
+                <div>
+                    <h6> What type of pets do you accept?</h6>
 
-      <label for="SelectedPetTypes" class="control-label"></label>
-      <div class="pets">
-        @foreach (var petType in Model.PetTypesAvailable)
-            {
-            <input class="form-check-input" type="checkbox" name="SelectedPetTypes" value="@petType"
-               @(Model.SelectedPetTypes.Contains(petType) ? "checked" : "") disabled>
-                    <label class="form-check-label">@petType</label>
-            }
+                    <label for="SelectedPetTypes" class="control-label"></label>
+                    <div class="pets">
+                        @foreach (var petType in Model.PetTypesAvailable)
+                        {
+                            <input class="form-check-input" type="checkbox" name="SelectedPetTypes" value="@petType"
+                            @(Model.SelectedPetTypes.Contains(petType) ? "checked" : "") disabled>
+                            <label class="form-check-label">@petType</label>
+                        }
+                    </div>
+                </div>
+
+                <div>
+
+                    <h6> What you want clients to pay per service:</h6>
+                    <p>@Html.DisplayFor(model => model.RatePerPetPerDay)</p>
                 </div>
             </div>
-                <div class="form-group">
-                    <h6> What you want clients to pay per service:</h6>
 
-                    <label asp-for="RatePerPetPerDay" class="control-label"></label>
-                    <input asp-for="RatePerPetPerDay" class="form-control" />
-                    <span asp-validation-for="RatePerPetPerDay" class="text-danger"></span>
-                </div>
-        
+
+
+        </dd>
+
+
+
+
     </div>
-    </div>
-    <style>
- /* Header */
-.profile .header h3 {
-  font-size: 24px;
-  margin: 0;
-  padding: 20px;
-  text-align: center;
-}
+</div>
+<style>
+    /* Header */
+    .profile .header h3 {
+        font-size: 24px;
+        margin: 0;
+        padding: 20px;
+        text-align: center;
+    }
 
-.profile .header a {
-  color: #2d86ff;
-  text-decoration: none;
-  margin-left: 5px;
-}
+    .profile .header a {
+        color: #2d86ff;
+        text-decoration: none;
+        margin-left: 5px;
+    }
 
-/* Body */
-.profile .body {
+    /* Body */
+    .profile .body {
         display: flex;
         padding: 20px;
         flex-direction: column;
         align-items: center;
-
     }
-.profile .body .row{
-    display:flex;
-    flex-direction:row;
-                flex-wrap: nowrap;
-}
 
-        .profile .body  .pets {
+        .profile .body .row {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+        }
+
+        .profile .body .pets {
             display: flex;
             flex-direction: row;
             flex-wrap: nowrap;
         }
 
         .profile .body .row .image {
-            width:30%;
+            width: 30%;
         }
+
         .profile .body h4 {
-  font-size: 20px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-}
+            font-size: 20px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
 
-.profile .body hr {
-  border: none;
-  border-top: 2px solid #ccc;
-  margin-top: 30px;
-  margin-bottom: 30px;
-}
+        .profile .body hr {
+            border: none;
+            border-top: 2px solid #ccc;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
 
-.profile .body img {
-   display: block;
-   margin: 0 auto;
- width:200px;
-   border: 2px solid black;
-   borderRadius: 50% ;
-   margin: 10px ; 
-   padding: 5px;
-}
+        .profile .body img {
+            display: block;
+            margin: 0 auto;
+            width: 200px;
+            border: 2px solid black;
+            borderRadius: 50%;
+            margin: 10px;
+            padding: 5px;
+        }
 
-.profile .body p {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
+        .profile .body p {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
 
-.profile .body input {
-  border: none;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 10px;
-  padding: 5px;
-  width: auto;
-}
+        .profile .body input {
+            border: none;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 5px;
+            width: auto;
+        }
 
-.profile .body label {
-  display: block;
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
+        .profile .body label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-.profile .body .form-group {
-  margin-bottom: 20px;
-                width: max-content;
-}
+        .profile .body .form-group {
+            margin-bottom: 20px;
+            width: max-content;
+        }
 
-.profile .body .text-danger {
-  color: #f00;
-}
+        .profile .body .text-danger {
+            color: #f00;
+        }
 
-.material-symbols-outlined {
-  font-family: "Material Icons Outlined";
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "liga";
-  -webkit-font-feature-settings: "liga";
-  -webkit-font-smoothing: subpixel-antialiased;
-}
+    .material-symbols-outlined {
+        font-family: "Material Icons Outlined";
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        -moz-osx-font-smoothing: grayscale;
+        font-feature-settings: "liga";
+        -webkit-font-feature-settings: "liga";
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
 </style>
 
-@*
-@if (message != null)
-{
-    <div class="alert alert-success">@message</div>}
-
-
-<form asp-action="Profile">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SitterId" class="control-label" hidden></label>
-        <input asp-for="SitterId" class="form-control" hidden />
-        <span asp-validation-for="SitterId" class="text-danger" read></span>
-            </div>
-    <div class="form-group">
-        <label asp-for="UserId" class="control-label" hidden></label>
-        <input asp-for="UserId" class="form-control" hidden />
-        <span asp-validation-for="UserId" class="text-danger" read></span>
-    </div>
-     <div class="form-group">
-        <label asp-for="UserType" class="control-label" hidden></label>
-        <input asp-for="UserType" class="form-control" hidden />
-        <span asp-validation-for="UserType" class="text-danger" read></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ProfileBio" class="control-label"></label>
-        <input asp-for="ProfileBio" class="form-control" />
-        <span asp-validation-for="ProfileBio" class="text-danger"></span>
-    </div>
-    <h4>Contact Details</h4>
-
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-              <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-        <input asp-for="LastName" class="form-control" />
-        <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-    <div class="form-group">
-        <label asp-for="Email" class="control-label"></label>
-        <input asp-for="Email" class="form-control" readonly />
-        <span asp-validation-for="Email" class="text-danger" read></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="PhoneNumber" class="control-label"></label>
-        <input asp-for="PhoneNumber" class="form-control" />
-        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-    </div>
-    <h4>Postal Adress</h4>
-
-    <div class="form-group">
-        <label asp-for="City" class="control-label"></label>
-        <input asp-for="City" class="form-control" />
-        <span asp-validation-for="City" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="PostalCode" class="control-label"></label>
-        <input asp-for="PostalCode" class="form-control" />
-        <span asp-validation-for="PostalCode" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="StreetAddress" class="control-label"></label>
-        <input asp-for="StreetAddress" class="form-control"  />
-        <span asp-validation-for="StreetAddress" class="text-danger"></span>
-    </div>
-    <h4>Service Preferences</h4>
-
-    <div class="form-group">
-    <h6> What you want clients to pay per service:</h6>
-
-        <label asp-for="RatePerPetPerDay" class="control-label"></label>
-        <input asp-for="RatePerPetPerDay" class="form-control" />
-        <span asp-validation-for="RatePerPetPerDay" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-       <h6> What type of pets do you accept?</h6>
-      <label for="SelectedPetTypes" class="control-label"></label>
-        @foreach (var petType in Model.PetTypesAvailable)
-            {
-            <input class="form-check-input" type="checkbox" name="SelectedPetTypes" value="@petType"
-               @(Model.SelectedPetTypes.Contains(petType) ? "checked" : "")>
-                    <label class="form-check-label">@petType</label>
-            }
-    </div>
-    <div class="form-group">
-        <input type="submit" id="saveButton" value="Save Changes" class="btn btn-primary"/>
- 
-
-    </div>
-
-        <div class="form-group">
-        <h4> Delete your account </h4>
-
-            <a asp-action="Delete" asp-route-id="@Model.SitterId" class="btn btn-danger">Delete</a>
-
-</div>
-</form>
-  
-
-
-
-  
-<div class="form-group">
-        <label asp-for="PetTypes" class="control-label"></label>
-        <select asp-for="PetTypes" class="form-control" multiple>
-            <option  value="Dog" selected="@Model.PetTypes.Contains("Dog")">Dog</option>
-            <option value="Cat" selected="@Model.PetTypes.Contains("Cat")">Cat</option>
-        </select>
-        <span asp-validation-for="PetTypes" class="text-danger"></span>
-    </div>
-<hr />
-<dl class="row">
-       <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProfileBio)
-        </dt>
-        <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.ProfileBio)
-        </dd>
-    </dl>
-
-<h4>Contact Details</h4>
-<hr />
-<dl class="row">
-   <dl class="row">
-
-    <dt class="col">
-        @Html.DisplayNameFor(model => model.FirstName)
-    </dt>
-    <dd class="col">
-        @Html.DisplayFor(model => model.FirstName)
-    </dd>
-        <dt class="col">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class="col">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-  </dl>
-   <dl class="row">
-
-    <dt class="col">
-        @Html.DisplayNameFor(model => model.Email)
-    </dt>
-    <dd class="col">
-        @Html.DisplayFor(model => model.Email)
-    </dd>
-        <dt class="col">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </dt>
-        <dd class="col">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </dd>
-        </dl>
-
-   
-</dl>
-
-
-<h4>Postal Adress</h4>
-<hr />
-<dl class="row">
-    <dl class="row">
-
-        <dt class="col">
-            @Html.DisplayNameFor(model => model.City)
-        </dt>
-        <dd class="col">
-            @Html.DisplayFor(model => model.City)
-        </dd>
-        <dt class="col">
-            @Html.DisplayNameFor(model => model.PostalCode)
-        </dt>
-        <dd class="col">
-            @Html.DisplayFor(model => model.PostalCode)
-        </dd>
-        </dl>
-         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StreetAddress)
-        </dt>
-        <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.StreetAddress)
-        </dd>
-        </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.SitterId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-*@
