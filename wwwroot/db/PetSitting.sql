@@ -36,7 +36,7 @@ CREATE TABLE [User] (
 	email					VARCHAR(50) NOT NULL,
 	streetAddress			VARCHAR(50) NOT NULL,
 	city					VARCHAR(50) NOT NULL,
-	postalCode				CHAR(6) NOT NULL,
+	postalCode				CHAR(7) NOT NULL,
 	userType				VARCHAR(50) NOT NULL,
 	profileImage			VARBINARY(MAX)
 	FOREIGN KEY(userType) REFERENCES UserType(userType)

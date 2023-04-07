@@ -13,8 +13,19 @@ img{
     height: auto;
 }
 
-/* Start of GetProfile.cshtml */
+/* Nav bar -> Hello! User */
+.nav-user{
+    position: relative;
+    top: 3px;
+}
 
+@media only screen and (max-width:480px){
+    .nav-user{
+        top:0;
+    }
+}
+
+/* Start of GetProfile.cshtml */
 .getprofile-container {
     max-width: 800px;
     margin: 0 auto;

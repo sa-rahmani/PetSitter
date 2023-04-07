@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace PetSitter.Models
 {
@@ -19,6 +20,8 @@ namespace PetSitter.Models
         public string? Email { get; set; }
         public string? StreetAddress { get; set; }
         public string? City { get; set; }
+
+        [RegularExpression("^[A-Za-z]\\d[A-Za-z][ ]?\\d[A-Za-z]\\d$")]
         public string? PostalCode { get; set; }
         public string? UserType { get; set; }
         public byte[]? ProfileImage { get; set; }
