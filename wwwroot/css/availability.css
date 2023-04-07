@@ -41,14 +41,20 @@
 
     /* Style for the "Save" button */
     .availability form .btn {
-        background-color: #dce6f496;
-        color: #084298;
-        border: 1px solid #ccc;
+        background-color: #6366F1;
+/*        color: #dce6f496;
+
+*/  
+color:white;
+border: 1px solid #ccc;
         font-weight: bold;
         width: 100%;
         margin: 10px;
     }
-
+        .availability form .btn:hover {
+            background-color: #dce6f496;
+            color: #6366F1;
+        }
     /* Style for the FullCalendar */
     .availability #calendar {
         max-width: 600px;
