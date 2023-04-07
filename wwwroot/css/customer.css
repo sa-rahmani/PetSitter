@@ -113,7 +113,6 @@ img{
 .pet-btn {
     background-color: var(--indigo-500);
     color: #fff;
-    font-weight: bold;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -165,8 +164,32 @@ img{
     font-size: 1.2em;
 }
 
+.pet-image{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width:480px) {
+    .pet-image{
+        margin-top:0px !important;
+    }
+    .pet-image img{
+        margin-bottom: 1rem;
+        max-width:200px;
+        min-width: 100px !important;
+        max-height: 250px !important;
+    }
+    .getpet-container dt, .getpet-container dd{
+        font-size:1rem;
+    }
+}
+
+
 .pet-image img {
     max-width: 100%;
+    max-height: 250px !important;
 }
 
 .pet-image img:hover {
@@ -201,12 +224,12 @@ img{
 }
 
 
-.back-to-profile .text{
+.back-to-profile .text {
     margin-left: 20px;
 }
 
 .back-link .text {
-    color:black;
+    color: black;
 }
 
 
@@ -214,13 +237,16 @@ img{
     .back-to-profile .arrow {
         border-width: 5px 0 5px 7px;
     }
+
     .back-to-profile .text {
         font-size: 0.8em;
     }
-    .profile-wrapper h3{
-        font-size:1.2em;
+
+    .profile-wrapper h3 {
+        font-size: 1.2em;
     }
-    .profile-container h3{
+
+    .profile-container h3 {
         font-size: 1.2em;
     }
 }
@@ -300,4 +326,33 @@ input[type="radio"]:checked + .radio-icon i {
     position: relative;
     right: 10px;
     border-radius: 10%;
+}
+
+.editpet-container .input-group {
+    width:50%;
+}
+
+.editpet-container .radio-group{
+    margin-top:1em;
+}
+
+.editpet-container .radio-group label{
+    margin-right:0.5em;
+}
+
+.editpet-container .second-row{
+    margin-top: 1em;
+}
+
+@media only screen and (max-width:480px) {
+    .editpet-container .input-group input {
+        margin-top: 0 !important;
+    }
+
+    .editpet-container .second-row {
+        margin-top: 0;
+    }
+    .save-btn{
+        padding: 5px;
+    }
 }
