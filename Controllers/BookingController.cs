@@ -50,7 +50,13 @@ namespace PetSitter.Controllers
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             BookingVM booking = bookingRepo.GetBookingVM(bookingID);
 
-            return View(booking);
+            // Check that the booking belongs to the currently logged in user
+            if (booking.UserId == Convert.ToInt32(HttpContext.Session.GetString("UserID"))) {
+                return View(booking);
+            } else // If the booking is for a different user, redirect them to the no permission page.
+            {
+                return RedirectToAction("NoPermission", "Home");
+            }
         }
 
         public IActionResult FindASitter(int? page, List<string> petTypes, string selectedDates)
@@ -183,7 +189,24 @@ namespace PetSitter.Controllers
         {
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             BookingVM confirmBooking = bookingRepo.GetBookingVM(bookingId);
-            return View(confirmBooking);
+
+            // Check that the booking belongs to the currently logged in user
+            if (confirmBooking.UserId == Convert.ToInt32(HttpContext.Session.GetString("UserID")))
+            {
+                // Check that booking is not yet paid for 
+                if (confirmBooking.PaymentId == null)
+                {
+                    return View(confirmBooking);
+                }
+                else // If booking has already been paid for, redirect to the booking details
+                {
+                    return RedirectToAction("BookingDetails", "Booking", new { bookingId = bookingId });
+                }
+            }
+            else // If the booking is for a different user, redirect them to the no permission page.
+            {
+                return RedirectToAction("NoPermission", "Home");
+            }
         }
 
         [Authorize]
@@ -192,7 +215,17 @@ namespace PetSitter.Controllers
         {
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
             BookingFormVM booking = bookingRepo.GetBookingFormVM(bookingId);
-            return View(booking);
+            BookingVM bookingDetails = bookingRepo.GetBookingVM(bookingId);
+
+            // Check that the booking belongs to the currently logged in user
+            if (bookingDetails.UserId == Convert.ToInt32(HttpContext.Session.GetString("UserID")))
+            {
+                return View(booking);
+            }
+            else // If the booking is for a different user, redirect them to the no permission page.
+            {
+                return RedirectToAction("NoPermission", "Home");
+            }
         }
 
         [Authorize]
@@ -200,41 +233,51 @@ namespace PetSitter.Controllers
         [HttpPost]
         public IActionResult Edit(BookingFormVM bookingForm)
         {
-            // If the message is null, set to an empty string.
-            bookingForm.Message ??= "";
-
-            // Check that at least one pet was selected.
             BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
-            bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
+            BookingVM bookingDetails = bookingRepo.GetBookingVM(bookingForm.BookingId);
 
-            // Check that sitter is available for selected dates.
-            bool sitterAvailable = bookingRepo.CheckSitterAvailability(bookingForm);
-
-            if (sitterAvailable)
+            // Check that the booking belongs to the currently logged in user
+            if (bookingDetails.UserId == Convert.ToInt32(HttpContext.Session.GetString("UserID")))
             {
-                if (petsSelected)
-                {
-                    if (ModelState.IsValid)
-                    {
-                        // Update booking
-                        int bookingId = bookingRepo.Update(bookingForm);
+                // If the message is null, set to an empty string.
+                bookingForm.Message ??= "";
 
-                        // Redirect to confirmation page
-                        return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+                // Check that at least one pet was selected.
+                bool petsSelected = bookingRepo.CheckPetSelection(bookingForm);
+
+                // Check that sitter is available for selected dates.
+                bool sitterAvailable = bookingRepo.CheckSitterAvailability(bookingForm);
+
+                if (sitterAvailable)
+                {
+                    if (petsSelected)
+                    {
+                        if (ModelState.IsValid)
+                        {
+                            // Update booking
+                            int bookingId = bookingRepo.Update(bookingForm);
+
+                            // Redirect to confirmation page
+                            return RedirectToAction("ConfirmBooking", "Booking", new { bookingId = bookingId });
+                        }
+                    }
+                    else // if no pets selected
+                    {
+                        bookingForm.Message = "Please select at least one pet for this booking.";
                     }
                 }
-                else // if no pets selected
+                else // if sitter is not available
                 {
-                    bookingForm.Message = "Please select at least one pet for this booking.";
+                    bookingForm.Message = $"Sorry, {bookingForm.SitterName} is not available those days.";
                 }
-            }
-            else // if sitter is not available
-            {
-                bookingForm.Message = $"Sorry, {bookingForm.SitterName} is not available those days.";
-            }
 
-            // Show booking page again.
-            return View(bookingForm);
+                // Show booking page again.
+                return View(bookingForm);
+            }
+            else // If the booking is for a different user, redirect them to the no permission page.
+            {
+                return RedirectToAction("NoPermission", "Home");
+            }
         }
 
         [Authorize]
@@ -260,47 +303,65 @@ namespace PetSitter.Controllers
         }
 
         [Authorize]
-        public IActionResult CreateReview(int sitterID, int bookingID)
+        public IActionResult CreateReview(int bookingID)
         {
-            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
-
-            SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
-            var sitterInfor = sRepos.GetSitterById(sitterID);
-
+            // Get the booking information
             BookingRepo bRepo = new BookingRepo(_db, _emailService);
             var bookInfo = bRepo.GetBookingVM(bookingID);
 
-            CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
-            User user = cfsRepo.getUserById(sitterID);
-            ViewData["SitterProfileImg"] = user;
-
-            // Add sitter and booking details to the CreateReviewVM.
-            CreateReviewVM reviewCreating = new CreateReviewVM
+            // Check that the booking belongs to the currently logged in user
+            if (bookInfo.UserId == Convert.ToInt32(HttpContext.Session.GetString("UserID")))
             {
-                sitter = sitterInfor.FirstName + " " + sitterInfor.LastName,
-                BookingId = bookingID,
-                startDate = bookInfo.StartDate,
-                endDate = bookInfo.EndDate,
-            };
+                // Get the sitter's information
+                SitterRepos sRepos = new SitterRepos(_db, _webHostEnvironment);
+                var sitterInfo = sRepos.GetSitterById(bookInfo.SitterId);
 
-            ViewBag.SitterName = reviewCreating.sitter;
+                // Get the sitter's profile image
+                CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+                User user = cfsRepo.getUserById(sitterInfo.UserId);
+                ViewData["SitterProfileImg"] = user;
 
-            return View(reviewCreating);
+                // Add sitter and booking details to the CreateReviewVM.
+                CreateReviewVM reviewCreating = new CreateReviewVM
+                {
+                    sitter = sitterInfo.FirstName + " " + sitterInfo.LastName,
+                    SitterId = bookInfo.SitterId,
+                    BookingId = bookingID,
+                    startDate = bookInfo.StartDate,
+                    endDate = bookInfo.EndDate,
+                };
+
+                ViewBag.SitterName = reviewCreating.sitter;
+
+                return View(reviewCreating);
+            }
+            else // If the booking is for a different user, redirect them to the no permission page.
+            {
+                return RedirectToAction("NoPermission", "Home");
+            }
         }
 
         [Authorize]
         [HttpPost]
         public IActionResult CreateReview(CreateReviewVM createReviewVM)
         {
+            // Get the booking information
+            BookingRepo bRepo = new BookingRepo(_db, _emailService);
+            var bookInfo = bRepo.GetBookingVM(createReviewVM.BookingId);
 
-            int customerID = Convert.ToInt32(HttpContext.Session.GetString("UserID"));
+            // Check that the booking belongs to the currently logged in user
+            if (bookInfo.UserId == Convert.ToInt32(HttpContext.Session.GetString("UserID")))
+            {
+                ReviewRepo reviewRepo = new ReviewRepo(_db);
 
-            ReviewRepo reviewRepo = new ReviewRepo(_db);
+                Tuple<int, string> response =
+                    reviewRepo.UpdateReview(createReviewVM);
 
-            Tuple<int, string> response =
-                reviewRepo.UpdateReview(createReviewVM);
-
-            return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
+                return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
+            } else // If the booking is for a different user, redirect them to the no permission page.
+            {
+                return RedirectToAction("NoPermission", "Home");
+            }
         }
     }
 }
