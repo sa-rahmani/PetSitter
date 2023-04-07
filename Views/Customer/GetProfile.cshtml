@@ -9,13 +9,13 @@
     <div class="profile-wrapper">
         <h2>Welcome @Html.DisplayFor(model => model.FirstName)!</h2>
         <h3>
-            Explore your profile and click
+            Click
             <a asp-action="EditProfile" asp-route-id="@Model.CustomerId">
                 <span class="material-symbols-outlined">
                     account_box
                 </span>
             </a>
-            this to add your pet to get service or edit your detail!
+            &lt;- icon to add your pet and update your account information
         </h3>
     </div>
 

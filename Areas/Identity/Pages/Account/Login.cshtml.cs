@@ -134,6 +134,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
 
                     HttpContext.Session.SetString("UserName", customerID.FirstName);
                     HttpContext.Session.SetString("UserID", customerID.UserId.ToString());
+                    HttpContext.Session.SetString("Email", Input.Email);
 
                     // This code will prevent error from login as customer
                     if (sitterID != null)

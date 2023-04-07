@@ -61,7 +61,7 @@
 
     .clear-button {
         grid-column: 1 / span 2;
-        max-width: 40%;
+        width: 40%;
         justify-self: center;
     }
 
