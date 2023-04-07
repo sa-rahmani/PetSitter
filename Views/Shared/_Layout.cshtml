@@ -51,11 +51,6 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="FindASitter">Find A Sitter</a>
                             </li>
-                           
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="ViewMyBookings">View My Bookings</a>
-                            </li>
-                         
 
                             @*This two nav item should be accessed only by admin*@
                             @*I didn't set this two nav as same as below in order to allow everyone create a admin account in development mode*@
@@ -64,6 +59,9 @@
 
                             @if (User.IsInRole("Customer"))
                             {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="ViewMyBookings">View My Bookings</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="GetProfile">My Profile</a>
                                 </li>

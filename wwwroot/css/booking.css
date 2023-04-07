@@ -77,3 +77,11 @@
     margin: 0 auto;
 }
 
+/* Sitter Details Page */
+@media (min-width: 770px) {
+    .sitter-detail .profile {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        text-align: left !important;
+    }
+}
