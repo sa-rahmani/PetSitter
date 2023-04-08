@@ -118,7 +118,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
-            [RegularExpression("[0-9]{10}")]
+            [RegularExpression("[0-9]{10}", ErrorMessage = "The phone number entered is invalid. Please ensure that it contains exactly 10 digits (no spaces or special characters)")]
             [Display(Name = "Phone Number")]
             [Phone]
             public string PhoneNumber { get; set; }
@@ -128,7 +128,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
             public string City { get; set; }
 
             [Required]
-            [RegularExpression("^[A-Za-z]\\d[A-Za-z][ ]?\\d[A-Za-z]\\d$")]
+            [RegularExpression("^[A-Za-z]\\d[A-Za-z][ ]?\\d[A-Za-z]\\d$", ErrorMessage = "Please enter a valid postal code in the format A1A 1A1")]
             [Display(Name = "Postal Code")]
             [MaxLength(7)]
             public string PostalCode { get; set; }
