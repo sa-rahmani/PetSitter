@@ -1,4 +1,7 @@
-﻿@model IEnumerable<PetSitter.Models.User>
+﻿@*@model IEnumerable<PetSitter.Models.User>
+*@
+@model IEnumerable<PetSitter.ViewModels.SitterVM>
+
 
 @{
     ViewData["Title"] = "Index";
@@ -97,6 +100,80 @@
 
         </div>
         </div>
+
+                    <hr class="mt-4">
+
+        <div class="container mx-auto">
+            <h1 class="text-center">Top pet sitters</h1>
+
+        <div class="row">
+
+           @if (Model.Any())
+           {
+
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4">
+                        <div class="card mb-4 h-100">
+                            <div class="card-body">
+                                <div style="display: flex; align-items: center;">
+                                    @if (item.ProfileImage == null)
+                                    {
+                                        <div style="width: 50px; height: 50px; border: 2px solid black; border-radius: 50%; margin-right: 10px;"></div>
+                                    }
+                                    else
+                                    {
+                                        <img style="width: 50px; height: 50px; border: 2px solid black; border-radius: 50%; margin-right: 10px;" src="data:image/png;base64,@Convert.ToBase64String(item.ProfileImage)" alt="User Profile Image" />
+                                    }
+                                    <div class="d-flex flex-column justify-content-start align-items-start">
+                                        <h5 class="card-title" style="margin: 0; text-align: center;">@Html.DisplayFor(modelItem => item.FirstName)</h5>
+                                        <small class="text-muted">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= item.AvgRating)
+                                            {
+                                                <i class="fas fa-star text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="far fa-star"></i>
+                                            }
+                                        }
+                                   
+                                </small>    
+                                 </div>
+                                </div>
+
+                            
+
+
+                                <p class="card-text">@Html.DisplayFor(modelItem => item.ProfileBio)</p>
+@*                                <p class="card-text"><small class="text-muted">@Html.DisplayFor(modelItem => item.startDate) - @Html.DisplayFor(modelItem => item.endDate)</small></p>
+*@                            
+   
+                               </div>
+                        <div class="card-footer d-flex justify-content-between flex-wrap">
+                             <span><span class="price" style="color:red" >$@Html.DisplayFor(modelItem => item.Rate)</span> per day</span>
+
+                                  <div class="more-info-link">
+                                         <a asp-controller="Booking" asp-action="SitterDetails" asp-route-sitterID="@item.SitterId" class="link-light"><button class="mx-auto">View profile</button></a>
+                                  </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            }
+
+            else
+            {
+                <p>No sitters found.</p>
+            }
+        </div>
+
+
+        </div>
+
+            <hr class="mt-4">
 
 
         <div class="FindPetSitter">
