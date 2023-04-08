@@ -24,10 +24,7 @@ namespace PetSitter.Controllers
             return View();
         }
 
-       //public IActionResult TopPetSitter()
-       // {
-
-       // }
+        
 
     }
 
