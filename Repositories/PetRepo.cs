@@ -7,6 +7,7 @@ using static Humanizer.In;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Policy;
 
 namespace PetSitter.Repositories
 {
@@ -221,6 +222,21 @@ namespace PetSitter.Repositories
                 deleteMessage = ex.Message;
             }
             return Tuple.Create(deleteMessage, pet.PetId);
+        }
+
+        public bool IsBookedPet(int petID)
+        {
+            bool isBooked = false;
+            var findBookedPet = _db.BookingPets.Where(b => b.PetId == petID).FirstOrDefault();
+
+            if (findBookedPet != null)
+            {
+                return isBooked= true;
+            }
+            else
+            {
+                return isBooked = false;
+            }
         }
 
         private bool IsImageFileTypeValid(string contentType)

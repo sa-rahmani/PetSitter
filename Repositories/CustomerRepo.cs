@@ -40,6 +40,15 @@ namespace PetSitter.Repositories
         {
             var singleUser = _db.Users.Where(u => u.UserId == customerID).FirstOrDefault();
 
+            var petLists = _db.Pets.Where(p => p.UserId == customerID).ToList();
+            var findBookedPets = new List<BookingPet>();
+
+            foreach (var pet in petLists)
+            {
+                var bookedPets = _db.BookingPets.Where(b => b.PetId == pet.PetId).ToList();
+                findBookedPets.AddRange(bookedPets);
+            }
+
             CustomerVM vm = new CustomerVM
             {
                 CustomerId = customerID,
@@ -51,6 +60,7 @@ namespace PetSitter.Repositories
                 StreetAddress = singleUser.StreetAddress,
                 City = singleUser.City,
                 UserType = singleUser.UserType,
+                BookedPets = findBookedPets,
             };
 
             return vm;

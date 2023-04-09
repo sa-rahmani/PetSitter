@@ -11,6 +11,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Drawing;
 using Microsoft.AspNetCore.Authorization;
+using NuGet.Packaging;
 
 namespace PetSitter.Controllers
 {
@@ -167,8 +168,9 @@ namespace PetSitter.Controllers
 
             PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
-            var findBookedPet = _db.BookingPets.Where(b => b.PetId == id).FirstOrDefault();
-            if (findBookedPet != null)
+            bool isBookedPet = petRepo.IsBookedPet(id);
+
+            if (isBookedPet == true)
             {
                 return Json(new { redirectUrl = Url.Action("NoBookedPet", "Home") });
             }
