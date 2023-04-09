@@ -302,6 +302,32 @@ namespace PetSitter.Controllers
 
         }
 
+        public IActionResult SitterDetails(int sitterID, int? page)
+        {
+            // Get the SitterVM.
+            CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+            SitterVM sitterRes = cfsRepo.GetSitterVM(sitterID);
+
+            User user = cfsRepo.getUserById(sitterID);
+            ViewData["SitterProfileImg"] = user;
+
+            ViewData["FirstName"] = sitterRes.FirstName;
+            ViewData["AvgRating"] = sitterRes.AvgRating;
+            ViewData["Rate"] = sitterRes.Rate.ToString("0.00");
+            ViewData["ProfileBio"] = sitterRes.ProfileBio;
+            ViewBag.ProfileImage = sitterRes.ProfileImage;
+
+            SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+            List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+
+            ViewData["SitterID"] = sitterID;
+
+            int pageSize = 1;
+            return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
+                                                     , page ?? 1, pageSize));
+        }
+
+
         [Authorize]
         public IActionResult CreateReview(int bookingID)
         {
