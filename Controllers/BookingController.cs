@@ -293,87 +293,24 @@ namespace PetSitter.Controllers
             return Json(completeIPN);
         }
 
-
-
-        //    public IActionResult ReviewList(int sitterID)
-        //    {
-
-
-        //        //var rating 
-
-        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-        //        return View(response);
-        //    }
-
-        //}
-
-
-
-
-
-
-
-        //public IActionResult SitterDetails(int sitterID)
-        //{
-        //    // Get the SitterVM.
-        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-
-
-        //    //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-        //    //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-        //    //return View(response);
-
-
-        //    return View(sitter);
-
-        //}
-
         public IActionResult SitterDetails(int sitterID, int? page)
         {
-
-
-
             // Get the SitterVM.
             CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
             SitterVM sitterRes = cfsRepo.GetSitterVM(sitterID);
-            //ViewData["Sitter"] = sitterRes;
-
-
-            //CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
 
             User user = cfsRepo.getUserById(sitterID);
             ViewData["SitterProfileImg"] = user;
-
-
-            //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-            //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-            //return View(response);
 
             ViewData["FirstName"] = sitterRes.FirstName;
             ViewData["AvgRating"] = sitterRes.AvgRating;
             ViewData["Rate"] = sitterRes.Rate.ToString("0.00");
             ViewData["ProfileBio"] = sitterRes.ProfileBio;
+            ViewData["City"] = sitterRes.City;
             ViewBag.ProfileImage = sitterRes.ProfileImage;
 
-            //ViewData["Complete"] = bookings.Select(b => b.completeNbr).LastOrDefault();
-            //ViewData["Reviews"] = bookings.Select(b => b.reviewsNbr).LastOrDefault();
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-            //var rating 
-
-
             SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-            //return View(response);
-
 
             ViewData["SitterID"] = sitterID;
 
@@ -381,10 +318,6 @@ namespace PetSitter.Controllers
             return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
                                                      , page ?? 1, pageSize));
         }
-
-
-
-        
 
         [Authorize]
         public IActionResult CreateReview(int bookingID)
@@ -402,7 +335,8 @@ namespace PetSitter.Controllers
 
                 // Get the sitter's profile image
                 CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
-                User user = cfsRepo.getUserById(sitterInfo.SitterId);
+                User user = cfsRepo.getUserById(bookInfo.SitterId);
+
                 ViewData["SitterProfileImg"] = user;
 
                 // Add sitter and booking details to the CreateReviewVM.

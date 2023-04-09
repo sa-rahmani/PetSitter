@@ -1,55 +1,73 @@
 ﻿@model PetSitter.ViewModels.BookingVM
 
 @{
-    ViewData["Title"] = "Confirm Booking";
+    ViewData["Title"] = "Confirm Your Booking";
 }
 
-<h1>Confirm Your Booking</h1>
+<h1 class="text-center">Confirm Your Booking with @Html.DisplayFor(model => model.SitterName)</h1>
 
 <div>
-    <hr />
-    <div>
-        <a asp-action="Edit" asp-route-bookingId="@Model.BookingId">Edit Booking</a>
+    <div class="mt-3 mb-3 back-to-profile flex align-items-center">
+        <a asp-action="Edit" asp-route-bookingId="@Model.BookingId" class="back-link">
+            <span class="arrow"></span>
+            <span class="text mt-2" style="font-weight: normal; font-size: 1em;">Edit Booking</span>
+        </a>
     </div>
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SitterName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SitterName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Pets)
-        </dt>
-        <dd class="col-sm-10">
-            @foreach (var pet in Model.Pets)
+    <div class="row">
+        <div class="col-md">
+        </div>
+        <dl class="row text-center col-md-6">
+            <dt class="col-sm-5">
+                @Html.DisplayNameFor(model => model.Pets)
+            </dt>
+            <dd class="col-sm-7">
+                <span>@Model.Pets[0].Name</span>
+                @for (int i = 1; i < @Model.Pets.Count - 1; i++)
+                {
+                    <span>, @Model.Pets[i].Name</span>
+                }
+                @if (@Model.Pets.Count > 1)
+                {
+                    <span> & @Model.Pets[Model.Pets.Count - 1].Name</span>
+                }
+            </dd>
+            <dt class="col-sm-5">
+                @Html.DisplayNameFor(model => model.StartDate)
+            </dt>
+            <dd class="col-sm-7">
+                @Html.DisplayFor(model => model.StartDate)
+            </dd>
+            <dt class="col-sm-5">
+                @Html.DisplayNameFor(model => model.EndDate)
+            </dt>
+            <dd class="col-sm-7">
+                @Html.DisplayFor(model => model.EndDate)
+            </dd>
+            @if (Model.SpecialRequests != null)
             {
-                @pet.Name
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.SpecialRequests)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.SpecialRequests)
+                </dd>
             }
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class="col-sm-10">
-            $@Html.DisplayFor(model => model.Price)
-        </dd>
-    </dl>
+            <dt class="col-sm-5">
+                @Html.DisplayNameFor(model => model.Price)
+            </dt>
+            <dd class="col-sm-7">
+                $@Html.DisplayFor(model => model.Price)
+            </dd>
+        </dl>
+        <div class="col-md">
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <div id="paypal-button"></div>
+    </div>
 </div>
-<div>
-    <div id="paypal-button"></div>
-</div>
+
 
 
 <script src="https://www.paypalobjects.com/api/checkout.js"></script>
@@ -57,7 +75,7 @@
     paypal.Button.render({
         env: 'sandbox',
         style: {
-            size: 'small',
+            size: 'medium',
             color: 'gold',
             shape: 'pill',
             label: 'checkout'
@@ -76,8 +94,8 @@
                         custom: 'Custom data goes here!',
                         amount: {
                             total:
-                                @Html.DisplayFor(model => model.Price)
-                            , currency:
+    @Html.DisplayFor(model => model.Price)
+                                , currency:
                                 "CAD"
                         }
                     }]

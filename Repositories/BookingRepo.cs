@@ -386,13 +386,13 @@ namespace PetSitter.Repositories
                 Email = email,
                 Body = $"<h1 style=\"font-weight:normal;\">Thank you for booking with Sitter Care!</h1>" +
                        $"<h2>Booking Details</h2>" +
-                       $"<ul><li>Sitter: {bookingVM.SitterName}</li>" +
-                       $"<li>Pets: {pets}</li>" +
-                       $"<li>Start Date: {startDate.ToString("MMMM dd, yyyy")}</li>" +
-                       $"<li>End Date: {endDate.ToString("MMMM dd, yyyy")}</li>" +
-                       $"<li>Special Requests: {booking.SpecialRequests}</li>" +
-                       $"<li>Price: {price.ToString("C")}</li>" +
-                       $"<li>Payment Confirmation: {booking.PaymentId}</li></ul>"
+                       $"<ul><li>Sitter: <span style=\"font-weight:normal;\">{bookingVM.SitterName}<span></li>" +
+                       $"<li>Pets: <span style=\"font-weight:normal;\">{pets}<span></li>" +
+                       $"<li>Start Date: <span style=\"font-weight:normal;\">{startDate.ToString("MMMM dd, yyyy")}</span></li>" +
+                       $"<li>End Date: <span style=\"font-weight:normal;\">{endDate.ToString("MMMM dd, yyyy")}</span></li>" +
+                       $"<li>Special Requests: <span style=\"font-weight:normal;\">{booking.SpecialRequests}</span></li>" +
+                       $"<li>Price: <span style=\"font-weight:normal;\">{price.ToString("C")}</span></li>" +
+                       $"<li>Payment Confirmation: <span style=\"font-weight:normal;\">{booking.PaymentId}</span></li></ul>"
             });
         }
 
