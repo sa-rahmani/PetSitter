@@ -21,6 +21,8 @@ namespace PetSitter.ViewModels
 
         [DisplayName("Average Rating")]
         public double? AvgRating { get; set; }
+
+        public string? City { get; set; }
         public List<ReviewVM>? Reviews { get; set; }
         public List<string>? petTypes { get; set; }
         public List<DateTime>? availableDates { get; set; }
