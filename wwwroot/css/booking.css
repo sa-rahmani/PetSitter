@@ -85,3 +85,13 @@
         text-align: left !important;
     }
 }
+
+@media (min-width: 770px) {
+    .list-of-bookings {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .booking-section {
+        padding: 1em;
+    }
+}

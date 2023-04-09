@@ -43,6 +43,15 @@
             <dd class="col-sm-7">
                 @Html.DisplayFor(model => model.EndDate)
             </dd>
+            @if (Model.SpecialRequests != null)
+            {
+                <dt class="col-sm-5">
+                    @Html.DisplayNameFor(model => model.SpecialRequests)
+                </dt>
+                <dd class="col-sm-7">
+                    @Html.DisplayFor(model => model.SpecialRequests)
+                </dd>
+            }
             <dt class="col-sm-5">
                 @Html.DisplayNameFor(model => model.Price)
             </dt>

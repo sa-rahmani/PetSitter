@@ -318,7 +318,7 @@ namespace PetSitter.Controllers
 
                 // Get the sitter's profile image
                 CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
-                User user = cfsRepo.getUserById(sitterInfo.UserId);
+                User user = cfsRepo.getUserById(bookInfo.SitterId);
                 ViewData["SitterProfileImg"] = user;
 
                 // Add sitter and booking details to the CreateReviewVM.

@@ -21,9 +21,10 @@ namespace PetSitter.ViewModels
         [DisplayFormat(DataFormatString = "{0:D}")]
         [DisplayName("End Date")]
         public DateTime EndDate { get; set; }
+        [DisplayName("Special Requests")]
         public string? SpecialRequests { get; set; }
         public decimal Price { get; set; }
-
+        [DisplayName("Payment Confirmation")]
         public string? PaymentId { get; set; }
     }
 }
