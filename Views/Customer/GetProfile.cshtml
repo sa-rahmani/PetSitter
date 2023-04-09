@@ -8,15 +8,15 @@
 <div class="getprofile-container">
     <div class="profile-wrapper">
         <h2>Welcome @Html.DisplayFor(model => model.FirstName)!</h2>
-        <h3>
-            Click
+        <h4 class="text-break text-center">
+            To add your pet and update your account details, click the 
             <a asp-action="EditProfile" asp-route-id="@Model.CustomerId">
                 <span class="material-symbols-outlined">
                     account_box
                 </span>
             </a>
-            &lt;- icon to add your pet and update your account information
-        </h3>
+            icon
+        </h4>
     </div>
 
     <hr class="mt-4" />
@@ -39,9 +39,9 @@
                     {
                         <div class="d-flex align-items-center w-100">
                             <img style="max-width: 400px;" src="data:image/png;base64,
-                            @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
+                            @Convert.ToBase64String(user.ProfileImage)" class="rounded-3" alt="User Profile Image" />
                             <div>
-                                <h3 class="text-decoration-underline">PROFILE BIO</h3>
+                                <h4 class="text-decoration-underline">Profile Bio</h4>
                                 <p>This is the first photo pet owners will see. We recommend using a well-lit, clear photo of your face (without sunglasses).</p>
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                 }
 
             </dd>
-            <h3>CONTACT DETAILS</h3>
+            <h4 class="text-decoration-underline mt-4">Contact Details</h4>
             <div class="row">
                 <div class="col-sm-6">
                     <dt class="mb-2">First Name</dt>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="row">
                 <div class="col-sm-12">
-                    <h3>POSTAL ADDRESS</h3>
+                    <h4 class="text-decoration-underline mt-4">Postal Address</h4>
                 </div>
                 </div>
                 <div class="row">
@@ -96,7 +96,7 @@
 
             IEnumerable<Pet> pets = ViewData["PetLists"] as IEnumerable<Pet>;
         }
-        <h3>YOUR PETS</h3>
+            <h4 class="text-decoration-underline mt-4">Your Pets</h4>
         <table class="table">
             @if (pets.Count() == 0)
             {
@@ -110,7 +110,7 @@
                 @foreach (Pet pet in pets)
                 {
                     <tr class="pet-lists">
-                        <td class="d-flex justify-content-between font-monospace lead">
+                        <td class="d-flex justify-content-between lead">
                             @if (@pet.PetType == "Dog")
                             {
                                 <div>
@@ -129,7 +129,8 @@
                                 <a asp-action="EditPet" asp-route-id="@pet.PetId">
                                     <span class="material-symbols-outlined edit">edit</span>
                                 </a>
-                                <a class="btn-delete" data-id="@pet.PetId" data-controller="Customer" data-action="DeletePet" data-body-message="Are you sure to delete this pet?">
+
+                                    <a class="btn-delete" data-id="@pet.PetId" data-controller="Customer" data-action="DeletePet" data-body-message="Are you sure to delete @pet.Name on your pet list?">
                                     <span class="material-symbols-outlined delete">delete</span>
                                 </a>
                             </div>

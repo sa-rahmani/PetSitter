@@ -1,4 +1,6 @@
-﻿namespace PetSitter.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PetSitter.ViewModels
 {
     public class CreateReviewVM
     {
@@ -6,21 +8,21 @@
         //public string? LastName { get; set; }
 
 
-        public string? petParent { get; set; }
+        public string? PetParent { get; set; }
 
-        public string? sitter { get; set; }
-
+        public string? Sitter { get; set; }
+        [Key]
         public int? SitterId { get; set; }
         // public int? UserId { get; set; }
-
+        [Key]
 
         public int BookingId { get; set; }
 
-        public DateTime? startDate { get; set; }
-        public DateTime? endDate { get; set; }
-
-        public int rating { get; set; }
-        public string? review { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        [Required]
+        public int Rating { get; set; }
+        public string? Review { get; set; }
     }
 }
 

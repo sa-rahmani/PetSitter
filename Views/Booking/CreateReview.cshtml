@@ -52,6 +52,7 @@
 @{
     ViewData["Title"] = "CreateReview";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    //var item = Model.EndDate;
 }
 
 @{
@@ -62,19 +63,29 @@
 <hr class="mt-4">
 
 <h4>SITTER: @ViewBag.SitterName</h4>
-@if (user.ProfileImage == null)
-{
-    <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
-}
-else
-{
-    <img style="width: 50%; height: 50%; border: 2px solid black; margin: 10px; padding: 5px;" src="data:image/png;base64, @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
+    @if (user.ProfileImage == null)
+    {
+        <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
+    }
+    else
+    {
+        <img style="width: 50%; height: 50%; border: 2px solid black; margin: 10px; padding: 5px;" src="data:image/png;base64, @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
 }
 <hr class="mt-4">
 
 <div>
     <h4>Service Date: </h4>
-    @Html.DisplayFor(model => model.startDate) -  @Html.DisplayFor(model => model.endDate)
+    @Html.DisplayFor(model =>model.StartDate) -  @Html.DisplayFor(model => model.EndDate)
+        
+@*    @Html.DisplayFor(model => model.StartDate.ToString("MMMM d, yyyy")) - @Html.DisplayFor(model => model.EndDate.ToString("MMMM d, yyyy"))
+*@
+    @*@Html.DisplayFor(model => model.StartDate).ToString("MMMM d, yyyy") - @Html.DisplayFor(model => model.EndDate.ToString("MMMM d, yyyy"))*@
+
+    <p>@Model.StartDate.ToString("MMMM d, yyyy") - @Model.EndDate.ToString("MMMM d, yyyy")</p>
+
+@*    @Html.DisplayFor(model => model.StartDate.ToString(), "{MMMM d, yyyy}") - @Html.DisplayFor(model => model.EndDate.ToString(), "{MMMM d, yyyy}")
+*@
+
 </div>
 
 <hr class="mt-4">
@@ -105,9 +116,9 @@ else
             <hr>
 
             <div class="form-group">
-                <label asp-for="review" class="control-label" style="text-transform: uppercase;"></label>
-                <textarea asp-for="review" class="form-control" style="width: 500px; height: 200px; float: left;"></textarea>
-                <span asp-validation-for="review" class="text-danger"></span>
+                <label asp-for="Review" class="control-label" style="text-transform: uppercase;"></label>
+                <textarea asp-for="Review" class="form-control" style="width: 500px; height: 200px; float: left;"></textarea>
+                <span asp-validation-for="Review" class="text-danger"></span>
             </div>
 
             <div class="form-group" style="clear: both;">

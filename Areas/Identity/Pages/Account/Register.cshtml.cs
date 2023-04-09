@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using GMap.NET.MapProviders;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using PetSitter.Controllers;
 using PetSitter.Data.Services;
@@ -43,6 +45,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly IServiceProvider _serviceProvider;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
@@ -53,7 +56,8 @@ namespace PetSitter.Areas.Identity.Pages.Account
             PetSitterContext context,
             IWebHostEnvironment webHost,
             IEmailService emailService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IServiceProvider serviceProvider)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -63,9 +67,9 @@ namespace PetSitter.Areas.Identity.Pages.Account
             _emailSender = emailSender;
             _context = context;
             webHostEnvironment = webHost;
-            _emailService= emailService;
+            _emailService = emailService;
             _configuration = configuration;
-
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -114,7 +118,7 @@ namespace PetSitter.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
-            [RegularExpression("[0-9]{10}")]
+            [RegularExpression("[0-9]{10}", ErrorMessage = "The phone number entered is invalid. Please ensure that it contains exactly 10 digits (no spaces or special characters)")]
             [Display(Name = "Phone Number")]
             [Phone]
             public string PhoneNumber { get; set; }
@@ -124,7 +128,9 @@ namespace PetSitter.Areas.Identity.Pages.Account
             public string City { get; set; }
 
             [Required]
+            [RegularExpression("^[A-Za-z]\\d[A-Za-z][ ]?\\d[A-Za-z]\\d$", ErrorMessage = "Please enter a valid postal code in the format A1A 1A1")]
             [Display(Name = "Postal Code")]
+            [MaxLength(7)]
             public string PostalCode { get; set; }
 
             [Required]
@@ -162,6 +168,11 @@ namespace PetSitter.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
+
+            // Ensure ReCaptcha doesn't disappear after invalid attempt
+            Response.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
+            Response.Headers.Add("Pragma", "no-cache");
+            Response.Headers.Add("Expires", "0");
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -194,6 +205,9 @@ namespace PetSitter.Areas.Identity.Pages.Account
                     using var binaryReader = new BinaryReader(fileStream);
                     defaultImageBytes = binaryReader.ReadBytes((int)fileStream.Length);
                 }
+                // store in AspNetUserRole table once user sign up as either sitter or customer
+                var UserManager = _serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                var findUser = await UserManager.FindByEmailAsync(Input.Email);
 
                 if (result.Succeeded)
                 {
@@ -208,10 +222,12 @@ namespace PetSitter.Areas.Identity.Pages.Account
                         StreetAddress = Input.StreetAddress,
                         UserType = Input.UserType,
                         ProfileImage = defaultImageBytes
-
-
-
                     };
+
+                    if (findUser != null)
+                    {
+                        await UserManager.AddToRoleAsync(findUser, newUser.UserType);
+                    }
 
                     if (newUser.UserType == "Sitter")
                     {

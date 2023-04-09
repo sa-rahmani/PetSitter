@@ -13,8 +13,19 @@ img{
     height: auto;
 }
 
-/* Start of GetProfile.cshtml */
+/* Nav bar -> Hello! User */
+.nav-user{
+    position: relative;
+    top: 2px;
+}
 
+@media only screen and (max-width:480px){
+    .nav-user{
+        top:0;
+    }
+}
+
+/* Start of GetProfile.cshtml */
 .getprofile-container {
     max-width: 800px;
     margin: 0 auto;
@@ -99,10 +110,8 @@ img{
 }
 
 /* End of GetProfile.cshtml */
-
 /*Start of EditProfile.cshtml*/
-
-.editprofile-container .pet-lists h3{
+.editprofile-container .pet-lists h3 {
     margin-left: 20px;
 }
 
@@ -114,7 +123,6 @@ img{
 .pet-btn {
     background-color: var(--indigo-500);
     color: #fff;
-    font-weight: bold;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -166,8 +174,38 @@ img{
     font-size: 1.2em;
 }
 
+.pet-image{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width:480px) {
+    .pet-image{
+        margin-top:0px !important;
+    }
+    .pet-image img{
+        margin-bottom: 1rem;
+        max-width:200px;
+        min-width: 100px !important;
+        max-height: 250px !important;
+    }
+    .getpet-container dt, .getpet-container dd{
+        font-size:1rem;
+    }
+    .update-section h4 {
+        font-size: 1.2rem;
+    }
+    .update-section i{
+        font-size: 1.6rem !important;
+    }
+}
+
+
 .pet-image img {
     max-width: 100%;
+    max-height: 250px !important;
 }
 
 .pet-image img:hover {
@@ -190,7 +228,7 @@ img{
     height: 0;
     border-style: solid;
     border-width: 5px 0 7px 8px;
-    border-color: transparent transparent transparent #555;
+    border-color: transparent transparent transparent #6366F1;
     transform: rotate(180deg);
     position: absolute;
     left: 0;
@@ -202,12 +240,31 @@ img{
 }
 
 
-.back-to-profile .text{
+.back-to-profile .text {
     margin-left: 20px;
 }
 
 .back-link .text {
-    color:black;
+    color: black;
+}
+
+.update-section .pet-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #6366F1;
+    color: #fff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    text-decoration: none;
+}
+
+.update-section i {
+    font-size: 25px;
+    line-height: 1;
+    position: relative;
+    left: 10px;
 }
 
 
@@ -215,14 +272,26 @@ img{
     .back-to-profile .arrow {
         border-width: 5px 0 5px 7px;
     }
+
     .back-to-profile .text {
         font-size: 0.8em;
     }
-    .profile-wrapper h3{
-        font-size:1.2em;
-    }
-    .profile-container h3{
+
+    .profile-wrapper h3 {
         font-size: 1.2em;
+    }
+
+    .profile-container h3 {
+        font-size: 1.2em;
+    }
+
+    .getpet-container dd i{
+        font-size:18px !important;
+    }
+
+    .update-section .pet-icon {
+        width: 40px;
+        height: 40px;
     }
 }
 
@@ -291,8 +360,7 @@ input[type="radio"]:checked + .radio-icon i {
 
 
 
-/*Start of EditPet.cshtml*/
-
+/* Start of EditPet.cshtml */
 .pet-image img {
     width: 200px;
     max-height: 230px;
@@ -302,3 +370,104 @@ input[type="radio"]:checked + .radio-icon i {
     right: 10px;
     border-radius: 10%;
 }
+
+.editpet-container .input-group {
+    width:50%;
+}
+
+.editpet-container .radio-group label{
+    margin-right:1em;
+}
+
+.editpet-container .second-row{
+    margin-top: 1em;
+}
+
+.editpet-container .back-link{
+    position: relative;
+    left: 8em;
+}
+
+@media only screen and (max-width:480px) {
+    .editpet-container .input-group input {
+        margin-top: 0 !important;
+    }
+
+    .editpet-container .second-row {
+        margin-top: 0;
+    }
+    .save-btn{
+        padding: 5px;
+    }
+    .editpet-container .back-to-profile{
+        margin: 0 !important;
+    }
+    .editpet-container .back-link {
+        position: relative;
+        left: 0;
+        font-size: 0.8em;
+    }
+}
+/* End of EditPet.cshtml */
+
+/* Hide the default radio button */
+.radio-group{
+    display: flex;
+    align-items: center;
+}
+
+.radio-group input[type="radio"] {
+    display: none;
+}
+
+/* Style the custom radio button */
+.radio-group input[type="radio"] + label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+}
+
+/* Style the checked state of the custom radio button */
+.radio-group input[type="radio"]:checked + label {
+    background-color: #6366F1;
+    color: #fff;
+}
+
+/* Start of CreatePet.cshtml */
+.createpet-container .radio-group{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    top: 5px;
+}
+
+.createpet-container .radio-group label{
+    margin-right: 1em;
+}
+
+.createpet-container .radio-group label:hover {
+    background-color: #6366F1;
+    color: #fff;
+}
+
+.createpet-container .pet-type-group{
+    display: flex;
+}
+
+.createpet-container .title{
+    position: relative;
+    left: 1.5em;
+}
+
+@media only screen and (max-width:480px){
+    .createpet-container .title{
+        left:0;
+    }
+}
+/* End of CreatePet.cshtml */

@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using PetSitter.Data;
 using PetSitter.Models;
+using PetSitter.Repositories;
+using PetSitter.ViewModels;
 using System.Diagnostics;
+using System.Drawing.Printing;
 
 namespace PetSitter.Controllers
 {
@@ -24,8 +29,22 @@ namespace PetSitter.Controllers
             var connectionString = _configuration["ConnectionStrings:DefaultConnection"];
 
             ViewData["UserName"] = HttpContext.Session.GetString("UserName");
-            return View();
+            //return View();
+
+            ReviewRepo rRepo = new ReviewRepo(_db);
+            var top3Sitter = rRepo.GetTop3SitterVMs().ToList();
+
+            return View(top3Sitter);
         }
+
+
+        //public IActionResult TopPetSitter()
+        //{
+        //    ReviewRepo rRepo = new ReviewRepo(_db);
+        //    var top3Sitter = rRepo.GetTop3SitterVMs().ToList();
+
+        //    return View(top3Sitter);
+        //}
 
         public IActionResult Privacy()
         {
@@ -33,6 +52,12 @@ namespace PetSitter.Controllers
         }
 
         public IActionResult NoPermission()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult NoBookedPet()
         {
             return View();
         }

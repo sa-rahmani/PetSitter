@@ -10,9 +10,11 @@ using System.Dynamic;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System.Drawing;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PetSitter.Controllers
 {
+    [Authorize]
     public class CustomerController : Controller
     {
         private readonly ILogger<CustomerController> _logger;
@@ -162,14 +164,25 @@ namespace PetSitter.Controllers
 
         public IActionResult DeletePet(int id)
         {
-            string deleteMessage;
 
             PetRepo petRepo = new PetRepo(_db, webHostEnvironment);
 
-            deleteMessage = petRepo.DeletePetRecord(id);
+            var findBookedPet = _db.BookingPets.Where(b => b.PetId == id).FirstOrDefault();
+            if (findBookedPet != null)
+            {
+                return Json(new { redirectUrl = Url.Action("NoBookedPet", "Home") });
+            }
+            else
+            {
+                Tuple<string, int> deletePetRecord = petRepo.DeletePetRecord(id);
 
-            return RedirectToAction("GetProfile", "Customer",
-                 new { message = deleteMessage });
+                string deleteMessage = deletePetRecord.Item1;
+
+
+                return RedirectToAction("GetProfile", "Customer",
+                new { message = deleteMessage });
+            }
+
         }
 
     }

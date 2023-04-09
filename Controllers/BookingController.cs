@@ -293,15 +293,6 @@ namespace PetSitter.Controllers
             return Json(completeIPN);
         }
 
-        public IActionResult SitterDetails(int sitterID)
-        {
-            // Get the SitterVM.
-            CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-            SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-            return View(sitter);
-
-        }
-
         public IActionResult SitterDetails(int sitterID, int? page)
         {
             // Get the SitterVM.
@@ -327,7 +318,6 @@ namespace PetSitter.Controllers
                                                      , page ?? 1, pageSize));
         }
 
-
         [Authorize]
         public IActionResult CreateReview(int bookingID)
         {
@@ -345,19 +335,20 @@ namespace PetSitter.Controllers
                 // Get the sitter's profile image
                 CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
                 User user = cfsRepo.getUserById(bookInfo.SitterId);
+
                 ViewData["SitterProfileImg"] = user;
 
                 // Add sitter and booking details to the CreateReviewVM.
                 CreateReviewVM reviewCreating = new CreateReviewVM
                 {
-                    sitter = sitterInfo.FirstName + " " + sitterInfo.LastName,
+                    Sitter = sitterInfo.FirstName + " " + sitterInfo.LastName,
                     SitterId = bookInfo.SitterId,
                     BookingId = bookingID,
-                    startDate = bookInfo.StartDate,
-                    endDate = bookInfo.EndDate,
+                    StartDate = bookInfo.StartDate,
+                    EndDate = bookInfo.EndDate,
                 };
 
-                ViewBag.SitterName = reviewCreating.sitter;
+                ViewBag.SitterName = reviewCreating.Sitter;
 
                 return View(reviewCreating);
             }

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using PetSitter.Data.Services;
 using PetSitter.Models;
 
 namespace PetSitter.Controllers
@@ -7,10 +10,13 @@ namespace PetSitter.Controllers
     {
 
         private readonly PetSitterContext _db;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ReviewController(PetSitterContext db)
+
+        public ReviewController(PetSitterContext db, IWebHostEnvironment webHost)
         {
             _db = db;
+            _webHostEnvironment = webHost;
         }
 
         public IActionResult Index()
@@ -18,7 +24,17 @@ namespace PetSitter.Controllers
             return View();
         }
 
-
+        
 
     }
+
+
+
+
+
+
+
+
+
+
 }

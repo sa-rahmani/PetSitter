@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PetSitter.Repositories
 {
