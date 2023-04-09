@@ -306,6 +306,7 @@ namespace PetSitter.Controllers
             ViewData["AvgRating"] = sitterRes.AvgRating;
             ViewData["Rate"] = sitterRes.Rate.ToString("0.00");
             ViewData["ProfileBio"] = sitterRes.ProfileBio;
+            ViewData["City"] = sitterRes.City;
             ViewBag.ProfileImage = sitterRes.ProfileImage;
 
             SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
