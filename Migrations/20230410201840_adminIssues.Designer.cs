@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PetSitter.Models;
 
@@ -11,9 +12,10 @@ using PetSitter.Models;
 namespace PetSitter.Migrations
 {
     [DbContext(typeof(PetSitterContext))]
-    partial class PetSitterContextModelSnapshot : ModelSnapshot
+    [Migration("20230410201840_adminIssues")]
+    partial class adminIssues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
