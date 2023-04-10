@@ -84,6 +84,74 @@ namespace PetSitter.Repositories
 
 
 
+        public RatingCountVM CountRating(int sitterId)
+        {
+            //SitterProfileVM sitter = GetSitterById(sitterId);
+
+            var bookings = from b in _db.Bookings
+                           where b.SitterId == sitterId
+                           select new
+                           {
+                               b.Rating,
+                           };
+
+
+            RatingCountVM vm = new RatingCountVM();
+            double total = 0;
+            double one = 0;
+            double two = 0;
+            double three = 0;
+            double four = 0;
+            double five = 0;
+            double reviews = (from b in _db.Bookings
+
+                           where b.SitterId == sitterId && b.Review != null
+
+                           select b.Review).Count();
+            foreach (var b in bookings)
+            {
+                
+                switch(b.Rating)
+                {
+                    case 5:
+                        five++;
+                        total++;
+                        break;
+                    case 4:
+                        four++;
+                        total++;
+                        break;
+                    case 3:
+                        three++;
+                        total++;
+                        break;
+                    case 2:
+                        two++;
+                        total++;
+                        break;
+                    case 1:
+                        one++;
+                        total++;
+                        break;
+                    default:
+                        break;
+                }
+ 
+            }
+            vm.Total = total;
+            vm.Five = five;
+            vm.Four = four;
+            vm.Three = three;
+            vm.Two = two;
+            vm.One = one;
+
+            return vm;
+
+        }
+
+
+
+
 
 
 

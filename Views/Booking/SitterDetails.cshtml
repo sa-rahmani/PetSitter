@@ -47,21 +47,77 @@
                 <img style="width: 50%; height: 50%; border: 2px solid black; margin: 10px; padding: 5px;" src="data:image/png;base64, @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
             }*@
         <div class="rating">
-            <span class="@IsStarSelected(1, @ViewBag.AvgRating)">&#9733;</span>
-            <span class="@IsStarSelected(2, @ViewBag.AvgRating)">&#9733;</span>
-            <span class="@IsStarSelected(3, @ViewBag.AvgRating)">&#9733;</span>
-            <span class="@IsStarSelected(4, @ViewBag.AvgRating)">&#9733;</span>
-            <span class="@IsStarSelected(5, @ViewBag.AvgRating)">&#9733;</span>
-        </div>
+            <span class="@IsStarSelected(1, @ViewBag.AvgRating)" style="display: inline-block;">&#9733;</span>
+            <span class="@IsStarSelected(2, @ViewBag.AvgRating)" style="display: inline-block;">&#9733;</span>
+            <span class="@IsStarSelected(3, @ViewBag.AvgRating)" style="display: inline-block;">&#9733;</span>
+            <span class="@IsStarSelected(4, @ViewBag.AvgRating)" style="display: inline-block;">&#9733;</span>
+            <span class="@IsStarSelected(5, @ViewBag.AvgRating)" style="display: inline-block;">&#9733;</span>
+
+        <p style="display: inline-block; margin-left: 10px; font-size: 0.8em;">
+            @if (ViewBag.TotalReview == 0)
+            {
+                <span>No ratings</span>
+            }
+            else
+            {
+                <span>@ViewBag.TotalReview @((ViewBag.TotalReview == 1) ? "rating" : "ratings")</span>
+            }
+        </p> 
+      </div>
+
+            <hr class="mt-4">
+
+       
         <div>
-            <span class="price">@ViewBag.Rate</span> per day
+            <p>@ViewBag.AvgRating OUT OF 5</p>
+            <div class="starDetail">
+                <span>5 Star</span>
+                <span class="percentage-bar">
+                    <span class="percentage-bar-inner" style="width: @ViewBag.Star5%" data-rating="5"></span>
+                </span>
+                <span>@ViewBag.Star5%</span>
+            </div>
+                <div class="starDetail">
+                    <span>4 Star</span>
+                    <span class="percentage-bar">
+                        <span class="percentage-bar-inner" style="width: @ViewBag.Star4%" data-rating="4"></span>
+                    </span>
+                    <span>@ViewBag.Star4%</span>
+                </div>
+                <div class="starDetail">
+                    <span>3 Star</span>
+                    <span class="percentage-bar">
+                        <span class="percentage-bar-inner" style="width: @ViewBag.Star3%" data-rating="3"></span>
+                    </span>
+                    <span>@ViewBag.Star3%</span>
+                </div>
+                <div class="starDetail">
+                    <span>2 Star</span>
+                    <span class="percentage-bar">
+                        <span class="percentage-bar-inner" style="width: @ViewBag.Star2%" data-rating="2"></span>
+                    </span>
+                    <span>@ViewBag.Star2%</span>
+                </div>
+                <div class="starDetail">
+                    <span>1 Star</span>
+                    <span class="percentage-bar">
+                        <span class="percentage-bar-inner" style="width: @ViewBag.Star1%" data-rating="1"></span>
+                    </span>
+                    <span>@ViewBag.Star1%</span>
+                </div>
         </div>
-        <div>
-            <a asp-action="Book" asp-route-sitterID="@ViewBag.SitterID">Book with @ViewBag.FirstName</a>
-        </div>
-        <div>
-            @ViewBag.ProfileBio
-        </div>
+
+
+     
+            <div>
+                <span class="price">@ViewBag.Rate</span> per day
+            </div>
+            <div>
+                <a asp-action="Book" asp-route-sitterID="@ViewBag.SitterID">Book with @ViewBag.FirstName</a>
+            </div>
+            <div>
+                @ViewBag.ProfileBio
+            </div>
     </div>
 
     <hr class="mt-4">
@@ -124,6 +180,57 @@
 
     </div>
 </main>
+
+
+<style>
+    .percentage-bar {
+        display: inline-block;
+        width: 150px;
+        height: 15px;
+        background-color: lightgray;
+        margin: 0 5px;
+        position: relative;
+    }
+
+    .percentage-bar-inner {
+        display: block;
+        width: 0;
+        height: 100%;
+        background-color: #deb217;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    .starDetail{
+                 font-size: 0.8em;
+
+    }
+    .star5{
+  }
+</style>
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".percentage-bar-inner").on("click", function() {
+            var rating = $(this).data("rating");
+            $.ajax({
+                url: '@Url.Action("SitterDetails", "Booking")',
+                type: "POST",
+                data: { sitterID: @ViewBag.SitterID,
+                    rating: rating },
+                success: function(result) {
+                    console.Log(result)
+                },
+                error: function(error) {
+                   ('There was an error filtering.');
+                }
+            });
+        });
+    });
+</script>
+}
 
 @functions {
     public string IsStarSelected(int star, double? rating)

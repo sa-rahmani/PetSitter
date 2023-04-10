@@ -332,17 +332,17 @@ namespace PetSitter.Controllers
 
         //}
 
-        public IActionResult SitterDetails(int sitterID, int? page)
+        public IActionResult SitterDetails(int sitterID, string? rating, int? page)
         {
-
-
 
             // Get the SitterVM.
             CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
             SitterVM sitterRes = cfsRepo.GetSitterVM(sitterID);
             //ViewData["Sitter"] = sitterRes;
-
-
+            if (rating != null)
+            {
+                int r = Int32.Parse(rating);
+            }
             //CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
 
             User user = cfsRepo.getUserById(sitterID);
@@ -360,8 +360,26 @@ namespace PetSitter.Controllers
             ViewData["ProfileBio"] = sitterRes.ProfileBio;
             ViewBag.ProfileImage = sitterRes.ProfileImage;
 
-            //ViewData["Complete"] = bookings.Select(b => b.completeNbr).LastOrDefault();
-            //ViewData["Reviews"] = bookings.Select(b => b.reviewsNbr).LastOrDefault();
+            ReviewRepo rRepo = new ReviewRepo(_db);
+            RatingCountVM sitterRating = rRepo.CountRating(sitterID);
+            ViewData["TotalReview"] = sitterRating.Total;
+            if (sitterRating.Total == 0 ||sitterRating == null)
+            {
+                ViewData["Star5"] = 0;
+                ViewData["Star4"] = 0;
+                ViewData["Star3"] = 0;
+                ViewData["Star2"] = 0;
+                ViewData["Star1"] = 0;
+            }
+            else { 
+            ViewData["Star5"] = sitterRating.Five / sitterRating.Total * 100; ;
+            ViewData["Star4"] = sitterRating.Four / sitterRating.Total * 100;
+            ViewData["Star3"] = sitterRating.Three / sitterRating.Total * 100;
+            ViewData["Star2"] = sitterRating.Two / sitterRating.Total * 100;
+            ViewData["Star1"] = sitterRating.One / sitterRating.Total * 100;
+
+            }
+       
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -373,12 +391,18 @@ namespace PetSitter.Controllers
 
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
             //return View(response);
+            if (rating != null)
+            {
+                 response = response.Where(r => r.rating == Int32.Parse(rating)).ToList();
+                // Do something with the filteredResponse array
 
+            }
+            List<ReviewVM> responsecheck = response;
 
             ViewData["SitterID"] = sitterID;
 
-            int pageSize = 1;
-            return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
+            int pageSize = 6;
+            return View(PaginatedList<ReviewVM>.Create(responsecheck.AsQueryable().AsNoTracking()
                                                      , page ?? 1, pageSize));
         }
 
