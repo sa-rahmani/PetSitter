@@ -348,16 +348,11 @@ namespace PetSitter.Controllers
             User user = cfsRepo.getUserById(sitterID);
             ViewData["SitterProfileImg"] = user;
 
-
-            //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-            //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-            //return View(response);
-
             ViewData["FirstName"] = sitterRes.FirstName;
             ViewData["AvgRating"] = sitterRes.AvgRating;
             ViewData["Rate"] = sitterRes.Rate.ToString("0.00");
             ViewData["ProfileBio"] = sitterRes.ProfileBio;
+            ViewData["City"] = sitterRes.City;
             ViewBag.ProfileImage = sitterRes.ProfileImage;
 
             ReviewRepo rRepo = new ReviewRepo(_db);
@@ -387,8 +382,6 @@ namespace PetSitter.Controllers
 
 
             SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
             //return View(response);
             if (rating != null)
@@ -406,10 +399,6 @@ namespace PetSitter.Controllers
                                                      , page ?? 1, pageSize));
         }
 
-
-
-        
-
         [Authorize]
         public IActionResult CreateReview(int bookingID)
         {
@@ -426,7 +415,8 @@ namespace PetSitter.Controllers
 
                 // Get the sitter's profile image
                 CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
-                User user = cfsRepo.getUserById(sitterInfo.SitterId);
+                User user = cfsRepo.getUserById(bookInfo.SitterId);
+
                 ViewData["SitterProfileImg"] = user;
 
                 // Add sitter and booking details to the CreateReviewVM.

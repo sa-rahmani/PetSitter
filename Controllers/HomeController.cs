@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PetSitter.Data;
 using PetSitter.Models;
@@ -51,6 +52,12 @@ namespace PetSitter.Controllers
         }
 
         public IActionResult NoPermission()
+        {
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult NoBookedPet()
         {
             return View();
         }

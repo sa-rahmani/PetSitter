@@ -7,6 +7,7 @@ using static Humanizer.In;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Policy;
 
 namespace PetSitter.Repositories
 {
@@ -201,18 +202,18 @@ namespace PetSitter.Repositories
             return fileName;
         }
 
-        public string DeletePetRecord(int petID)
+        public Tuple<string,int> DeletePetRecord(int petID)
         {
             string deleteMessage;
 
-            var pets = _db.Pets.Where(p => p.PetId == petID).FirstOrDefault();
+            var pet = _db.Pets.Where(p => p.PetId == petID).FirstOrDefault();
 
             try
             {
-                _db.Remove(pets);
+                _db.Remove(pet);
                 _db.SaveChanges();
 
-                deleteMessage = $"Success deleting {pets.Name} pet account, " + $"Your deleted pet number is: {pets.PetId}";
+                deleteMessage = $"Success deleting {pet.Name} pet account, " + $"Your deleted pet number is: {pet.PetId}";
             }
             
             catch (Exception ex)
@@ -220,7 +221,22 @@ namespace PetSitter.Repositories
 
                 deleteMessage = ex.Message;
             }
-            return deleteMessage;
+            return Tuple.Create(deleteMessage, pet.PetId);
+        }
+
+        public bool IsBookedPet(int petID)
+        {
+            bool isBooked = false;
+            var findBookedPet = _db.BookingPets.Where(b => b.PetId == petID).FirstOrDefault();
+
+            if (findBookedPet != null)
+            {
+                return isBooked= true;
+            }
+            else
+            {
+                return isBooked = false;
+            }
         }
 
         private bool IsImageFileTypeValid(string contentType)

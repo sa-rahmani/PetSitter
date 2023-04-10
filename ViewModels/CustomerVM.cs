@@ -16,6 +16,7 @@ namespace PetSitter.ViewModels
         public string City { get; set; }
         public string PostalCode { get; set; }
         public string UserType { get; set; }
+        public List<BookingPet>? BookedPets { get; set; }
 
         public IFormFile? ProfileImage { get; set; }
 

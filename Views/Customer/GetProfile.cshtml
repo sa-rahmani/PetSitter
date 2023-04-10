@@ -39,7 +39,7 @@
                     {
                         <div class="d-flex align-items-center w-100">
                             <img style="max-width: 400px;" src="data:image/png;base64,
-                            @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
+                            @Convert.ToBase64String(user.ProfileImage)" class="rounded-3" alt="User Profile Image" />
                             <div>
                                 <h4 class="text-decoration-underline">Profile Bio</h4>
                                 <p>This is the first photo pet owners will see. We recommend using a well-lit, clear photo of your face (without sunglasses).</p>
@@ -49,7 +49,7 @@
                 }
 
             </dd>
-            <h4 class="text-decoration-underline">Contact Details</h4>
+            <h4 class="text-decoration-underline mt-4">Contact Details</h4>
             <div class="row">
                 <div class="col-sm-6">
                     <dt class="mb-2">First Name</dt>
@@ -72,7 +72,7 @@
                 </div>
                 <div class="row">
                 <div class="col-sm-12">
-                    <h4 class="text-decoration-underline">Postal Address</h4>
+                    <h4 class="text-decoration-underline mt-4">Postal Address</h4>
                 </div>
                 </div>
                 <div class="row">
@@ -92,11 +92,19 @@
                 </div>
             </div>
 
-        @{
+            @{
 
-            IEnumerable<Pet> pets = ViewData["PetLists"] as IEnumerable<Pet>;
-        }
-        <h4 class="text-decoration-underline">Your Pets</h4>
+                IEnumerable<Pet> pets = ViewData["PetLists"] as IEnumerable<Pet>;
+            }
+
+        <h4 class="text-decoration-underline mt-4">Your Pets</h4>
+            @if (Model.BookedPets != null && Model.BookedPets.Count() > 0)
+            {
+                <p class="lead">
+                    You have @Model.BookedPets.Count() booked pet(s):
+                    @String.Join(", ", Model.BookedPets.Select(bp => bp?.Pet?.Name))
+                </p>
+            }
         <table class="table">
             @if (pets.Count() == 0)
             {
@@ -109,27 +117,37 @@
                 </tr>
                 @foreach (Pet pet in pets)
                 {
-                    <tr class="pet-lists">
-                        <td class="d-flex justify-content-between lead">
+                        <tr class="pet-lists">
+                            <td class="d-flex justify-content-between lead">
                             @if (@pet.PetType == "Dog")
                             {
                                 <div>
                                     <i class="fa-solid fa-dog"></i>
                                     <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
+                                    @if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
+                                    {
+                                        <i class="fa-solid fa-check" style="color:chartreuse; margin-left:3px;"></i>
+                                    }
                                 </div>
                             }
                             else
                             {
                                 <div>
+                                  
                                     <i class="fa-solid fa-cat"></i>
                                     <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
+                                    @if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
+                                    {
+                                        <i class="fa-solid fa-check" style="color:chartreuse; margin-left:3px;"></i>
+                                    }
                                 </div>
                             }
                             <div>
                                 <a asp-action="EditPet" asp-route-id="@pet.PetId">
                                     <span class="material-symbols-outlined edit">edit</span>
                                 </a>
-                                <a class="btn-delete" data-id="@pet.PetId" data-controller="Customer" data-action="DeletePet" data-body-message="Are you sure to delete this pet?">
+
+                                    <a class="btn-delete" data-id="@pet.PetId" data-controller="Customer" data-action="DeletePet" data-body-message="Are you sure to delete @pet.Name on your pet list?">
                                     <span class="material-symbols-outlined delete">delete</span>
                                 </a>
                             </div>
