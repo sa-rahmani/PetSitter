@@ -35,7 +35,6 @@ img{
 .profile-container img{
     width: 150px;
     height: auto;
-    margin-right: 15px;
 }
 
 
@@ -50,6 +49,19 @@ img{
 
 .getprofile-container h3 {
     font-size: 1.5em;
+}
+.getprofile-container .rating {
+    font-size: 1.5em;
+    line-height: 1.5em;
+    display: flex;
+    justify-content: center;
+}
+.getprofile-container .highlight{
+    color: gold;
+}
+
+.getprofile-container .no-highlight {
+    color: lightgrey;
 }
 
 

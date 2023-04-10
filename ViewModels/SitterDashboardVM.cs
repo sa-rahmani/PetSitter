@@ -1,5 +1,6 @@
 ﻿using GoogleMaps.LocationServices;
 using PetSitter.Models;
+using System.ComponentModel;
 
 namespace PetSitter.ViewModels
 {
@@ -8,15 +9,25 @@ namespace PetSitter.ViewModels
         public int bookingId { get; set; }
 
         public string? sitter { get; set; }
+        [DisplayName("Pet Parent")]
 
         public string? petParent { get; set; }
         public MapPoint? PointCustomer { get; set; }
         public MapPoint? PointSitter { get; set; }
+        [DisplayName("Pet Type")]
 
         public string? petType { get; set; }
+        [DisplayName("Start Date")]
+
         public string? startDate { get; set; }
+        [DisplayName("End Date")]
+
         public string? endDate { get; set; }
+        [DisplayName("Status")]
+
         public string? status { get; set; }
+        [DisplayName("Review")]
+
         public string? review { get; set; }
        public User user { get; set; }
 

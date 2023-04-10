@@ -37,13 +37,7 @@ namespace PetSitter.Repositories
             return petTypeSitter;
 
         }
-        //public Sitter getSitterById(int sitterId)
-        //{
-        //    var sitter = (from s in _db.Sitters
-        //                  where s.SitterId == sitterId
-        //                  select s).FirstOrDefault();
-        //    return sitter;
-        //}
+    
 
         //Add new sitter
         public void AddSiter(Sitter sitter)
@@ -81,12 +75,16 @@ namespace PetSitter.Repositories
                               LastName = u.LastName,
                               Email = u.Email,
                               City = u.City,
+                              AvgRating = (double?)_db.Bookings
+                      .Where(b => b.SitterId == s.SitterId)
+                      .Average(b => (double?)b.Rating) ?? 0,
                               StreetAddress = u.StreetAddress,
                               PostalCode = u.PostalCode,
                               PhoneNumber = u.PhoneNumber,
                               RatePerPetPerDay = s.RatePerPetPerDay,
                               UserType = u.UserType,
                               ProfileBio = s.ProfileBio
+                              
                           }).FirstOrDefault();
 
             List<PetType> petTypeSitter = getPetTypeSitter(sitter.SitterId);
@@ -106,7 +104,8 @@ namespace PetSitter.Repositories
                 ProfileBio = sitter.ProfileBio,
                 UserType = sitter.UserType,
                 PetTypesAvailable = getPetTypes(),
-                SelectedPetTypes = petTypeSitter.Select(p => p.PetType1).ToList()
+                SelectedPetTypes = petTypeSitter.Select(p => p.PetType1).ToList(),
+                AvgRating=sitter.AvgRating
 
             };
 
@@ -204,23 +203,7 @@ namespace PetSitter.Repositories
 
             return Tuple.Create(sitterObj.SitterId, message);
         }
-        //private string UploadCustomerFile(SitterProfileVM sitterProfileVM)
-        //{
-        //    string fileName = null;
-        //    if (sitterProfileVM.ProfileImage != null)
-        //    {
-        //        string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath, "images");
-        //        fileName = Guid.NewGuid().ToString() + "_" + sitterProfileVM.ProfileImage.FileName;
-        //        string filePath = Path.Combine(uploadDir, fileName);
-        //        using (var fileStream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            sitterProfileVM.ProfileImage.CopyTo(fileStream);
-        //        }
-
-        //    }
-        //    return fileName;
-        //}
-
+      
         public List<SitterDashboardVM> GetBooking(int sitterId)
         {
             SitterProfileVM sitter = GetSitterById(sitterId);

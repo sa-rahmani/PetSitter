@@ -39,22 +39,21 @@ namespace PetSitter.Controllers
         /// get  bookings  list 
         /// </summary>
         /// <returns></returns>
-        public IActionResult Dashboard(int? page,string status)
+        public IActionResult Dashboard(int? page, string status)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
-            IEnumerable<SitterDashboardVM> bookings= sitterRepos.GetBooking(sitterID); ;
+            IEnumerable<SitterDashboardVM> bookings = sitterRepos.GetBooking(sitterID); ;
             ViewData["UpComing"] = bookings.Select(b => b.upComingNbr).LastOrDefault();
             ViewData["Complete"] = bookings.Select(b => b.completeNbr).LastOrDefault();
             ViewData["Reviews"] = bookings.Select(b => b.reviewsNbr).LastOrDefault();
             if (!string.IsNullOrEmpty(status))
             {
-              
-              
-                    bookings = sitterRepos.GetBookingByStatus(bookings, status);
 
-   
+                bookings = sitterRepos.GetBookingByStatus(bookings, status);
+
+
 
             }
 
@@ -69,7 +68,7 @@ namespace PetSitter.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public  IActionResult Details(int id)
+        public IActionResult Details(int id)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
@@ -133,8 +132,6 @@ namespace PetSitter.Controllers
 
             if (ModelState.IsValid)
             {
-                //sitterProfileVM.SelectedPetTypes = PetTypes?.ToList() ?? new List<string>();
-
 
                 Tuple<int, string> response = sitterRepos.EditSitter(sitterProfileVM);
 
@@ -209,7 +206,7 @@ namespace PetSitter.Controllers
             var events = new List<object>();
 
             var bookedDates = bookingRepo.GetBookedDates(bookings);
-            //Add bookings as events
+            //Add booked dates as events
 
             foreach (var date in bookedDates)
             {
@@ -227,7 +224,7 @@ namespace PetSitter.Controllers
 
             var availableDates = availabilityRepo.GetAvailableDates(availabilities);
             var notBooked = availableDates.Except(bookedDates);
-            // Add bookings as events
+            // Add not booked dates as events
             foreach (var date in notBooked)
             {
                 if (date >= DateTime.Now)
@@ -289,7 +286,7 @@ namespace PetSitter.Controllers
 
 
 
- 
+
 
 
 }
