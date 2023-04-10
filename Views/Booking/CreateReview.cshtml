@@ -94,8 +94,8 @@
     <div class="col-md-4 w-100">
         <form asp-action="CreateReview" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input asp-for="SitterId" class="form-control" value="@Model.SitterId" type="hidden" />
-            <input asp-for="BookingId" class="form-control" value="@Model.BookingId" type="hidden" />
+            <input type="hidden" asp-for="SitterId" />
+            <input type="hidden" asp-for="BookingId" />
 
             <div class="form-group">
                 <label class="control-label">RATING:</label>
