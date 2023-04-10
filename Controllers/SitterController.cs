@@ -250,7 +250,7 @@ namespace PetSitter.Controllers
 
 
         //public IActionResult ReviewList(string currentFilter, string searchString, int? page)
-        public IActionResult ReviewList(int? page)
+        public IActionResult ReviewList(string? rating, int? page)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
@@ -270,14 +270,48 @@ namespace PetSitter.Controllers
 
             //var rating 
 
+
+            ReviewRepo rRepo = new ReviewRepo(_db);
+            RatingCountVM sitterRating = rRepo.CountRating(sitterID);
+            ViewData["TotalReview"] = sitterRating.Total;
+            if (sitterRating.Total == 0 || sitterRating == null)
+            {
+                ViewData["Star5"] = 0;
+                ViewData["Star4"] = 0;
+                ViewData["Star3"] = 0;
+                ViewData["Star2"] = 0;
+                ViewData["Star1"] = 0;
+            }
+            else
+            {
+                ViewData["Star5"] = sitterRating.Five / sitterRating.Total * 100; ;
+                ViewData["Star4"] = sitterRating.Four / sitterRating.Total * 100;
+                ViewData["Star3"] = sitterRating.Three / sitterRating.Total * 100;
+                ViewData["Star2"] = sitterRating.Two / sitterRating.Total * 100;
+                ViewData["Star1"] = sitterRating.One / sitterRating.Total * 100;
+
+            }
+
+
             SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
 
 
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
             //return View(response);
 
-            int pageSize = 1;
-            return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
+            if (rating != null)
+            {
+                response = response.Where(r => r.rating == Int32.Parse(rating)).ToList();
+                // Do something with the filteredResponse array
+
+            }
+            List<ReviewVM> responsecheck = response;
+
+            ViewData["SitterID"] = sitterID;
+
+            int pageSize = 6;
+
+            return View(PaginatedList<ReviewVM>.Create(responsecheck.AsQueryable().AsNoTracking()
                                                      , page ?? 1, pageSize));
 
         }

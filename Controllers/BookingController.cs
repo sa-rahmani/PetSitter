@@ -293,11 +293,57 @@ namespace PetSitter.Controllers
             return Json(completeIPN);
         }
 
-        public IActionResult SitterDetails(int sitterID, int? page)
+
+
+        //    public IActionResult ReviewList(int sitterID)
+        //    {
+
+
+        //        //var rating 
+
+        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+        //        return View(response);
+        //    }
+
+        //}
+
+
+
+
+
+
+
+        //public IActionResult SitterDetails(int sitterID)
+        //{
+        //    // Get the SitterVM.
+        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
+        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
+
+
+        //    //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
+
+        //    //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+        //    //return View(response);
+
+
+        //    return View(sitter);
+
+        //}
+
+        public IActionResult SitterDetails(int sitterID, string? rating, int? page)
         {
+
             // Get the SitterVM.
             CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
             SitterVM sitterRes = cfsRepo.GetSitterVM(sitterID);
+            //ViewData["Sitter"] = sitterRes;
+            if (rating != null)
+            {
+                int r = Int32.Parse(rating);
+            }
+            //CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
 
             User user = cfsRepo.getUserById(sitterID);
             ViewData["SitterProfileImg"] = user;
@@ -309,13 +355,47 @@ namespace PetSitter.Controllers
             ViewData["City"] = sitterRes.City;
             ViewBag.ProfileImage = sitterRes.ProfileImage;
 
+            ReviewRepo rRepo = new ReviewRepo(_db);
+            RatingCountVM sitterRating = rRepo.CountRating(sitterID);
+            ViewData["TotalReview"] = sitterRating.Total;
+            if (sitterRating.Total == 0 ||sitterRating == null)
+            {
+                ViewData["Star5"] = 0;
+                ViewData["Star4"] = 0;
+                ViewData["Star3"] = 0;
+                ViewData["Star2"] = 0;
+                ViewData["Star1"] = 0;
+            }
+            else { 
+            ViewData["Star5"] = sitterRating.Five / sitterRating.Total * 100; ;
+            ViewData["Star4"] = sitterRating.Four / sitterRating.Total * 100;
+            ViewData["Star3"] = sitterRating.Three / sitterRating.Total * 100;
+            ViewData["Star2"] = sitterRating.Two / sitterRating.Total * 100;
+            ViewData["Star1"] = sitterRating.One / sitterRating.Total * 100;
+
+            }
+       
+
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //var rating 
+
+
             SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
+            //return View(response);
+            if (rating != null)
+            {
+                 response = response.Where(r => r.rating == Int32.Parse(rating)).ToList();
+                // Do something with the filteredResponse array
+
+            }
+            List<ReviewVM> responsecheck = response;
 
             ViewData["SitterID"] = sitterID;
 
-            int pageSize = 1;
-            return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
+            int pageSize = 6;
+            return View(PaginatedList<ReviewVM>.Create(responsecheck.AsQueryable().AsNoTracking()
                                                      , page ?? 1, pageSize));
         }
 
