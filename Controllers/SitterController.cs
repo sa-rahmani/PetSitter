@@ -309,7 +309,7 @@ namespace PetSitter.Controllers
 
             ViewData["SitterID"] = sitterID;
 
-            int pageSize = 6;
+            int pageSize = 9;
 
             return View(PaginatedList<ReviewVM>.Create(responsecheck.AsQueryable().AsNoTracking()
                                                      , page ?? 1, pageSize));
@@ -324,3 +324,5 @@ namespace PetSitter.Controllers
 
 
 }
+
+
