@@ -66,14 +66,14 @@
     <div class="btn btn-default @prevDisabled prev">
         <a asp-action="Dashboard"
            asp-route-page="@(Model.PageIndex - 1)">
-            <i style="font-size:24px" class="fa">&#xf137;</i>
+                <i style="font-size:24px;    color: #6366F1" class="fa">&#xf137;</i>
         </a><span> Previous </span>
     </div>
     <div class="btn btn-default @nextDisabled next">
         <span> Next </span>
         <a asp-action="Dashboard"
            asp-route-page="@(Model.PageIndex + 1)">
-            <i style="font-size:24px" class="fa">&#xf138;</i>
+                <i style="font-size:24px;    color: #6366F1" class="fa">&#xf138;</i>
         </a>
     </div>
 </div>

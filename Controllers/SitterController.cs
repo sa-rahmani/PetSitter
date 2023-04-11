@@ -15,9 +15,12 @@ using System.Collections.Generic;
 using System;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 //using PetSitter.Utilities;
 namespace PetSitter.Controllers
 {
+    [Authorize]
+
     public class SitterController : Controller
     {
         private readonly PetSitterContext _db;
@@ -103,6 +106,16 @@ namespace PetSitter.Controllers
             SitterProfileVM sitterProfileVM = sitterRepos.GetSitterById(sitterID);
 
             sitterProfileVM.Message = message;
+            var defaultImageFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "images/default-image.jpg");
+            byte[] defaultImageBytes;
+            using (var fileStream = new FileStream(defaultImageFilePath, FileMode.Open))
+            {
+                using var binaryReader = new BinaryReader(fileStream);
+                defaultImageBytes = binaryReader.ReadBytes((int)fileStream.Length);
+            }
+            ViewData["ProfileImg"] = defaultImageBytes;
+
+
             return View(sitterProfileVM);
         }
         /// <summary>
@@ -299,7 +312,8 @@ namespace PetSitter.Controllers
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
             //return View(response);
 
-            if (rating != null)
+            //if (rating != null)
+            if (!string.IsNullOrEmpty(rating) && rating != "-1")
             {
                 response = response.Where(r => r.rating == Int32.Parse(rating)).ToList();
                 // Do something with the filteredResponse array

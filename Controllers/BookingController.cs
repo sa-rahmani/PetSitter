@@ -339,7 +339,7 @@ namespace PetSitter.Controllers
             CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
             SitterVM sitterRes = cfsRepo.GetSitterVM(sitterID);
             //ViewData["Sitter"] = sitterRes;
-            if (rating != null)
+            if (!string.IsNullOrEmpty(rating) && rating != "-1")
             {
                 int r = Int32.Parse(rating);
             }
@@ -384,7 +384,7 @@ namespace PetSitter.Controllers
             SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
             //return View(response);
-            if (rating != null)
+            if (!string.IsNullOrEmpty(rating) && rating != "-1")
             {
                  response = response.Where(r => r.rating == Int32.Parse(rating)).ToList();
                 // Do something with the filteredResponse array

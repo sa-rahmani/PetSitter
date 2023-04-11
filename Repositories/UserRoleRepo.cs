@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using PetSitter.Models;
 using PetSitter.ViewModels;
 
 namespace PetSitter.Repositories
@@ -6,10 +7,12 @@ namespace PetSitter.Repositories
     public class UserRoleRepo
     {
         IServiceProvider serviceProvider;
+        PetSitterContext _context;
 
-        public UserRoleRepo(IServiceProvider serviceProvider)
+        public UserRoleRepo(IServiceProvider serviceProvider, PetSitterContext context)
         {
             this.serviceProvider = serviceProvider;
+            _context = context;
         }
 
         // Assign a role to a user.
@@ -21,6 +24,8 @@ namespace PetSitter.Repositories
             if (user != null)
             {
                 await UserManager.AddToRoleAsync(user, roleName);
+                User updatedUser = _context.Users.Where(u => u.Email == email).FirstOrDefault();
+                updatedUser.UserType = roleName;
 
             }
             return true;
