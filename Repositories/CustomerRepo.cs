@@ -9,6 +9,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
+using NuGet.Packaging;
 
 namespace PetSitter.Repositories
 {
@@ -41,11 +42,25 @@ namespace PetSitter.Repositories
             var singleUser = _db.Users.Where(u => u.UserId == customerID).FirstOrDefault();
 
             var petLists = _db.Pets.Where(p => p.UserId == customerID).ToList();
+
+            // find booking pets
             var findBookedPets = new List<BookingPet>();
+
+            // find booking pet dates
+            var findBookingDates = new List<Booking>();
 
             foreach (var pet in petLists)
             {
                 var bookedPets = _db.BookingPets.Where(b => b.PetId == pet.PetId).ToList();
+
+                // process of find a booked pet from Booking table
+                var findABookedPet = _db.BookingPets.Where(b => b.PetId == pet.PetId).FirstOrDefault();
+                var findBookingDate = _db.Bookings.Where(b => findABookedPet != null && b.BookingId == findABookedPet.BookingId).ToList();
+
+                if (findABookedPet != null)
+                {
+                    findBookingDates.AddRange(findBookingDate);
+                }
                 findBookedPets.AddRange(bookedPets);
             }
 
@@ -61,6 +76,7 @@ namespace PetSitter.Repositories
                 City = singleUser.City,
                 UserType = singleUser.UserType,
                 BookedPets = findBookedPets,
+                Booking = findBookingDates
             };
 
             return vm;
