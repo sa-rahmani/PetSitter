@@ -29,7 +29,10 @@ img{
 .getprofile-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 15px;
+/*    padding: 0 15px;
+*/    border: 1px solid #ccc;
+    box-shadow: 0 0 5px #ccc;
+    padding: 20px;
 }
 
 .profile-container img{
@@ -55,6 +58,7 @@ img{
     line-height: 1.5em;
     display: flex;
     justify-content: center;
+    margin: 10px;
 }
 .getprofile-container .highlight{
     color: gold;
@@ -476,6 +480,50 @@ input[type="radio"]:checked + .radio-icon i {
     position: relative;
     left: 1.5em;
 }
+
+.img-warning {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 5px #ccc;
+    background-color: #f7f7f7;
+    padding: 10px;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.close {
+    position: absolute;
+    top: -4px;
+    right: 5px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #666;
+    opacity: 0.7;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+    .close:hover {
+        color: #000;
+        opacity: 1;
+    }
+
+.btn-img {
+    background-color: #6366F1;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: small;
+}
+
+    .btn-img:hover {
+        background-color: #6366F1;
+    }
 
 @media only screen and (max-width:480px){
     .createpet-container .title{
