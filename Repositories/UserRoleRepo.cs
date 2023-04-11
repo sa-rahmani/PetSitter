@@ -21,6 +21,7 @@ namespace PetSitter.Repositories
             if (user != null)
             {
                 await UserManager.AddToRoleAsync(user, roleName);
+
             }
             return true;
         }

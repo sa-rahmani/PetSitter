@@ -1,4 +1,6 @@
-﻿namespace PetSitter.ViewModels
+﻿using System.Collections;
+
+namespace PetSitter.ViewModels
 {
     public class AdminDashboardVM
     {
@@ -6,11 +8,7 @@
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Role { get; set; }
-        //public int SitterID { get; set; }
-        //public int CustomerID { get; set; }
-
-           
+        public IEnumerable Role { get; set; }
 
     }
 }
