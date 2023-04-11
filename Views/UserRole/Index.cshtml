@@ -3,33 +3,60 @@
 @{
     ViewData["Title"] = "UserRole";
 }
+  
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
 
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Users
-            </th>
-            <th>
-                <a asp-action="Create">Create New User Role</a>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="panel panel-primary">  
+    <div class="panel-heading">  
+        <h3 class="box-title">  
+            <b>User Roles</b>  
+        </h3>
+    </div>  
+    <!-- /.box-header -->  
+    <div class="panel-body">  
+        <table class="table table-hover table-bordered table-condensed" id="UsersWithRoles">
+            <thead>
                 <tr>
-                    <td>
-                    @item.Email
-                    </td>
-                    <td>
-                    @Html.ActionLink(
-                "View Roles"
-                , "Detail"
-                , new { userName = item.Email })
-                    </td>
+                    <th>
+                        Users
+                    </th>
+                    <th>
+                        <a asp-action="Create">Create New User Role</a>
+                    </th>
                 </tr>
-        }
-    </tbody>
-</table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.Email
+                        </td>
+                        <td>
+                            @Html.ActionLink(
+                        "View Roles"
+                        , "Detail"
+                        , new { userName = item.Email })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>  
+    </div>   
+</div>  
+
+@section scripts{
+    <script>
+        $(function () {
+            $('#UsersWithRoles').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": true
+            });
+        });
+    </script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+}
