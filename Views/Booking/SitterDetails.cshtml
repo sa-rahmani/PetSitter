@@ -42,7 +42,7 @@
                 <img style="width: 50%; height: 50%; border: 2px solid black; margin: 10px; padding: 5px;" src="data:image/png;base64, @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
             }*@
                <div class="details">
-            <h1 class="mt-2">@ViewBag.FirstName</h1>
+            <h2 class="mt-2">@ViewBag.FirstName</h2>
             <div class="text-uppercase" style="font-weight:bold;">
                 @ViewBag.City
             </div>
@@ -66,11 +66,9 @@
         </p> 
       </div>
 
-            <hr class="mt-4">
-
        
         <div>
-            <p>@ViewBag.AvgRating OUT OF 5</p>
+            <p>OverALL: @ViewBag.AvgRating OUT OF 5</p>
             <div class="starDetail">
                 <span>5 Star</span>
                 <span class="percentage-bar">
@@ -108,7 +106,7 @@
                 </div>
         </div>
         <div>
-            <span class="price">@ViewBag.Rate</span> per day
+            <span class="price">$@ViewBag.Rate</span> per day
         </div>
         <div>
                 <a asp-action="Book" asp-route-sitterID="@ViewBag.SitterID" class="mt-2 mb-4 text-white mx-auto col-12 col-md-6 btn" style="background:#6366F1; box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);">Book with @ViewBag.FirstName</a>
@@ -208,7 +206,7 @@
             var rating = $(this).data("rating");
             $.ajax({
                 url: '@Url.Action("SitterDetails", "Booking")',
-                type: "POST",
+                type: "GET",
                 data: { sitterID: @ViewBag.SitterID,
                     rating: rating },
                 success: function(result) {

@@ -75,11 +75,10 @@
 
 <div>
     <h4>Service Date: </h4>
-    @Html.DisplayFor(model =>model.StartDate) -  @Html.DisplayFor(model => model.EndDate)
+@*     @Html.DisplayFor(model =>model.StartDate) -  @Html.DisplayFor(model => model.EndDate)
         
-@*    @Html.DisplayFor(model => model.StartDate.ToString("MMMM d, yyyy")) - @Html.DisplayFor(model => model.EndDate.ToString("MMMM d, yyyy"))
-*@
-    @*@Html.DisplayFor(model => model.StartDate).ToString("MMMM d, yyyy") - @Html.DisplayFor(model => model.EndDate.ToString("MMMM d, yyyy"))*@
+   @Html.DisplayFor(model => model.StartDate.ToString("MMMM d, yyyy")) - @Html.DisplayFor(model => model.EndDate.ToString("MMMM d, yyyy"))
+    @Html.DisplayFor(model => model.StartDate).ToString("MMMM d, yyyy") - @Html.DisplayFor(model => model.EndDate.ToString("MMMM d, yyyy"))*@
 
     <p>@Model.StartDate.ToString("MMMM d, yyyy") - @Model.EndDate.ToString("MMMM d, yyyy")</p>
 
