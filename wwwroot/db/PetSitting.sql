@@ -118,7 +118,8 @@ CREATE TABLE Booking (
 	review					VARCHAR(2000),
 	complaint				VARCHAR(2000),
 	sitterID				INT NOT NULL,
-	userID					INT NOT NULL
+	userID					INT NOT NULL,
+	paymentId				VARCHAR(255),
 	FOREIGN KEY(sitterID) REFERENCES Sitter(sitterID),
 	FOREIGN KEY(userID) REFERENCES [User](userID)
 );
@@ -145,12 +146,3 @@ SELECT * FROM SitterAvailability
 SELECT * FROM Booking
 SELECT * FROM BookingPet
 
------------------------------------------------------
-ALTER TABLE Booking
-ADD paymentId VARCHAR(255);
-
--------change image type to VARBINARY-----------------
-ALTER TABLE Pet
-DROP COLUMN petImage
-
-ALTER TABLE Pet ADD petImage VARBINARY(MAX);
