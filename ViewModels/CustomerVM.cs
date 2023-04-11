@@ -5,8 +5,6 @@ namespace PetSitter.ViewModels
 {
     public class CustomerVM
     { 
-        public string? Message { get; set; }
-
         public int CustomerId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -17,6 +15,7 @@ namespace PetSitter.ViewModels
         public string PostalCode { get; set; }
         public string UserType { get; set; }
         public List<BookingPet>? BookedPets { get; set; }
+        public List<Booking>? Booking { get; set; }
 
         public IFormFile? ProfileImage { get; set; }
 

@@ -97,6 +97,11 @@
                 IEnumerable<Pet> pets = ViewData["PetLists"] as IEnumerable<Pet>;
             }
 
+          @*  @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success">@ViewBag.Message</div>
+            }*@
+
         <h4 class="text-decoration-underline mt-4">Your Pets</h4>
             @if (Model.BookedPets != null && Model.BookedPets.Count() > 0)
             {
@@ -124,21 +129,36 @@
                                 <div>
                                     <i class="fa-solid fa-dog"></i>
                                     <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
-                                    @if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
+                                    @if (Model.Booking.Any(bp => bp.EndDate < DateTime.Now))
                                     {
-                                        <i class="fa-solid fa-check" style="color:chartreuse; margin-left:3px;"></i>
+                                        <i class="fa-solid fa-calendar-days" style="color:red;margin-left:3px;"></i>
+                                        <span style="font-size:0.8em;">Booking date is passed!</span>
+                                    }
+                                    else
+                                    {
+                                        @if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
+                                        {
+                                            <i class="fa-solid fa-check" style="color:chartreuse; margin-left:3px;"></i>
+                                        } 
                                     }
                                 </div>
                             }
                             else
                             {
                                 <div>
-                                  
                                     <i class="fa-solid fa-cat"></i>
                                     <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
-                                    @if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
+                                    @if (Model.Booking.Any(bp => bp.EndDate < DateTime.Now))
                                     {
-                                        <i class="fa-solid fa-check" style="color:chartreuse; margin-left:3px;"></i>
+                                          <i class="fa-solid fa-calendar-days" style="color:red;margin-left:3px;"></i>
+                                          <span style="font-size:0.8em;">Booking date is passed!</span>
+                                    }
+                                    else
+                                    {
+                                        @if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
+                                        {
+                                            <i class="fa-solid fa-check" style="color:chartreuse; margin-left:3px;"></i>
+                                        }
                                     }
                                 </div>
                             }
