@@ -10,7 +10,10 @@
     <div class="panel-heading">  
         <h3 class="box-title">  
             <b>Users</b>  
-        </h3>  
+        </h3>
+        <div class="admin link-header">
+            <a asp-controller="UserRole" asp-action="Index">Edit User Roles</a>
+        </div>
     </div>  
     <!-- /.box-header -->  
     <div class="panel-body">  
@@ -32,11 +35,6 @@
                     <td>@user.FirstName</td>
                     <td>@user.LastName</td>
                     <td>@user.Role</td>
-                    @*@if (@user.Role == "Sitter")
-                    {
-                        <td></td>
-                    }*@
-
                 </tr>  
             }  
         </table>  
@@ -46,6 +44,12 @@
         <p class="box-title"><b>Total Users Registered as of @String.Format("{0 : dddd, MMMM d, yyyy}", DateTime.Now)  : </b><span class="label label-primary">@Model.Count()</span></p>  
     </div>  
 </div>  
+<style>
+    .admin {
+        margin: 1rem;
+        margin-left: 0;
+    }
+</style>
 
 @section scripts{
     <script>

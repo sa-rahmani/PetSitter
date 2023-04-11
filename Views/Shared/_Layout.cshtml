@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/availability.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -89,16 +90,9 @@
                             @*Later on this should be only accessed by admin*@
                             @if (User.IsInRole("Admin"))
                             {
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="UserRole" asp-action="Index">User Role</a>
-                                </li>
                                 <li classs="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
                                 </li>
-
                             }
 
                         </ul>

@@ -39,22 +39,21 @@ namespace PetSitter.Controllers
         /// get  bookings  list 
         /// </summary>
         /// <returns></returns>
-        public IActionResult Dashboard(int? page,string status)
+        public IActionResult Dashboard(int? page, string status)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
             SitterRepos sitterRepos = new SitterRepos(_db, _webHostEnvironment);
-            IEnumerable<SitterDashboardVM> bookings= sitterRepos.GetBooking(sitterID); ;
+            IEnumerable<SitterDashboardVM> bookings = sitterRepos.GetBooking(sitterID); ;
             ViewData["UpComing"] = bookings.Select(b => b.upComingNbr).LastOrDefault();
             ViewData["Complete"] = bookings.Select(b => b.completeNbr).LastOrDefault();
             ViewData["Reviews"] = bookings.Select(b => b.reviewsNbr).LastOrDefault();
             if (!string.IsNullOrEmpty(status))
             {
-              
-              
-                    bookings = sitterRepos.GetBookingByStatus(bookings, status);
 
-   
+                bookings = sitterRepos.GetBookingByStatus(bookings, status);
+
+
 
             }
 
@@ -69,7 +68,7 @@ namespace PetSitter.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public  IActionResult Details(int id)
+        public IActionResult Details(int id)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
@@ -133,8 +132,6 @@ namespace PetSitter.Controllers
 
             if (ModelState.IsValid)
             {
-                //sitterProfileVM.SelectedPetTypes = PetTypes?.ToList() ?? new List<string>();
-
 
                 Tuple<int, string> response = sitterRepos.EditSitter(sitterProfileVM);
 
@@ -209,7 +206,7 @@ namespace PetSitter.Controllers
             var events = new List<object>();
 
             var bookedDates = bookingRepo.GetBookedDates(bookings);
-            //Add bookings as events
+            //Add booked dates as events
 
             foreach (var date in bookedDates)
             {
@@ -227,7 +224,7 @@ namespace PetSitter.Controllers
 
             var availableDates = availabilityRepo.GetAvailableDates(availabilities);
             var notBooked = availableDates.Except(bookedDates);
-            // Add bookings as events
+            // Add not booked dates as events
             foreach (var date in notBooked)
             {
                 if (date >= DateTime.Now)
@@ -253,7 +250,7 @@ namespace PetSitter.Controllers
 
 
         //public IActionResult ReviewList(string currentFilter, string searchString, int? page)
-        public IActionResult ReviewList(int? page)
+        public IActionResult ReviewList(string? rating, int? page)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
 
@@ -273,14 +270,48 @@ namespace PetSitter.Controllers
 
             //var rating 
 
+
+            ReviewRepo rRepo = new ReviewRepo(_db);
+            RatingCountVM sitterRating = rRepo.CountRating(sitterID);
+            ViewData["TotalReview"] = sitterRating.Total;
+            if (sitterRating.Total == 0 || sitterRating == null)
+            {
+                ViewData["Star5"] = 0;
+                ViewData["Star4"] = 0;
+                ViewData["Star3"] = 0;
+                ViewData["Star2"] = 0;
+                ViewData["Star1"] = 0;
+            }
+            else
+            {
+                ViewData["Star5"] = sitterRating.Five / sitterRating.Total * 100; ;
+                ViewData["Star4"] = sitterRating.Four / sitterRating.Total * 100;
+                ViewData["Star3"] = sitterRating.Three / sitterRating.Total * 100;
+                ViewData["Star2"] = sitterRating.Two / sitterRating.Total * 100;
+                ViewData["Star1"] = sitterRating.One / sitterRating.Total * 100;
+
+            }
+
+
             SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
 
 
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
             //return View(response);
 
-            int pageSize = 1;
-            return View(PaginatedList<ReviewVM>.Create(response.AsQueryable().AsNoTracking()
+            if (rating != null)
+            {
+                response = response.Where(r => r.rating == Int32.Parse(rating)).ToList();
+                // Do something with the filteredResponse array
+
+            }
+            List<ReviewVM> responsecheck = response;
+
+            ViewData["SitterID"] = sitterID;
+
+            int pageSize = 9;
+
+            return View(PaginatedList<ReviewVM>.Create(responsecheck.AsQueryable().AsNoTracking()
                                                      , page ?? 1, pageSize));
 
         }
@@ -289,7 +320,9 @@ namespace PetSitter.Controllers
 
 
 
- 
+
 
 
 }
+
+

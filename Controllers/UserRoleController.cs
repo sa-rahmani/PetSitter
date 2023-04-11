@@ -44,7 +44,7 @@ namespace PetSitter.Controllers
             ViewBag.UserName = userName;
 
             var firstName = _db.Users.Where(u => u.Email == userName).FirstOrDefault();
-            ViewBag.FirstName = firstName.FirstName;
+            // ViewBag.FirstName = firstName.FirstName;
             return View(roles);
         }
 

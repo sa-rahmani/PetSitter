@@ -1,4 +1,7 @@
-﻿using PetSitter.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using PetSitter.Data;
+using PetSitter.Models;
 using PetSitter.ViewModels;
 
 namespace PetSitter.Repositories
@@ -7,16 +10,21 @@ namespace PetSitter.Repositories
     {
         private readonly PetSitterContext _db;
         private readonly IWebHostEnvironment _webHostEnvironment;
-
-        public AdminRepo(PetSitterContext db, IWebHostEnvironment webHostEnvironment)
+        private readonly ApplicationDbContext _context;
+      
+        public AdminRepo(PetSitterContext db, IWebHostEnvironment webHostEnvironment, ApplicationDbContext context)
         {
             _db = db;
             _webHostEnvironment = webHostEnvironment;
+            _context = context;
+ 
+            
         }
 
         public IQueryable GetAllUsers() 
         {
-          var allUsers = (from user in _db.Users
+
+            var allUsers = (from user in _db.Users
                             select new AdminDashboardVM
                             {
                                 UserID = user.UserId,
@@ -24,7 +32,7 @@ namespace PetSitter.Repositories
                                 FirstName = user.FirstName,
                                 LastName = user.LastName,
                                 Role = user.UserType
-                            });
+                            }) ;
 
             return allUsers;
 

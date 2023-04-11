@@ -130,6 +130,16 @@
             map: map,
             title: 'My Address'
         });
+        var customerInfoWindow = new google.maps.InfoWindow({
+            content: '<h6 style="font-size: 14px; margin: 0;">Pet Parent Address</h6>'
+        });
+
+        var sitterInfoWindow = new google.maps.InfoWindow({
+            content: '<h6 style="font-size: 14px; margin: 0;">My Address</h6>'
+        });
+
+        customerInfoWindow.open(map, customerMarker);
+        sitterInfoWindow.open(map, sitterMarker);
    
     }
 </script>

@@ -17,8 +17,8 @@
   
     <div class="mt-3 mb-3 back-to-profile font-monospace lead" style="font-size:large;">
         <a asp-action="Dashboard" class="back-link">
-            <span class="arrow"></span>
-            <span class="text text-lg-start mt-2">
+                <span class="arrow" style="color:#6366F1;"></span>
+                <span class="text text-lg-start mt-1">
                 Back to Full List
             </span>
         </a>
@@ -82,27 +82,29 @@
     <thead>
         <tr>
             <th>
-                bookingId
+                booking ID
             </th>
             <th>
-                petParent
+                Pet Parent
             </th>
             <th>
-                petType
+                Pet Type
             </th>
             <th>
-                status
+                Status
             </th>
             <th>
-                startDate
+                Start Date
             </th>
             <th>
-                endDate
+                End Date
             </th>
 
 
 
-            <th></th>
+            <th>
+                Details
+            </th>
 
         </tr>
     </thead>
@@ -123,13 +125,14 @@
                 </td>
                 <td>
                     @if (item.status == "Complete")
-                    {<div class="alert alert-success">
+                    {<div class="alert alert-success mx-auto">
 
                             @Html.DisplayFor(modelItem => item.status)
                         </div>
                     }
                     @if (item.status == "UpComing")
-                    {<div class="alert alert-danger">
+                            {
+                                <div class="alert alert-danger mx-auto">
 
                             @Html.DisplayFor(modelItem => item.status)
                         </div>
@@ -144,7 +147,11 @@
 
 
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.bookingId">Details</a>
+                    <a asp-action="Details" asp-route-id="@item.bookingId">
+                                <span class="material-symbols-outlined fa-4x">
+                                    more_horiz
+                                </span>
+                    </a>
                 </td>
             </tr>
         }

@@ -24,7 +24,7 @@
                     account_box
                 </span>
             </a>
-            to edit your Profile!
+            to edit your Profile!!
         </h3>
 
     </div>
@@ -39,16 +39,23 @@
 
             <dd class="col-sm-10">
 
-                @if (user.ProfileImage == null)
-                {
-                    <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
-                }
-                else
-                {
-                    <div class="d-flex align-items-center w-100">
+
+                <div class="d-flex align-items-center w-100">
+                                                     <div class="d-flex flex-column">
+
+
+
                         <img style="max-width: 400px;" src="data:image/png;base64,
                             @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
-                        <div>
+                    <div class="rating">
+                        <span class="@IsStarSelected(1, @Model.AvgRating)">&#9733;</span>
+                        <span class="@IsStarSelected(2, @Model.AvgRating)">&#9733;</span>
+                        <span class="@IsStarSelected(3, @Model.AvgRating)">&#9733;</span>
+                        <span class="@IsStarSelected(4, @Model.AvgRating)">&#9733;</span>
+                        <span class="@IsStarSelected(5, @Model.AvgRating)">&#9733;</span>
+                    </div></div>
+
+                    <div class="p-4">
                             @if (Model.ProfileBio != null)
                             {
                                 <h3 class="text-decoration-underline">PROFILE BIO</h3>
@@ -71,7 +78,7 @@
 
                         </div>
                     </div>
-                }
+                
 
 
             </dd>
@@ -79,7 +86,7 @@
 
 
 
-            <h3>CONTACT DETAILS</h3>
+            <h3 id="1">CONTACT DETAILS</h3>
             <div class="row">
                 <div class="col-sm-6">
                     <dt class="mb-2">First Name</dt>
@@ -100,11 +107,10 @@
                     <dd>@Html.DisplayFor(model => model.PhoneNumber)</dd>
                 </div>
             </div>
-            <hr class="mt-2" />
 
             <div class="row">
                 <div class="col-sm-12">
-                    <h3>POSTAL ADDRESS</h3>
+                    <h3 id="2">POSTAL ADDRESS</h3>
                 </div>
             </div>
             <div class="row">
@@ -126,9 +132,8 @@
 
         </dl>
 
-        <hr class="mt-2" />
 
-        <h3>Pet Preferences</h3>
+        <h3 id="3">Pet Preferences</h3>
         <dd class="col-sm-10">
 
 
@@ -148,7 +153,7 @@
 
                 <div>
 
-                    <h6> What you want clients to pay per service:</h6>
+                    <h6> What you want clients to pay per service?</h6>
                     <p>@String.Format("{0:C}", Model.RatePerPetPerDay)</p>
                 </div>
             </div>
@@ -162,117 +167,16 @@
 
     </div>
 </div>
-<style>
-   
-
-    /* Header */
-    .profile .header h3 {
-        font-size: 24px;
-        margin: 0;
-        padding: 20px;
-        text-align: center;
+@functions {
+    public string IsStarSelected(int star, double? rating)
+    {
+        if (star <= rating)
+        {
+            return "highlight";
+        }
+        else
+        {
+            return "no-highlight";
+        }
     }
-
-    .profile .header a {
-        color: #2d86ff;
-        text-decoration: none;
-        margin-left: 5px;
-    }
-
-    /* Body */
-    .profile .body {
-        display: flex;
-        padding: 20px;
-        flex-direction: column;
-        align-items: center;
-    }
-
-        .profile .body .row {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-        }
-
-        .profile .body .pets {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-        }
-
-        .profile .body .row .image {
-            width: 30%;
-        }
-
-        .profile .body h4 {
-            font-size: 20px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-
-        .profile .body hr {
-            border: none;
-            border-top: 2px solid #ccc;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-
-        .profile .body img {
-            display: block;
-            margin: 0 auto;
-            width: 200px;
-            border: 2px solid black;
-            borderRadius: 50%;
-            margin: 10px;
-            padding: 5px;
-        }
-
-        .profile .body p {
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        .profile .body input {
-            border: none;
-            border-bottom: 1px solid #ccc;
-            margin-bottom: 10px;
-            padding: 5px;
-            width: auto;
-        }
-
-        .profile .body label {
-            display: block;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .profile .body .form-group {
-            margin-bottom: 20px;
-            width: max-content;
-        }
-
-        .profile .body .text-danger {
-            color: #f00;
-        }
-
-    .material-symbols-outlined {
-        font-family: "Material Icons Outlined";
-        font-weight: normal;
-        font-style: normal;
-        font-size: 24px;
-        line-height: 1;
-        letter-spacing: normal;
-        text-transform: none;
-        display: inline-block;
-        white-space: nowrap;
-        word-wrap: normal;
-        direction: ltr;
-        -webkit-font-smoothing: antialiased;
-        text-rendering: optimizeLegibility;
-        -moz-osx-font-smoothing: grayscale;
-        font-feature-settings: "liga";
-        -webkit-font-feature-settings: "liga";
-        -webkit-font-smoothing: subpixel-antialiased;
-    }
-</style>
-
+}
