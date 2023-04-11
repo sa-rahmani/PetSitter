@@ -13,7 +13,7 @@ namespace PetSitter.Controllers
     // roles.
 
     //This should be uncommented later on, for now keep as it is in order to create a admin account in deplevement mode
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UserRoleController : Controller
     {
         private ApplicationDbContext _context;
