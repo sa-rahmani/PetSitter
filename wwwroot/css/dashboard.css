@@ -1,6 +1,9 @@
 ﻿.dashboard {
     display: flex;
     flex-direction: column;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 5px #6366F1;
+    padding: 20px;
 }
     .dashboard  p {
         text-align: center;
@@ -124,9 +127,9 @@
     color: #4a7863;
 }
 
-.dashboard-count dt:nth-of-type(3) span, .dashboard-count dt:nth-of-type(3) h2 {
-    color: #084298;
-}
+    .dashboard-count dt:nth-of-type(3) span, .dashboard-count dt:nth-of-type(3) h2 {
+        color: #6366F1;
+    }
 
 /* Style the table */
 .dashboard-table {
