@@ -310,7 +310,11 @@ img{
 
 @media only screen and (max-width:770px) {
     .editprofile-container .pet-lists {
-        display: none;
+        margin-top: 1em;
+        padding:0;
+    }
+    .editprofile-container .pet-lists table{
+        width: 93%;
     }
 }
 

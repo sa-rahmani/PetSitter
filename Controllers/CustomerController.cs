@@ -43,6 +43,7 @@ namespace PetSitter.Controllers
             ViewData["PetLists"] = petRepo.GetPetLists(customerID);
             ViewData["UserData"] = customerRepo.GetUserData(customerID);
 
+
             return View(vm);
         }
 
@@ -179,7 +180,6 @@ namespace PetSitter.Controllers
                 Tuple<string, int> deletePetRecord = petRepo.DeletePetRecord(id);
 
                 string deleteMessage = deletePetRecord.Item1;
-
 
                 return RedirectToAction("GetProfile", "Customer",
                 new { message = deleteMessage });

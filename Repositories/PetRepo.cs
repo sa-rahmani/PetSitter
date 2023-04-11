@@ -213,7 +213,7 @@ namespace PetSitter.Repositories
                 _db.Remove(pet);
                 _db.SaveChanges();
 
-                deleteMessage = $"Success deleting {pet.Name} pet account, " + $"Your deleted pet number is: {pet.PetId}";
+                deleteMessage = $"Success deleting {pet.Name} on your pet lists";
             }
             
             catch (Exception ex)
