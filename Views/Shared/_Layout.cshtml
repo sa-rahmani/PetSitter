@@ -59,7 +59,7 @@
                            
                             @*--------------------------------------------------------------------------------------------------------*@
 
-                            @if (User.IsInRole("Customer"))
+                            @if (User.IsInRole("Customer") || User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="FindASitter">Find A Sitter</a>
@@ -75,7 +75,7 @@
                                 }
                             }
 
-                            @if (User.IsInRole("Sitter"))
+                            @if (User.IsInRole("Sitter") || User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Dashboard">Dashboard</a>
