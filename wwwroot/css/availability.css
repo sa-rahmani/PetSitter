@@ -4,6 +4,9 @@
     display: flex;
     justify-content: space-around;
     margin: 40px auto;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 5px #ccc;
+    padding: 20px;
 }
     .availability form {
         width: min-content;
