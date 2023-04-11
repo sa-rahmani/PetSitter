@@ -312,7 +312,8 @@ namespace PetSitter.Controllers
             List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
             //return View(response);
 
-            if (rating != null)
+            //if (rating != null)
+            if (!string.IsNullOrEmpty(rating) && rating != "-1")
             {
                 response = response.Where(r => r.rating == Int32.Parse(rating)).ToList();
                 // Do something with the filteredResponse array

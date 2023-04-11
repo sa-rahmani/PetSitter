@@ -47,7 +47,7 @@
                 @ViewBag.City
             </div>
       
-        <div class="rating my-2">
+        <div class="starDetail rating my-2" data-rating="-1">
             <span class="@IsStarSelected(1, @ViewBag.AvgRating)" style="display: inline-block;">&#9733;</span>
             <span class="@IsStarSelected(2, @ViewBag.AvgRating)" style="display: inline-block;">&#9733;</span>
             <span class="@IsStarSelected(3, @ViewBag.AvgRating)" style="display: inline-block;">&#9733;</span>
@@ -69,35 +69,35 @@
        
         <div>
             <p>OverALL: @ViewBag.AvgRating OUT OF 5</p>
-            <div class="starDetail">
+            <div class="starDetail" data-rating="5">
                 <span>5 Star</span>
                 <span class="percentage-bar">
                     <span class="percentage-bar-inner" style="width: @ViewBag.Star5%" data-rating="5"></span>
                 </span>
                 <span>@ViewBag.Star5%</span>
             </div>
-                <div class="starDetail">
+                <div class="starDetail" data-rating="4">
                     <span>4 Star</span>
                     <span class="percentage-bar">
                         <span class="percentage-bar-inner" style="width: @ViewBag.Star4%" data-rating="4"></span>
                     </span>
                     <span>@ViewBag.Star4%</span>
                 </div>
-                <div class="starDetail">
+                <div class="starDetail" data-rating="3">
                     <span>3 Star</span>
                     <span class="percentage-bar">
                         <span class="percentage-bar-inner" style="width: @ViewBag.Star3%" data-rating="3"></span>
                     </span>
                     <span>@ViewBag.Star3%</span>
                 </div>
-                <div class="starDetail">
+                <div class="starDetail" data-rating="2">
                     <span>2 Star</span>
                     <span class="percentage-bar">
                         <span class="percentage-bar-inner" style="width: @ViewBag.Star2%" data-rating="2"></span>
                     </span>
                     <span>@ViewBag.Star2%</span>
                 </div>
-                <div class="starDetail">
+                <div class="starDetail" data-rating="1">
                     <span>1 Star</span>
                     <span class="percentage-bar">
                         <span class="percentage-bar-inner" style="width: @ViewBag.Star1%" data-rating="1"></span>
@@ -198,7 +198,7 @@
   }
 </style>
 
-@section Scripts{
+@*@section Scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
@@ -219,6 +219,21 @@
         });
     });
 </script>
+}*@
+
+
+@section Scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(".starDetail").on("click", function() {
+                var rating = $(this).data("rating");
+                var sitterID = '@ViewBag.SitterID';
+                var url = '/Booking/SitterDetails?sitterID=' + sitterID + '&rating=' + rating;
+                window.location.href = url;
+            });
+        });
+    </script>
 }
 
 @functions {
