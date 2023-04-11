@@ -97,6 +97,11 @@
                 IEnumerable<Pet> pets = ViewData["PetLists"] as IEnumerable<Pet>;
             }
 
+          @*  @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success">@ViewBag.Message</div>
+            }*@
+
         <h4 class="text-decoration-underline mt-4">Your Pets</h4>
             @if (Model.BookedPets != null && Model.BookedPets.Count() > 0)
             {

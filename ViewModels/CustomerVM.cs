@@ -5,8 +5,6 @@ namespace PetSitter.ViewModels
 {
     public class CustomerVM
     { 
-        public string? Message { get; set; }
-
         public int CustomerId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
