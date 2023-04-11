@@ -149,20 +149,17 @@
         padding: 8px;
     }
         .dashboard-table td a {
-            background-color: #dce6f496;
-            color: #6366F1;
-            border: 1px solid #ccc;
-            font-weight: bold;
+/*            background-color: #dce6f496;
+*/            color: #6366F1;
+/*            border: 1px solid #ccc;
+*/            font-weight: bold;
             width: 100%;
             margin: 10px;
         }
 
-
-        /* Style the booking ID link */
-        .dashboard-table td a {
-            color: #007bff;
-            text-decoration: none;
-        }
+.alert-danger, alert-success {
+    margin: 0 auto;
+}
 /*
     .status {
         position: relative;

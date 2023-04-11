@@ -1,6 +1,7 @@
 ﻿using PetSitter.Data;
 using PetSitter.Models;
 using PetSitter.Repositories;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PetSitter.ViewModels
@@ -8,8 +9,11 @@ namespace PetSitter.ViewModels
     public class SitterProfileVM
     {
         public int UserId { get; set; }
+
         public string? FirstName { get; set; }
+
         public string? LastName { get; set; }
+
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? StreetAddress { get; set; }
@@ -24,5 +28,7 @@ namespace PetSitter.ViewModels
         public List<string>? PetTypesAvailable { get; set; }
         public List<string>? SelectedPetTypes { get; set; }
         public string? Message { get; set; }
+        public double? AvgRating { get; set; }
+
     }
 }
