@@ -39,7 +39,7 @@ namespace PetSitter.Controllers
         // Show all roles for a specific user.
         public async Task<IActionResult> Detail(string userName)
         {
-            UserRoleRepo userRoleRepo = new UserRoleRepo(_serviceProvider);
+            UserRoleRepo userRoleRepo = new UserRoleRepo(_serviceProvider, _db);
             var roles = await userRoleRepo.GetUserRoles(userName);
             ViewBag.UserName = userName;
 
@@ -101,7 +101,7 @@ namespace PetSitter.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(UserRoleVM userRoleVM)
         {
-            UserRoleRepo userRoleRepo = new UserRoleRepo(_serviceProvider);
+            UserRoleRepo userRoleRepo = new UserRoleRepo(_serviceProvider, _db);
 
             if (ModelState.IsValid)
             {
