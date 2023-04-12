@@ -1,69 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-
-@*
-@model IEnumerable<PetSitter.ViewModels.ReviewVM>
-
-@{
-    ViewData["Title"] = "ReviewList";
-}
-
-<h1>Review</h1>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.petParent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.startDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.endDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.rating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.review)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.petParent)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.startDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.endDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.rating)
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.review)
-                </td>
-    
-            </tr>
-        }
-    </tbody>
-</table>
-*@
-
-@*@model IEnumerable<PetSitter.ViewModels.ReviewVM>
-*@
-@model PaginatedList<PetSitter.ViewModels.ReviewVM>
+﻿@model PaginatedList<PetSitter.ViewModels.ReviewVM>
 
 
 @{
@@ -144,9 +79,6 @@
                                             </div>
                                     </div>
 
-
-
-
                                     <div>
                                         <span class="price">$@ViewBag.Rate</span> per day
                                     </div>
@@ -156,8 +88,6 @@
                                     </div>
                     
                         </div>
-
-
 
                         <div class="d-md-none">
                                     <div>
@@ -199,20 +129,14 @@
                                             </div>
                                     </div>
 
-
-
-
                                     <div>
                                         <span class="price">$@ViewBag.Rate</span> per day
                                     </div>
   
                                     <div>
                                         @ViewBag.ProfileBio
-                                    </div>
-                    
+                                 </div>                  
                         </div>
-
-
 
                   </div>
 
@@ -305,29 +229,6 @@
 
 </style>
 
-@*@section Scripts{
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $(".percentage-bar-inner").on("click", function() {
-            var rating = $(this).data("rating");
-            $.ajax({
-                url: '@Url.Action("ReviewList", "Sitter")',
-                type: "GET",
-                data: { sitterID: @ViewBag.SitterID,
-                    rating: rating },
-                success: function(result) {
-                   $("#reviews-list").html(result); // update the reviews list with the new data
-                },
-                error: function(error) {
-                   ('There was an error filtering.');
-                }
-            });
-        });
-    });
-</script>
-}*@
-
 @section Scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -355,29 +256,6 @@
         }
     }
 }
-
-
-@*<style>
-    .rating {
-        unicode-bidi: bidi-override;
-        direction: rtl;
-        text-align: center;
-        position: relative;
-    }
-
-        .rating .star {
-            display: inline-block;
-            font-size: 1.5em;
-            color: #ccc;
-            transition: color 200ms ease-in-out;
-            cursor: pointer;
-        }
-
-            .rating .star.checked,
-            .rating .star:hover {
-                color: yellow;
-            }
-</style>*@
 
 
 

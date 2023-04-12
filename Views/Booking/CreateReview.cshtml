@@ -1,53 +1,4 @@
-﻿@*@model PetSitter.ViewModels.CreateReviewVM
-
-@{
-    ViewData["Title"] = "CreateReview";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-
-<h1>CreateReview</h1>
-
-<h2>@ViewBag.SitterName</h2>
-
-
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="CreateReview" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="SitterId" />
-            <input type="hidden" asp-for="BookingId" />
-  
-              <div class="form-group">
-                <label asp-for="rating" class="control-label"></label>
-                <input asp-for="rating" class="form-control" />
-                <span asp-validation-for="rating" class="text-danger"></span>
-            </div>
-
-
-            <div class="form-group">
-                <label asp-for="review" class="control-label"></label>
-                <textarea asp-for="review" class="form-control"></textarea>
-                <span asp-validation-for="review" class="text-danger"></span>
-            </div>
-
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-
-
-<div class="review-form">
-
-</div>
-
-<div class="comment-form">
-
-</div>*@
-@model PetSitter.ViewModels.CreateReviewVM
+﻿@model PetSitter.ViewModels.CreateReviewVM
 
 @{
     ViewData["Title"] = "CreateReview";
@@ -86,15 +37,10 @@
 
 <div>
     <h4>Service Date: </h4>
-@*     @Html.DisplayFor(model =>model.StartDate) -  @Html.DisplayFor(model => model.EndDate)
-        
-   @Html.DisplayFor(model => model.StartDate.ToString("MMMM d, yyyy")) - @Html.DisplayFor(model => model.EndDate.ToString("MMMM d, yyyy"))
-    @Html.DisplayFor(model => model.StartDate).ToString("MMMM d, yyyy") - @Html.DisplayFor(model => model.EndDate.ToString("MMMM d, yyyy"))*@
 
     <p>@Model.StartDate.ToString("MMMM d, yyyy") - @Model.EndDate.ToString("MMMM d, yyyy")</p>
 
-@*    @Html.DisplayFor(model => model.StartDate.ToString(), "{MMMM d, yyyy}") - @Html.DisplayFor(model => model.EndDate.ToString(), "{MMMM d, yyyy}")
-*@
+
 
 </div>
 
@@ -138,8 +84,7 @@
     </div>
 
 </div>
-@*<div class="review-form"></div>
-<div class="comment>*@
+
 
 <style>
     /* Set the size and color of the star */
@@ -186,14 +131,7 @@
             color: #c59b08;
         }
 
-    /* Form styling */
-/*    form {
-        background-color: #f5f5f5;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-*/
+
     label {
         display: block;
         font-weight: bold;
