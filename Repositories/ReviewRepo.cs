@@ -32,8 +32,9 @@ namespace PetSitter.Repositories
                 _db.SaveChanges();
 
 
-                message = $"Success adding your new Review. " +
-                               $"Your new Review number is: {createReviewVM.BookingId}";
+                message = $"Success adding your new Review. ";
+                    //+
+                    //           $"Your new Review number is: {createReviewVM.BookingId}";
                 success = true;
 
             }
