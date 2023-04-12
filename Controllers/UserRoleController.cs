@@ -13,7 +13,7 @@ namespace PetSitter.Controllers
     // roles.
 
     //This should be uncommented later on, for now keep as it is in order to create a admin account in deplevement mode
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UserRoleController : Controller
     {
         private ApplicationDbContext _context;
@@ -43,8 +43,9 @@ namespace PetSitter.Controllers
             var roles = await userRoleRepo.GetUserRoles(userName);
             ViewBag.UserName = userName;
 
-            var firstName = _db.Users.Where(u => u.Email == userName).FirstOrDefault();
-            // ViewBag.FirstName = firstName.FirstName;
+            var findUser = _db.Users.Where(u => u.Email == userName).FirstOrDefault();
+            var userFirstName = findUser?.FirstName;
+            ViewBag.FirstName = userFirstName;
             return View(roles);
         }
 
