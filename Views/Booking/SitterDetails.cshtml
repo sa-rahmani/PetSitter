@@ -46,14 +46,6 @@
         }
       
 
-      @*      @if (user.ProfileImage == null)
-            {
-                <p>No Profile Image Given, go edit profile link add your new Profile Image!</p>
-            }
-            else
-            {
-                <img style="width: 50%; height: 50%; border: 2px solid black; margin: 10px; padding: 5px;" src="data:image/png;base64, @Convert.ToBase64String(user.ProfileImage)" alt="User Profile Image" />
-            }*@
                <div class="details">
             <h2 class="mt-2">@ViewBag.FirstName</h2>
             <div class="text-uppercase" style="font-weight:bold;">
@@ -210,29 +202,6 @@
     .star5{
   }
 </style>
-
-@*@section Scripts{
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $(".percentage-bar-inner").on("click", function() {
-            var rating = $(this).data("rating");
-            $.ajax({
-                url: '@Url.Action("SitterDetails", "Booking")',
-                type: "GET",
-                data: { sitterID: @ViewBag.SitterID,
-                    rating: rating },
-                success: function(result) {
-                    console.Log(result)
-                },
-                error: function(error) {
-                   ('There was an error filtering.');
-                }
-            });
-        });
-    });
-</script>
-}*@
 
 
 @section Scripts{

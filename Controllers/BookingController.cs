@@ -294,56 +294,13 @@ namespace PetSitter.Controllers
         }
 
 
-
-        //    public IActionResult ReviewList(int sitterID)
-        //    {
-
-
-        //        //var rating 
-
-        //        SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-        //        List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-        //        return View(response);
-        //    }
-
-        //}
-
-
-
-
-
-
-
-        //public IActionResult SitterDetails(int sitterID)
-        //{
-        //    // Get the SitterVM.
-        //    CsFacingSitterRepo sitterRepo = new CsFacingSitterRepo(_db);
-        //    SitterVM sitter = sitterRepo.GetSitterVM(sitterID);
-
-
-        //    //SitterRepos sitterReviews = new SitterRepos(_db, _webHostEnvironment);
-
-        //    //List<ReviewVM> response = sitterReviews.GetReviews(sitterID);
-        //    //return View(response);
-
-
-        //    return View(sitter);
-
-        //}
-
         public IActionResult SitterDetails(int sitterID, string message, string? rating, int? page)
         {
 
             // Get the SitterVM.
             CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
             SitterVM sitterRes = cfsRepo.GetSitterVM(sitterID);
-            //ViewData["Sitter"] = sitterRes;
-            if (!string.IsNullOrEmpty(rating) && rating != "-1")
-            {
-                int r = Int32.Parse(rating);
-            }
-            //CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+            //ViewData["Sitter"] = sitterRes;  
 
             if (message == null)
             {
@@ -463,9 +420,7 @@ namespace PetSitter.Controllers
                 Tuple<int, string, bool> response =
                     reviewRepo.UpdateReview(createReviewVM);
 
-
                 //return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
-
 
                 if (response.Item3) // Check if the operation was successful
                 {
@@ -476,7 +431,6 @@ namespace PetSitter.Controllers
                     ModelState.AddModelError(string.Empty, "Failed to create review");
                     return View("CreateReview", createReviewVM);
                 }
-
 
             } else // If the booking is for a different user, redirect them to the no permission page.
             {

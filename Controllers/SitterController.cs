@@ -260,9 +260,6 @@ namespace PetSitter.Controllers
         }
 
 
-
-
-        //public IActionResult ReviewList(string currentFilter, string searchString, int? page)
         public IActionResult ReviewList(string? rating, int? page)
         {
             int sitterID = Convert.ToInt32(HttpContext.Session.GetString("SitterID"));
