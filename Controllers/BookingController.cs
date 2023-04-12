@@ -332,7 +332,7 @@ namespace PetSitter.Controllers
 
         //}
 
-        public IActionResult SitterDetails(int sitterID, string? rating, int? page)
+        public IActionResult SitterDetails(int sitterID, string message, string? rating, int? page)
         {
 
             // Get the SitterVM.
@@ -344,6 +344,14 @@ namespace PetSitter.Controllers
                 int r = Int32.Parse(rating);
             }
             //CsFacingSitterRepo cfsRepo = new CsFacingSitterRepo(_db);
+
+            if (message == null)
+            {
+                message = "";
+            }
+            ViewData["Confirm"] = message;
+
+
 
             User user = cfsRepo.getUserById(sitterID);
             ViewData["SitterProfileImg"] = user;
@@ -452,10 +460,24 @@ namespace PetSitter.Controllers
             {
                 ReviewRepo reviewRepo = new ReviewRepo(_db);
 
-                Tuple<int, string> response =
+                Tuple<int, string, bool> response =
                     reviewRepo.UpdateReview(createReviewVM);
 
-                return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
+
+                //return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId });
+
+
+                if (response.Item3) // Check if the operation was successful
+                {
+                    return RedirectToAction("SitterDetails", "Booking", new { createReviewVM.SitterId, message = response.Item2});
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Failed to create review");
+                    return View("CreateReview", createReviewVM);
+                }
+
+
             } else // If the booking is for a different user, redirect them to the no permission page.
             {
                 return RedirectToAction("NoPermission", "Home");
