@@ -21,6 +21,19 @@
             <span class="text mt-2" style="font-weight: normal; font-size: 1em;">Back to Find a Sitter</span>
         </a>
     </div>
+    @{
+
+     @if (ViewBag.Confirm != "")
+    {
+        <div class="alert alert-success text-center">@ViewBag.Confirm </div>
+    }
+    else
+    {
+        <div class="text-center">@ViewBag.Confirm </div>
+    }
+}
+
+
     <div class="profile text-center">
         @if (profileImageBytes != null)
         {

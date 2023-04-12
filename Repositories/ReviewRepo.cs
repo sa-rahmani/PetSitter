@@ -17,9 +17,10 @@ namespace PetSitter.Repositories
         }
 
 
-        public Tuple<int, string> UpdateReview(CreateReviewVM createReviewVM)
+        public Tuple<int, string, bool> UpdateReview(CreateReviewVM createReviewVM)
         {
             string message;
+            bool success;
 
             try
             {
@@ -33,14 +34,17 @@ namespace PetSitter.Repositories
 
                 message = $"Success adding your new Review. " +
                                $"Your new Review number is: {createReviewVM.BookingId}";
+                success = true;
+
             }
             catch (Exception e)
             {
                 message = $"Error creating your new Review, error: {e.Message}";
+                success = false;
 
             }
 
-            return Tuple.Create(createReviewVM.BookingId, message);
+            return Tuple.Create(createReviewVM.BookingId, message, success);
         }
 
 
