@@ -42,7 +42,15 @@ namespace PetSitter.Controllers
 
             ViewData["PetLists"] = petRepo.GetPetLists(customerID);
             ViewData["UserData"] = customerRepo.GetUserData(customerID);
-
+            
+            var defaultImageFilePath = Path.Combine(webHostEnvironment.WebRootPath, "images/default-image.jpg");
+            byte[] defaultImageBytes;
+            using (var fileStream = new FileStream(defaultImageFilePath, FileMode.Open))
+            {
+                using var binaryReader = new BinaryReader(fileStream);
+                defaultImageBytes = binaryReader.ReadBytes((int)fileStream.Length);
+            }
+            ViewData["ProfileImg"] = defaultImageBytes;
 
             return View(vm);
         }

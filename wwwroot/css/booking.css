@@ -71,10 +71,26 @@
 }
 
 /* Booking + Editing Forms */
+.book-class {
+    display: flex;
+    justify-content: space-around;
+    margin: 40px auto;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 5px #ccc;
+    padding: 20px;
+}
+
+@media only screen and (max-width: 997px) {
+    .book-class {
+        flex-direction: column;
+        align-items: center;
+    }
+}
 
 .booking-form {
     max-width: 400px;
-    margin: 0 auto;
+/*    margin: 0 auto;
+*/
 }
 
 /* Sitter Details Page */

@@ -24,9 +24,14 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">            
-                   <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img class="petsitterLogo" src="~/images/logo.jpg" alt="petsitterLogo"></a>
-                
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img class="petsitterLogo" src="~/images/Pet Sitter logo cropped.png" alt="petsitterLogo">
+                    <h4 class="logo"><strong>Pet S</strong>itter </h4>
+
+                </a>
+
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -38,45 +43,37 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
-                            @if (!User.IsInRole("Sitter"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="FindASitter">Find A Sitter</a>
-                                </li>
-                            }
+                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="FindASitter">Find A Sitter</a>
+                            </li>
                         </ul>
                     }
                     else
                     {
                         <ul class="navbar-nav flex-grow-1">
-
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
-                          
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="FindASitter">Find A Sitter</a>
+                            </li>
 
                             @*This two nav item should be accessed only by admin*@
                             @*I didn't set this two nav as same as below in order to allow everyone create a admin account in development mode*@
                            
                             @*--------------------------------------------------------------------------------------------------------*@
 
-                            @if (User.IsInRole("Customer") || User.IsInRole("Admin"))
+                            @if (User.IsInRole("Customer"))
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="FindASitter">Find A Sitter</a>
-                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Booking" asp-action="ViewMyBookings">View My Bookings</a>
                                 </li>
-                                @if (!User.IsInRole("Admin"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="GetProfile">My Profile</a>
-                                    </li>
-                                }
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="GetProfile">My Profile</a>
+                                </li>
                             }
 
-                            @if (User.IsInRole("Sitter") || User.IsInRole("Admin"))
+                            @if (User.IsInRole("Sitter"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Dashboard">Dashboard</a>
@@ -84,12 +81,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Availability">Availability</a>
                                 </li>
-                                @if (!User.IsInRole("Admin"))
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Profile">My Profile</a>
-                                    </li>
-                                }                              
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="Profile">My Profile</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Sitter" asp-action="ReviewList">Review</a>
                                 </li>
@@ -98,9 +92,16 @@
                             @*Later on this should be only accessed by admin*@
                             @if (User.IsInRole("Admin"))
                             {
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
+                                </li>
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="UserRole" asp-action="Index">User Role</a>
+                                </li>
                                 <li classs="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="AdminDashboard">Admin Dashboard</a>
                                 </li>
+
                             }
 
                         </ul>
@@ -116,7 +117,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-center">
         <div class="container">
             &copy; 2023 - PetSitter - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
