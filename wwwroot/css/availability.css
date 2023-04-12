@@ -59,7 +59,7 @@ border: 1px solid #ccc;
             color: #6366F1;
         }
     /* Style for the FullCalendar */
-    .availability #calendar {
+     #calendar {
         max-width: 600px;
     }
 

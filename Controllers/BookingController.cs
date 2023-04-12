@@ -183,6 +183,43 @@ namespace PetSitter.Controllers
             // Show booking page again.
             return View(bookingForm);
         }
+        //get available dates of sitter as events for booking form 
+        public JsonResult GetEvents(int sitterID)
+        {
+
+            BookingRepo bookingRepo = new BookingRepo(_db, _emailService);
+            AvailabilityRepo availabilityRepo = new AvailabilityRepo(_db);
+
+            var bookings = bookingRepo.GetBookingsBySitter(sitterID);
+            var availabilities = availabilityRepo.GetAvailabilities(sitterID);
+
+            var events = new List<object>();
+
+            var bookedDates = bookingRepo.GetBookedDates(bookings);
+
+            var availableDates = availabilityRepo.GetAvailableDates(availabilities);
+            var notBooked = availableDates.Except(bookedDates);
+            // Add not booked dates as events
+            foreach (var date in notBooked)
+            {
+                if (date >= DateTime.Now)
+                {
+                    events.Add(new
+                    {
+                        title = "Available",
+                        start = date.ToString("yyyy-MM-dd"),
+                        display = "background",
+
+                        color = "green"
+                    });
+                }
+            }
+
+
+            return Json(events);
+
+
+        }
 
         [Authorize]
         public IActionResult ConfirmBooking(int bookingId)
