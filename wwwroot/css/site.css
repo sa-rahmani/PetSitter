@@ -119,7 +119,6 @@ legend {
     font-weight: 700;
 }
 
-
     legend::before {
         content: "1";
         display: inline-block;
