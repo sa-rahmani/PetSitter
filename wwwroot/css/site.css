@@ -42,7 +42,12 @@ img{
     width: 980px;
     margin: auto;
 }*/
-
+.logo {
+    color: #3d342e;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: normal;
+    margin: 0 40px 0 auto;
+}
 .wrapper {
     max-width: 1200px;
     margin: 0 auto;
