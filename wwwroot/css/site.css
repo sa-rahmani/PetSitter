@@ -46,7 +46,7 @@ img{
     color: #3d342e;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-weight: normal;
-    margin: 0 40px 0 auto;
+    margin: 0 0 0 auto;
 }
 .wrapper {
     max-width: 1200px;
@@ -59,11 +59,11 @@ img{
 
 
 .storeTitle {
-
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-shrink:0;
+    margin-top:2em;
 }
 
 .webBriefDescription {
@@ -119,6 +119,14 @@ li {
     text-decoration: none;
 }
 
+@media (max-width: 600px) {
+    .wayOfHowItWorks li {
+        width: auto !important;
+        text-decoration: none;
+    }
+}
+
+
 legend {
     font-size: 1.2rem;
     font-weight: 700;
@@ -147,10 +155,12 @@ li:nth-of-type(2) legend::before {
 li:nth-of-type(3) legend::before {
     content: "3";
 }
-.howItWorks p{
+
+.howItWorks p {
     margin-left: 20px;
 }
-.getStartedbtn{
+
+.getStartedbtn {
     margin-bottom: 20px;
 }
 
@@ -161,22 +171,25 @@ li:nth-of-type(3) legend::before {
 
 .hireAProfessionalCleaner {
     /*    display: flex;
-    justify-content: space-between;
-    gap: 20px;*/
+justify-content: space-between;
+gap: 20px;*/
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 20px 80px;
     justify-items: center;
     place-items: center;
 }
-.item-a{
-    grid-column:1/2;
-    grid-row:1/2
+
+.item-a {
+    grid-column: 1/2;
+    grid-row: 1/2
 }
+
 .item-b {
     grid-column: 1/2;
     grid-row: 2/3;
 }
+
 .item-c {
     grid-column: 1/2;
     grid-row: 3/4;
@@ -237,6 +250,7 @@ li:nth-of-type(3) legend::before {
         margin-left: 100px;
         margin-right: 100px;
     }
+
         .hireAProfessionalCleaner img {
             object-fit: cover;
             align-self: center;

@@ -53,7 +53,7 @@
                     else
                     {
                         <div class="d-flex align-items-center w-100">
-                            <img style="max-width: 400px;" src="data:image/png;base64,
+                            <img style="max-width: 400px; margin-right:1em;" src="data:image/png;base64,
                             @Convert.ToBase64String(user.ProfileImage)" class="rounded-3" alt="User Profile Image" />
                             <div>
                                 <h4 class="text-decoration-underline">Profile Bio</h4>
@@ -121,8 +121,8 @@
             @if (Model.BookedPets != null && Model.BookedPets.Count() > 0)
             {
                 <p class="lead">
-                    You have @Model.BookedPets.Count() booked pet(s):
-                    @String.Join(", ", Model.BookedPets.Select(bp => bp?.Pet?.Name))
+                    You have @Model.BookedPets.Count() bookings with:
+                    @String.Join(", ", Model.BookedPets.Select(bp => bp?.Pet?.Name).Distinct())
                 </p>
             }
         <table class="table">
@@ -144,18 +144,22 @@
                                 <div>
                                     <i class="fa-solid fa-dog"></i>
                                     <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
-                                    @if (Model.Booking.Any(bp => bp.EndDate < DateTime.Now))
-                                    {
-                                        <i class="fa-solid fa-calendar-days" style="color:red;margin-left:3px;"></i>
-                                        <span style="font-size:0.8em;">Booking date is passed!</span>
-                                    }
-                                    else
-                                    {
-                                        @if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
+                                    @{bool hasPastBooking = false;}
+                                        @if (Model.Booking.Join(Model.BookedPets,
+                                            booking => booking.BookingId,
+                                            bookingPet => bookingPet.BookingId,
+                                            (booking, bookingPet) => new { Booking = booking, BookingPet = bookingPet })
+                                      .Any(b => b.Booking.EndDate < DateTime.Now && b.BookingPet.PetId == pet.PetId))
+                                        {
+                                            <i class="fa-solid fa-calendar-days" style="color:red;margin-left:3px;"></i>
+                                            <span style="font-size:0.8em;">Booking date is passed!</span>
+                                        }
+                                        else if(Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
                                         {
                                             <i class="fa-solid fa-check" style="color:chartreuse; margin-left:3px;"></i>
-                                        } 
-                                    }
+                                        }
+
+                                  
                                 </div>
                             }
                             else
@@ -163,18 +167,23 @@
                                 <div>
                                     <i class="fa-solid fa-cat"></i>
                                     <a asp-action="GetPet" asp-route-id="@pet.PetId" class="text-decoration-none text-black">@pet.Name</a>
-                                    @if (Model.Booking.Any(bp => bp.EndDate < DateTime.Now))
-                                    {
-                                          <i class="fa-solid fa-calendar-days" style="color:red;margin-left:3px;"></i>
-                                          <span style="font-size:0.8em;">Booking date is passed!</span>
-                                    }
-                                    else
-                                    {
-                                        @if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
+                                        @{
+                                            bool hasPastBooking = false;
+                                        }
+
+                                        @if (Model.Booking.Join(Model.BookedPets,
+                                            booking => booking.BookingId,
+                                            bookingPet => bookingPet.BookingId,
+                                            (booking, bookingPet) => new { Booking = booking, BookingPet = bookingPet })
+                                       .Any(b => b.Booking.EndDate < DateTime.Now && b.BookingPet.PetId == pet.PetId))
+                                        {
+                                            <i class="fa-solid fa-calendar-days" style="color:red;margin-left:3px;"></i>
+                                            <span style="font-size:0.8em;">Booking date is passed!</span>
+                                        }
+                                        else if (Model.BookedPets.Any(bp => bp.PetId == pet.PetId))
                                         {
                                             <i class="fa-solid fa-check" style="color:chartreuse; margin-left:3px;"></i>
                                         }
-                                    }
                                 </div>
                             }
                             <div>
